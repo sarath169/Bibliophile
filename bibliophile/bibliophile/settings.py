@@ -30,6 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ALLOWED_ORIGINS = [
+     "http://localhost:3000"
+]
 
 # Application definition
 
@@ -40,9 +43,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #3rd party
+    'corsheaders',
+    'rest_framework',
+    'rest_framework.authtoken',
+
+    # local
+    'authentication.apps.AuthenticationConfig',
     'api.apps.ApiConfig',
     'books.apps.BooksConfig',
 ]
+
+AUTH_USER_MODEL = 'authentication.CustomUser'
+# AUTHENTICATION_BACKENDS = ['authentication.backends.EmailBackend']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,3 +137,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST =  os.getenv('EMAIL_HOST')
+EMAIL_USE_TLS = True
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
