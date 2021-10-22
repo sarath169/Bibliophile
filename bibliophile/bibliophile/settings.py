@@ -55,8 +55,7 @@ INSTALLED_APPS = [
     'books.apps.BooksConfig',
 ]
 
-AUTH_USER_MODEL = 'authentication.CustomUser'
-# AUTHENTICATION_BACKENDS = ['authentication.backends.EmailBackend']
+AUTH_USER_MODEL = 'authentication.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

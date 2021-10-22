@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import CustomUser, OtpValidation
+from .models import User as CustomUser, OtpValidation
 
 class RegisterSerializer(serializers.ModelSerializer):
 

@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 from rest_framework import status
 
-from .models import OtpValidation, CustomUser
+from .models import OtpValidation, User as CustomUser
 from .serializers import RegisterSerializer, PasswordChangeSerializer
 from django.conf import settings
 
