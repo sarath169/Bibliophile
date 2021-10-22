@@ -130,3 +130,6 @@ dmypy.json
 
 # Django Migrations
 migrations/
+
+# Static Files
+static/

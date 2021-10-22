@@ -12,10 +12,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    profile_picture = models.ImageField(upload_to='static/images', max_length=100, default = 'static/images/default.jpg')
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
-    is_staff = models.BooleanField(_('active'), default=False)
-
+    is_staff = models.BooleanField(_('staff'), default=False)
+    validated = models.BooleanField(_('validated'), default = False)
+    
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -43,42 +45,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         Sends an email to this User.
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
-
-# class CustomUser(AbstractBaseUser):
-#     email = models.EmailField(
-#         verbose_name='email address',
-#         max_length=255,
-#         unique=True,
-#     )
-#     name = models.CharField(max_length=128)
-
-#     validated = models.BooleanField(default=False)
-#     is_active = models.BooleanField(default=True)
-#     is_admin = models.BooleanField(default=False)
-
-#     # objects = CustomUserManager()
-
-#     USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = ['validated']
-
-#     def __str__(self):
-#         return self.email
-
-#     def has_perm(self, perm, obj=None):
-#         "Does the user have a specific permission?"
-#         # Simplest possible answer: Yes, always
-#         return True
-
-#     def has_module_perms(self, app_label):
-#         "Does the user have permissions to view the app `app_label`?"
-#         # Simplest possible answer: Yes, always
-#         return True
-
-#     @property
-#     def is_staff(self):
-#         "Is the user a member of staff?"
-#         # Simplest possible answer: All admins are staff
-#         return self.is_admin
 
 class OtpValidation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

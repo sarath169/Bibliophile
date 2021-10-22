@@ -107,7 +107,7 @@ class SendMailView(APIView):
         user = CustomUser.objects.get(email = email)
         print(user.validated)
 
-        if user.validated == 'NV':
+        if not user.validated :
             subject = 'Bibliophile App  : Verify Account'
             # message = render_to_string('OTP to verify ', otp)
             email_from = settings.EMAIL_HOST_USER
@@ -141,7 +141,7 @@ class SendMailView(APIView):
             message = {"message" : "success" }
             return Response(message, status=status.HTTP_200_OK)
 
-        if user.validated == 'V':
+        if user.validated :
             subject = 'Bibliophile App  : Password Change Request'
             # message = render_to_string('OTP to verify ', otp)
             email_from = settings.EMAIL_HOST_USER
