@@ -1,8 +1,8 @@
 import random
-import threading
 
 from django.contrib.auth import authenticate
-from django.core.mail import EmailMessage
+from django.http.response import HttpResponse
+from django.core.mail import send_mail
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,17 +12,8 @@ from rest_framework import status
 from .models import OtpValidation, User as CustomUser
 from .serializers import RegisterSerializer, PasswordChangeSerializer
 from django.conf import settings
+from .task import send_mail_func
 
-class EmailThread(threading.Thread):
-
-    def __init__(self, email):
-        self.email=email
-        threading.Thread.__init__(self)
-
-    def run(self):
-        self.email.send()
-
-# Create your views here.
 class RegistrationView(CreateAPIView):
     # This view is to register new users
     serializer_class = RegisterSerializer
@@ -108,12 +99,9 @@ class SendMailView(APIView):
         print(user.validated)
 
         if not user.validated :
-            subject = 'Bibliophile App  : Verify Account'
+            mail_subject = 'Bibliophile App  : Verify Account'
             # message = render_to_string('OTP to verify ', otp)
-            email_from = settings.EMAIL_HOST_USER
-            print(email_from)
-            to=user.email
-            print(to)
+            to_email = user.email
             try:
                     userotp_obj = OtpValidation.objects.get(user = user.id)
                     print(userotp_obj.otp)
@@ -122,53 +110,32 @@ class SendMailView(APIView):
                     userotp_obj = None
                     print("except")
             if userotp_obj:
-                email= EmailMessage(
-                        subject,        
-                        userotp_obj.otp,
-                        email_from,
-                        [to],
-                )
+                send_mail_func.delay(mail_subject, userotp_obj.otp, to_email )
+                
             else:
-                email= EmailMessage(
-                                subject,        
-                                str(otp),
-                                email_from,
-                                [to],
-                        )
+                send_mail_func.delay(mail_subject, str(otp), to_email )
                 userotp_obj = OtpValidation(user_id = user.id, otp = otp)
                 userotp_obj.save()
-            EmailThread(email).run()
             message = {"message" : "success" }
             return Response(message, status=status.HTTP_200_OK)
 
         if user.validated :
-            subject = 'Bibliophile App  : Password Change Request'
+            mail_subject = 'Bibliophile App  : Password Change Request'
             # message = render_to_string('OTP to verify ', otp)
-            email_from = settings.EMAIL_HOST_USER
-            print(email_from)
-            to=user.email
-            print(to)
+            to_email = user.email
             try:
                     userotp_obj = OtpValidation.objects.get(user = user.id)
+                    print(userotp_obj.otp)
+                    print("tried")
             except:
                     userotp_obj = None
+                    print("except")
             if userotp_obj:
-                email= EmailMessage(
-                        subject,        
-                        userotp_obj.otp,
-                        email_from,
-                        [to],
-                )
+                send_mail_func.delay(mail_subject, userotp_obj.otp, to_email )
             else:
-                email= EmailMessage(
-                                subject,        
-                                str(otp),
-                                email_from,
-                                [to],
-                        )
+                send_mail_func.delay(mail_subject, str(otp), to_email )
                 userotp_obj = OtpValidation(user_id = user.id, otp = otp)
                 userotp_obj.save()
-            EmailThread(email).run()
             message = {"message" : "success" }
             return Response(message, status=status.HTTP_200_OK)
         
@@ -197,3 +164,17 @@ class VerifyOtpView(APIView):
             print(e)
             message = {"message": "check formdata"}
             return Response({"response" : "Password change Success"}, status = status.HTTP_400_BAD_REQUEST)
+
+class Celery_Send_Mail(APIView):
+    def get(self, request):
+        print("called")
+        try:
+            send_mail_func.delay()
+            print("celery_entered")
+            message = {"message": "mail sent"}
+            return Response(message, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            message = {"message": "error while sending mail"}
+            return Response(message, status=status.HTTP_409_CONFLICT)
+        # return HttpResponse("worked")

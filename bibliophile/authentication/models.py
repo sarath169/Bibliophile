@@ -17,6 +17,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=False)
     validated = models.BooleanField(_('validated'), default = False)
+    description = models.TextField(_('Description'), blank=True)
     
     objects = UserManager()
 
