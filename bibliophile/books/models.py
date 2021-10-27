@@ -40,17 +40,34 @@ class BookShelf(models.Model):
     book_in_shelf = models.CharField(
         max_length=2,
         choices=BOOK_IN_SELF_CHOICES,
-        default=READLIST,
+        # default=READLIST,
     )
 
     def __str__(self):
-        return f'{self.book_id} - {self.user_id} - {self.book_in_self}'
+        return f'{self.book_id} - {self.user_id} - {self.book_in_shelf}'
 
     class Meta:
         db_table = 'book_shelf'
         verbose_name = 'Book Shelf'
         verbose_name_plural = 'Book Shelf'
         unique_together = (('book_id', 'user_id'),)
+
+
+class Review(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    comment = models.TextField()
+
+    def __str__(self):
+        return f'{self.book} - {self.user}'
+
+    class Meta:
+        db_table = 'review'
+        verbose_name = 'Review'
+        verbose_name_plural = 'Reviews'
+        unique_together = (('book_id', 'user_id'),)
+
 
 
 
