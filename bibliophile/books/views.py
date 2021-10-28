@@ -2,7 +2,7 @@ import os
 import requests
 import logging
 from django.db import connection
-from django.db.models import Q
+from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.views import APIView
@@ -133,18 +133,6 @@ class GetUsersBookAPIView(APIView):
     """
     permission_classes = (IsAuthenticated, )
 
-    def dictfetchall(self, cursor):
-        """
-        Return all rows from a cursor as a dict
-        :param cursor: django.db.connection.cursor
-        :return: dict
-        """
-        columns = [col[0] for col in cursor.description]
-        return [
-            dict(zip(columns, row))
-            for row in cursor.fetchall()
-        ]
-
     def get(self, request, user_id):
         """
         For a specific user return all books after grouping them based on the shelf type
@@ -152,20 +140,27 @@ class GetUsersBookAPIView(APIView):
         :param user_id: int, id of an user
         :return: dict, all books of an user
         """
-        cursor = connection.cursor()
-        qry = f'SELECT * FROM book b JOIN book_shelf bs on b.id=bs.book_id WHERE bs.user_id={user_id}'
-        cursor.execute(qry)
-        books = self.dictfetchall(cursor)
+        books = BookShelf.objects.select_related().filter(user_id=user_id)
+
         RL = []
         WL = []
         SL = []
         for book in books:
-            if book.get("book_in_shelf") == "RL":
-                RL.append(book)
-            elif book.get("book_in_shelf") == "WL":
-                WL.append(book)
+            temp_book = {
+                "id": book.book.id,
+                "title": book.book.title,
+                "author": book.book.author,
+                "description": book.book.description,
+                "page_count": book.book.page_count,
+                "category": book.book.category,
+                "image_link_small": book.book.image_link_small,
+            }
+            if book.book_in_shelf == "RL":
+                RL.append(temp_book)
+            elif book.book_in_shelf == "WL":
+                WL.append(temp_book)
             else:
-                SL.append(book)
+                SL.append(temp_book)
         book_shelf = {"RL": RL, "WL": WL, "SL": SL}
         return JsonResponse(book_shelf, status=status.HTTP_200_OK, safe=False)
 
@@ -243,7 +238,7 @@ class BooksReviewAPIView(APIView):
             book_title = review.book.title
             rvw = {
                 "user_id": review.user.id,
-                "user_name": review.user.first_name,
+                "user_name": review.user.name,
                 "rating": review.rating,
                 "comment": review.comment
             }
@@ -285,29 +280,69 @@ class UsersReviewAPIView(APIView):
         return Response(send_review, status=status.HTTP_200_OK)
 
 
-class TopTenBooksAPIView(APIView):
+class TopTenPopularBooksAPIView(APIView):
     """
     Fetch Top 10 Books based on number of appearances in multiple user's shelf
     """
+    def get(self, request):
+        """
+        Return top ten popular books
+        :param request: request object
+        :return: dict, top ten popular books
+        """
+        qs_books = BookShelf.objects.values("book_id").annotate(book_count=Count('book_id')).order_by('-book_count')
 
-    def dictfetchall(self, cursor):
+        book_list = []
+        for book in qs_books:
+            book_list.append(book.get("book_id"))
+
+        book_details = Book.objects.values('id', 'title', 'author', 'description', 'image_link_small').filter(
+            id__in=book_list)
+        return Response(book_details, status=status.HTTP_200_OK)
+
+
+class TopTenRatedBooksAPIView(APIView):
+    """
+    Get top ten best rated books
+    """
+    def get(self, request):
         """
-        Return all rows from a cursor as a dict
-        :param cursor: django.db.connection.cursor
-        :return: dict
+        Return top ten best rated books
+        :param request: request object
+        :return: dict, top ten best rated books
         """
-        columns = [col[0] for col in cursor.description]
-        return [
-            dict(zip(columns, row))
-            for row in cursor.fetchall()
-        ]
+        books = Review.objects.values('book').annotate(avg_rating=Avg('rating')).order_by('-avg_rating')[:10]
+        book_list = []
+        for book in books:
+            book_list.append(book.get("book"))
+
+        book_details = Book.objects.values('id', 'title', 'author', 'description', 'image_link_small').filter(id__in=book_list)
+        return Response(book_details, status=status.HTTP_200_OK)
+
+
+class LastTenReviewsAPIView(APIView):
+    """
+    Get Most recent reviews
+    """
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request):
-        cursor = connection.cursor()
-        qry = "SELECT " \
-              "book_id, title, author, description, image_link_small, COUNT(book_id) 'book_count' " \
-              "FROM book_shelf JOIN book ON book_shelf.book_id = book.id " \
-              "GROUP BY book_id ORDER BY book_count DESC LIMIT 10"
-        cursor.execute(qry)
-        books = self.dictfetchall(cursor)
-        return Response(books, status=status.HTTP_200_OK)
+        """
+        Returns 10 most recent reviews
+        :param request: request object
+        :return: dict, 10 most recent reviews
+        """
+        reviews = Review.objects.select_related().order_by('-id')[:10]
+        most_recent_review = []
+        for review in reviews:
+            tmp_book = {
+                "book_id": review.book_id,
+                "book_title": review.book.title,
+                "user_id": review.user_id,
+                "user_name": review.user.name,
+                "rating": review.rating,
+                "comment": review.comment
+            }
+            most_recent_review.append(tmp_book)
+
+        return Response(most_recent_review, status=status.HTTP_200_OK)

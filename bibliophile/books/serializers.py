@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from books.models import Book, BookShelf, Review
-from authentication.models import User
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -27,5 +26,4 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
-
 
