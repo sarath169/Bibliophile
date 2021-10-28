@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return 
-        
+
 class PasswordChangeSerializer(serializers.ModelSerializer):
     newpassword = serializers.CharField(write_only=True, required=True, style={'input_type': 'password',})
     newpassword2 = serializers.CharField(write_only=True, required=True, style={'input_type': 'password',})
@@ -51,3 +51,8 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         else:
             raise serializers.ValidationError({'error': "user not found"})
         return
+
+class VerifyOtpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OtpValidation
+        fields = ('user', 'otp')

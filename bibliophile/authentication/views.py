@@ -5,10 +5,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
-from rest_framework import status
+from rest_framework import serializers, status
 
 from .models import OtpValidation, User as CustomUser
-from .serializers import RegisterSerializer, PasswordChangeSerializer
+from .serializers import RegisterSerializer, PasswordChangeSerializer, VerifyOtpSerializer
 from django.conf import settings
 from .task import send_mail_func
 
@@ -146,22 +146,41 @@ class SendMailView(APIView):
         
 
 class VerifyOtpView(APIView):
-    def post(self, request):
-        try:
-            email = request.data['email']
-            otp = request.data['otp']
-            user = CustomUser.objects.get(email = email)
-            userotp_obj = OtpValidation.objects.get(user = user.id)
-            print(userotp_obj.otp)
-            print(otp)
-            if userotp_obj.otp == otp:
-                k =OtpValidation.objects.filter(user = user.id).delete()
-                print(k)
-                return Response({"response" : "Validation success"}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error" : "otp did not match"}, status=status.HTTP_401_UNAUTHORIZED)
+    serializer_class = VerifyOtpSerializer
 
-        except Exception as e:
-            print(e)
-            message = {"message": "check formdata"}
-            return Response({"response" : "Password change Success"}, status = status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        email = request.data['email']
+        otp = request.data['otp']
+        user = CustomUser.objects.get(email = email)
+        if user.validated:
+            try:
+                userotp_obj = OtpValidation.objects.get(user = user.id)
+                print(userotp_obj.otp)
+                print(otp)
+                if userotp_obj.otp == otp:
+                    OtpValidation.objects.filter(user = user.id).delete()
+                    return Response({"response" : "validation success"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            except Exception as e:
+                print(e)
+                return Response({"response" : "Please check email"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                print("not valiated")
+                userotp_obj = OtpValidation.objects.get(user = user.id)
+                print(userotp_obj.otp)
+                print(otp)
+                if userotp_obj.otp == otp:
+                    OtpValidation.objects.filter(user = user.id).delete()
+                    user.validated = True
+                    user.save()
+                    print(user.validated, "valiate")
+                    return Response({"response" : "validation success"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            except Exception as e:
+                print(e)
+                return Response({"response" : "please check email"}, status = status.HTTP_400_BAD_REQUEST)
