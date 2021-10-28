@@ -1,8 +1,6 @@
 import random
 
 from django.contrib.auth import authenticate
-from django.http.response import HttpResponse
-from django.core.mail import send_mail
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -38,17 +36,20 @@ class LoginView(APIView):
         print(request.data)
         email = request.data['email']
         password = request.data['password']
+        user = CustomUser.objects.get(email = email)
         print(email, password)
-        try:
-            user = authenticate(email = email, password = password)
-            print(user)
-            token = Token.objects.get_or_create(user = user)
-            print(token[0])
-            return Response({'token' : str(token[0]), 'id': user.id}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            return Response({'error': "password does not match"}, status = status.HTTP_400_BAD_REQUEST)
-    
+        if user.validated:
+            try:
+                user = authenticate(email = email, password = password)
+                print(user)
+                token = Token.objects.get_or_create(user = user)
+                print(token[0])
+                return Response({'token' : str(token[0]), 'id': user.id}, status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
+                return Response({'error': "password does not match"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': "Please Complete Validation"}, status = status.HTTP_403_FORBIDDEN)
                 
 
 class LogoutView(APIView):
@@ -164,17 +165,3 @@ class VerifyOtpView(APIView):
             print(e)
             message = {"message": "check formdata"}
             return Response({"response" : "Password change Success"}, status = status.HTTP_400_BAD_REQUEST)
-
-class Celery_Send_Mail(APIView):
-    def get(self, request):
-        print("called")
-        try:
-            send_mail_func.delay()
-            print("celery_entered")
-            message = {"message": "mail sent"}
-            return Response(message, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            message = {"message": "error while sending mail"}
-            return Response(message, status=status.HTTP_409_CONFLICT)
-        # return HttpResponse("worked")

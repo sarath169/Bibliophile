@@ -19,8 +19,8 @@ class ProfileView(ListAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        print(user, "*********************")
-        result = User.objects.filter(email = user).values('email', 'first_name', 'last_name', 'profile_picture', 'description')
+        print(user, "user")
+        result = User.objects.filter(email = user).values('email', 'name', 'profile_picture', 'description')
         print(result)
         return result
 
@@ -29,8 +29,9 @@ class UpdateProfileView(UpdateAPIView):
     serializer_class = ProfileSerializer
     lookup_field = 'email'
     def get_queryset(self):
+        print(str(self.request.get_full_path).split('/'), "request")
         user = self.request.user
-        print(user, "*********************")
-        result = User.objects.filter(email = user).values('email', 'first_name', 'last_name', 'profile_picture', 'description')
+        print(user, "user")
+        result = User.objects.filter(email = user).values('email', 'name', 'profile_picture', 'description')
         print(result)
         return result
