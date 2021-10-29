@@ -4,6 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 
 from .managers import UserManager
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField( unique=True)
     name = models.CharField( max_length=30, blank=True)
@@ -13,11 +14,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField( default=False)
     validated = models.BooleanField(default = False)
     description = models.TextField( blank=True)
-    
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    # def __str__(self):
+    #     return self.name
 
     class Meta:
         db_table = "User"
@@ -25,6 +28,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 class OtpValidation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=10)
-    
+
+    # def __str__(self):
+    #     return self.user
+
     class Meta:
         db_table = "OtpValidation"
