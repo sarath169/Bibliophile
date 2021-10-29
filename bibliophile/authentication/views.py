@@ -8,7 +8,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework import serializers, status
 
 from .models import OtpValidation, User as CustomUser
-from .serializers import RegisterSerializer, PasswordChangeSerializer, VerifyOtpSerializer
+from .serializers import RegisterSerializer, VerifyOtpSerializer
 from django.conf import settings
 from .task import send_mail_func
 
