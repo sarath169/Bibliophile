@@ -10,15 +10,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('name', 'email', 'password', 'password2',)
         extra_kwargs = {
-            'password': {'write_only': True, 'required': True},
-            'email': {'required': True},
-            'name': {'required': True}
+            'password' : {'write_only' : True, 'required' : True},
+            'email' : {'required': True},
+            'name' : {'required' : True}
         }
 
     def save(self):
         user = CustomUser(
-            email=self.validated_data['email'],
-            name=self.validated_data['name'],
+            email = self.validated_data['email'],
+            name = self.validated_data['name'],
         )
         password = self.validated_data['password']
         password2 = self.validated_data['password2']
@@ -27,8 +27,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'password': "Passwords must match."})
         user.set_password(password)
         user.save()
-        return
-
+        return 
 
 class PasswordChangeSerializer(serializers.ModelSerializer):
     newpassword = serializers.CharField(write_only=True, required=True, style={'input_type': 'password', })
@@ -52,3 +51,8 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         else:
             raise serializers.ValidationError({'error': "user not found"})
         return
+
+class VerifyOtpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OtpValidation
+        fields = ('user', 'otp')
