@@ -28,7 +28,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return 
 
+
 class VerifyOtpSerializer(serializers.ModelSerializer):
     class Meta:
         model = OtpValidation
         fields = ('user', 'otp')
+
+
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    profile_picture = serializers.ImageField(max_length=None, allow_empty_file=False, allow_null=True, required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'name', 'email', 'description', 'profile_picture')
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'name', 'description', 'profile_picture')
