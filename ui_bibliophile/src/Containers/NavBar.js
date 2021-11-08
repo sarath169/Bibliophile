@@ -1,22 +1,22 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
+// import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
+// import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
+// import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreIcon from "@mui/icons-material/MoreVert";
+// import AccountCircle from "@mui/icons-material/AccountCircle";
+// import MailIcon from "@mui/icons-material/Mail";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
+// import MoreIcon from "@mui/icons-material/MoreVert";
 import Button from "@mui/material/Button";
 
 import { UserContext } from "../Components/UserContext";
@@ -69,33 +69,28 @@ const axiosInstance = axios.create({
 export default function NavBar() {
   const history = useHistory();
 
-  const { token, setToken } = useContext(UserContext);
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const Home = () => {
-    history.push("/game");
+  const { token, setToken, searchResult, setSearchResult, userEmail } =
+    useContext(UserContext);
+  const [input, setInput] = useState("");
+  const homeView = () => {
+    history.push("/home");
   };
-  const Signup = () => {
+  const signupView = () => {
     history.push("/signup");
   };
-  const Login = () => {
+  const loginView = () => {
     history.push("/");
   };
-  const Stats = () => {
-    history.push("/stats");
+  const searchResultView = () => {
+    history.push("/search");
   };
-  const Leaderboard = () => {
-    history.push("/leaderboard");
+  const Detail = () => {
+    history.push("/detail");
   };
-  const Logout = () => {
+  const logoutView = () => {
     const url = "logout/";
     const formdata = new FormData();
-    formdata.append("user", "user");
+    formdata.append("user", userEmail);
     axiosInstance
       .post(url, formdata)
       .then(function (response) {
@@ -108,103 +103,39 @@ export default function NavBar() {
         console.log(error);
       });
   };
-
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const searchChangeHandler = (event) => {
+    console.log(event.target.value);
+    setInput(event.target.value);
   };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
+  const handleBookSearch = async (event) => {
+    // search = event.target.value
+    console.log(event);
+    console.log(input);
+    try {
+      if (input) {
+        // https://www.googleapis.com/books/v1/volumes?q=harrypotter&download=epub&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w
+        const API_URL = `https://www.googleapis.com/books/v1/volumes?q=${input}&download=epub&maxResults=12&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w`;
+        axios
+          .get(API_URL)
+          .then(function (response) {
+            console.log(response.data.items);
+            setSearchResult(response.data.items);
+            history.push("/search");
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
-
-  const menuId = "primary-search-account-menu";
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 10 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={10} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
+          {/* <IconButton
             size="large"
             edge="start"
             color="inherit"
@@ -212,7 +143,7 @@ export default function NavBar() {
             sx={{ mr: 2 }}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
           <Typography
             variant="h6"
             noWrap
@@ -221,20 +152,7 @@ export default function NavBar() {
           >
             Bibliophile
           </Typography>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Button color="inherit" onClick={Signup}>
-              Signup
-            </Button>
-            {token ? (
-              <Button color="inherit" onClick={Logout}>
-                Logout
-              </Button>
-            ) : (
-              <Button color="inherit" onClick={Login}>
-                Login
-              </Button>
-            )}
-          </Typography>
+
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -242,10 +160,28 @@ export default function NavBar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
+              onChange={searchChangeHandler}
             />
+            <Button color="inherit" onClick={handleBookSearch}>
+              Search
+            </Button>
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Button color="inherit" onClick={signupView}>
+              Signup
+            </Button>
+            {token ? (
+              <Button color="inherit" onClick={logoutView}>
+                Logout
+              </Button>
+            ) : (
+              <Button color="inherit" onClick={loginView}>
+                Login
+              </Button>
+            )}
+          </Typography>
+          {/* <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
               aria-label="show 4 new mails"
@@ -275,8 +211,8 @@ export default function NavBar() {
             >
               <AccountCircle />
             </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
+          </Box> */}
+          {/* <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="show more"
@@ -287,46 +223,9 @@ export default function NavBar() {
             >
               <MoreIcon />
             </IconButton>
-          </Box>
+          </Box> */}
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
     </Box>
   );
 }
-
-//   return (
-//     <Box sx={{ flexGrow: 1 }}>
-//       <AppBar position="static" className={classes.blue}>
-//         <Toolbar>
-//           <IconButton
-//             size="large"
-//             edge="start"
-//             color="inherit"
-//             aria-label="menu"
-//             sx={{ mr: 2 }}
-//           >
-//             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-//               Bibliophile
-//             </Typography>
-//           </IconButton>
-//           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-//             <Button color="inherit" onClick={Signup}>
-//               Signup
-//             </Button>
-//             {token ? (
-//               <Button color="inherit" onClick={Logout}>
-//                 Logout
-//               </Button>
-//             ) : (
-//               <Button color="inherit" onClick={Login}>
-//                 Login
-//               </Button>
-//             )}
-//           </Typography>
-//         </Toolbar>
-//       </AppBar>
-//     </Box>
-//   );
-// }
