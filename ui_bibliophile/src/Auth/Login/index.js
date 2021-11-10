@@ -66,7 +66,7 @@ function Login() {
           setToken(response.data.token);
           setUserEmail(response.data.email);
           console.log("entered");
-          history.push("/home");
+          history.push("/");
         })
         .catch(function (error) {
           console.log(error);

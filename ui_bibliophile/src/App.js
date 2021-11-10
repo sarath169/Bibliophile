@@ -16,12 +16,19 @@ import ForgotPassword from "./Containers/ForgotPassword";
 function App() {
   const history = useHistory();
 
-  const [userEmail, setUserEmail] = useState(null)
+  const [userEmail, setUserEmail] = useState(null);
   const [token, setToken] = useState(null);
   const [searchResult, setSearchResult] = useState(null);
 
   const providerValue = useMemo(
-    () => ({ token, setToken, searchResult, setSearchResult, userEmail, setUserEmail }),
+    () => ({
+      token,
+      setToken,
+      searchResult,
+      setSearchResult,
+      userEmail,
+      setUserEmail,
+    }),
     [token, setToken, searchResult, setSearchResult, userEmail, setUserEmail]
   );
   return (
@@ -32,30 +39,29 @@ function App() {
           <div className="">
             <Switch>
               <Route exact path="/">
-                <Login />
+                <Home />
               </Route>
               <Route exact path="/signup">
                 <SignUp />
               </Route>
-              <Route exact path="/home">
-                <Home />
+              <Route exact path="/login">
+                <Login />
               </Route>
               <Route exact path="/search">
                 <SearchResult />
               </Route>
               <Route exact path="/details">
-                <BookDetails/>
+                <BookDetails />
               </Route>
               <Route exact path="/sendotp">
-                <SendOtp/>
+                <SendOtp />
               </Route>
               <Route exact path="/validateotp">
-                <ValidateOtp/>
+                <ValidateOtp />
               </Route>
               <Route exact path="/forgotpassword">
-                <ForgotPassword/>
+                <ForgotPassword />
               </Route>
-              
             </Switch>
           </div>
         </UserProvider>

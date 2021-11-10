@@ -16,7 +16,7 @@ import { UserContext } from "../Components/UserContext";
 
 function Display(props) {
   const history = useHistory();
-  const { user, token } = useContext(UserContext);
+  const { token } = useContext(UserContext);
 
   const [favourites, setFavourites] = useState([]);
   let favourites_id = [];
@@ -47,13 +47,16 @@ function Display(props) {
       display: "inline-grid",
     },
     // card:{
-    //   height: 500,
+    //   height: 600,
     // },
     // image:{
-    //   height: "100%",
-    // },
-    // media: {
     //   height: 300,
+    // },
+    cardcontent: {
+      height: 130,
+    },
+    // media: {
+    //   height: 900,
     //   width: "100%",
     // },
     // title: {
@@ -78,7 +81,6 @@ function Display(props) {
     const API_URL = "http://127.0.0.1:8000/api/listfavourites/";
     axios
       .get(API_URL, {
-        params: { user: user },
         headers: { Authorization: "token " + token },
       })
       .then((response) => {
@@ -96,7 +98,7 @@ function Display(props) {
       .post(
         API_URL,
         {
-          user: user,
+          user: "user",
           id: id,
           secret: secret,
           farm: farm,
@@ -193,19 +195,20 @@ function Display(props) {
               <Grid item xs={3}>
                 <div className={classes.card}>
                   <Card>
-                    <CardActionArea
-                    height = "600">
+                    <CardActionArea height="400">
                       <CardMedia
                         component="img"
-                        height="100%"
+                        height="500"
                         image={srcPath}
                         alt="green iguana"
                       />
-                      <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                          {title}
-                        </Typography>
-                      </CardContent>
+                      <div className={classes.cardcontent}>
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="div">
+                            {title}
+                          </Typography>
+                        </CardContent>
+                      </div>
                     </CardActionArea>
                     <CardActions>
                       <Button

@@ -73,13 +73,13 @@ export default function NavBar() {
     useContext(UserContext);
   const [input, setInput] = useState("");
   const homeView = () => {
-    history.push("/home");
+    history.push("/");
   };
   const signupView = () => {
     history.push("/signup");
   };
   const loginView = () => {
-    history.push("/");
+    history.push("/login");
   };
   const searchResultView = () => {
     history.push("/search");
@@ -96,7 +96,7 @@ export default function NavBar() {
       .then(function (response) {
         console.log(response.data);
         setToken(null);
-        history.push("/");
+        history.push("/login");
         // setUsers(response.data.results);
       })
       .catch(function (error) {
@@ -153,6 +153,10 @@ export default function NavBar() {
             Bibliophile
           </Typography>
 
+          
+          <Box sx={{ flexGrow: 1 }} />
+
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -166,23 +170,21 @@ export default function NavBar() {
               Search
             </Button>
           </Search>
-          <Box sx={{ flexGrow: 1 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Button color="inherit" onClick={signupView}>
-              Signup
-            </Button>
-            {token ? (
-              <Button color="inherit" onClick={logoutView}>
-                Logout
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              <Button color="inherit" onClick={signupView}>
+                Signup
               </Button>
-            ) : (
-              <Button color="inherit" onClick={loginView}>
-                Login
-              </Button>
-            )}
-          </Typography>
-          {/* <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
+              {token ? (
+                <Button color="inherit" onClick={logoutView}>
+                  Logout
+                </Button>
+              ) : (
+                <Button color="inherit" onClick={loginView}>
+                  Login
+                </Button>
+              )}
+            </Typography>
+            {/* <IconButton
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
@@ -190,8 +192,8 @@ export default function NavBar() {
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>
-            </IconButton>
-            <IconButton
+            </IconButton> */}
+            {/* <IconButton
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
@@ -199,8 +201,8 @@ export default function NavBar() {
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
-            <IconButton
+            </IconButton> */}
+            {/* <IconButton
               size="large"
               edge="end"
               aria-label="account of current user"
@@ -210,8 +212,8 @@ export default function NavBar() {
               color="inherit"
             >
               <AccountCircle />
-            </IconButton>
-          </Box> */}
+            </IconButton> */}
+          </Box>
           {/* <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
