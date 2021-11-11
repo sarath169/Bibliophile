@@ -50,7 +50,7 @@ class LoginView(APIView):
                 print(user)
                 token = Token.objects.get_or_create(user = user)
                 print(token[0])
-                return Response({'token' : str(token[0]), 'id': user.id}, status=status.HTTP_200_OK)
+                return Response({'token' : str(token[0]), 'id': user.id, 'email': user.email}, status=status.HTTP_200_OK)
             except Exception as e:
                 print(e)
                 return Response({'error': "password does not match"}, status = status.HTTP_400_BAD_REQUEST)

@@ -5,16 +5,13 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { UserContext } from "../../Components/UserContext";
+// import { UserContext } from "../../Components/UserContext";
 
 function Copyright(props) {
   return (
@@ -42,7 +39,7 @@ const theme = createTheme();
 })
 
 function SignUp() {
-  const {token, setToken } = useContext(UserContext);
+  // const {setToken } = useContext(UserContext);
   const history = useHistory()
 
   const [name, setName] = useState(null);
@@ -76,7 +73,6 @@ function SignUp() {
         .post(API_URL, formdata)
         .then(function (response) {
           console.log(response);
-          setToken(response.data.token);
           console.log("entered");
           history.push("/");
         })
