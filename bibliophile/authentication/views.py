@@ -6,9 +6,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 from rest_framework import serializers, status
+from rest_framework.permissions import IsAuthenticated
 
 from .models import OtpValidation, User as CustomUser
-from .serializers import RegisterSerializer, VerifyOtpSerializer
+from .serializers import RegisterSerializer, VerifyOtpSerializer, ProfileSerializer, UpdateProfileSerializer
 from django.conf import settings
 from .task import send_mail_func
 
@@ -38,7 +39,10 @@ class LoginView(APIView):
         print(request.data)
         email = request.data['email']
         password = request.data['password']
-        user = CustomUser.objects.get(email = email)
+        try:
+            user = CustomUser.objects.get(email = email)
+        except CustomUser.DoesNotExist:
+            return Response({"msg": "Invalid Email"}, status=status.HTTP_404_NOT_FOUND)
         print(email, password)
         if user.validated:
             try:
@@ -53,16 +57,15 @@ class LoginView(APIView):
         else:
             return Response({'error': "Please Complete Validation"}, status = status.HTTP_403_FORBIDDEN)
 
+
 class LogoutView(APIView):
-    # This view is to logout uers
-    def post(self, request, format=None):
-        print(request.data['user'])
+    # This view is to logout user
+    permission_classes = (IsAuthenticated, )
+    def post(self, request):
         try:
             # simply delete the token to force a login
-            email = request.data['user']
-            print(email)
-            user = CustomUser.objects.get(email=email)
-            user.auth_token.delete()
+            token = request.auth.key
+            Token.objects.filter(key=token).delete()
             data = {"message": "logout success"}
             return Response(data, status=status.HTTP_200_OK)
         except:
@@ -97,7 +100,10 @@ class SendMailView(APIView):
 
     def post(self, request):
         otp = random.randrange(99999, 999999)
-        email = request.data['email']
+        email = request.data.get('email')
+        if not email:
+            return Response({"msg": "email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
         user = CustomUser.objects.get(email=email)
         print(user.validated)
 
@@ -152,8 +158,10 @@ class VerifyOtpView(APIView):
 
     def post(self, request):
 
-        email = request.data['email']
-        otp = request.data['otp']
+        email = request.data.get('email')
+        otp = request.data.get('otp')
+        if not email or not otp:
+            return Response({"msg": "email and OTP are required"}, status=status.HTTP_400_BAD_REQUEST)
         user = CustomUser.objects.get(email = email)
         if user.validated:
             try:
@@ -187,3 +195,53 @@ class VerifyOtpView(APIView):
             except Exception as e:
                 print(e)
                 return Response({"response" : "please check email"}, status = status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileAPIView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get_user(self, token):
+        """
+        Return user_id based on token
+        :param token: Authentication token of a user
+        :return: user_id
+        """
+        try:
+            user_id = Token.objects.get(key=token).user_id
+            return user_id
+        except CustomUser.DoesNotExist:
+            return None
+
+    def get(self, request):
+        """
+        Returns profile details of a user
+        """
+        token = request.auth.key
+        user_id = self.get_user(token)
+
+        if user_id:
+            user = CustomUser.objects.get(id=user_id)
+            serializer = ProfileSerializer(user, context={"request": request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request):
+        """
+        Update user's name, description, password and profile picture
+        """
+        token = request.auth.key
+        user_id = self.get_user(token)
+
+        if user_id:
+            user = CustomUser.objects.get(id=user_id)
+            serializer = UpdateProfileSerializer(user, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+

@@ -290,7 +290,7 @@ class TopTenPopularBooksAPIView(APIView):
         :param request: request object
         :return: dict, top ten popular books
         """
-        qs_books = BookShelf.objects.values("book_id").annotate(book_count=Count('book_id')).order_by('-book_count')
+        qs_books = BookShelf.objects.values("book_id").annotate(book_count=Count('book_id')).order_by('-book_count')[:10]
 
         book_list = []
         for book in qs_books:
