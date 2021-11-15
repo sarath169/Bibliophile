@@ -1,71 +1,35 @@
-import React, { useMemo, useState } from "react";
-import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import Navbar from "./components/Navbar";
+import ProtectedRoute from './helpers/ProtectedRoute';
+import BookDetails from './pages/book/BookDetails';
+import Books from './pages/book/Books';
+import SearchResult from './pages/book/SearchResult';
+import Home from './pages/Home';
+import Profile from './pages/user/Profile';
+import SignIn from './pages/user/SignIn';
+import SignUp from './pages/user/SignUp';
+import VerifyUser from './pages/user/VerifyUser';
 
-import NavBar from "./Containers/NavBar";
-import Login from "./Auth/Login/index";
-import SignUp from "./Auth/SingUp/index";
-import Home from "./Containers/Home";
-
-import { UserProvider } from "./Components/UserContext";
-import SearchResult from "./Containers/SearchResult";
-import BookDetails from "./Containers/BookDetails";
-import SendOtp from "./Containers/SendOtp";
-import ValidateOtp from "./Containers/ValidateOtp";
-import ForgotPassword from "./Containers/ForgotPassword";
 
 function App() {
-  const history = useHistory();
-
-  const [userEmail, setUserEmail] = useState(null);
-  const [token, setToken] = useState(null);
-  const [searchResult, setSearchResult] = useState(null);
-
-  const providerValue = useMemo(
-    () => ({
-      token,
-      setToken,
-      searchResult,
-      setSearchResult,
-      userEmail,
-      setUserEmail,
-    }),
-    [token, setToken, searchResult, setSearchResult, userEmail, setUserEmail]
-  );
   return (
     <div>
-      <BrowserRouter>
-        <UserProvider value={providerValue}>
-          <NavBar />
-          <div className="">
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              <Route exact path="/signup">
-                <SignUp />
-              </Route>
-              <Route exact path="/login">
-                <Login />
-              </Route>
-              <Route exact path="/search">
-                <SearchResult />
-              </Route>
-              <Route exact path="/details">
-                <BookDetails />
-              </Route>
-              <Route exact path="/sendotp">
-                <SendOtp />
-              </Route>
-              <Route exact path="/validateotp">
-                <ValidateOtp />
-              </Route>
-              <Route exact path="/forgotpassword">
-                <ForgotPassword />
-              </Route>
-            </Switch>
-          </div>
-        </UserProvider>
-      </BrowserRouter>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/verifyuser" element={<VerifyUser />} />
+          <Route path="/bookdetails" element={<BookDetails />} />
+
+          <Route path='/' element={<ProtectedRoute />} >
+            <Route path='/books' element={<Books/>} />
+            <Route path='/profile' element={<Profile/>} />
+            <Route path='/searchresult' element={<SearchResult/>} />
+          </Route>
+        </Routes>
+      </Router>
     </div>
   );
 }

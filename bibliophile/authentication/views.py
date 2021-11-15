@@ -24,12 +24,11 @@ class RegistrationView(CreateAPIView):
             data = {}
             if serializer.is_valid():
                 serializer.save()
-                data['response'] = "Registration Success"
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                data = serializer.errors
-            return Response(data)
+                return Response(serializer.errors, status=status.HTTP_200_OK)
         except:
-            message = {"message": "please provide all necessary values"}
+            message = {"message": "Please provide all necessary values"}
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -50,12 +49,12 @@ class LoginView(APIView):
                 print(user)
                 token = Token.objects.get_or_create(user = user)
                 print(token[0])
-                return Response({'token' : str(token[0]), 'id': user.id, 'email': user.email}, status=status.HTTP_200_OK)
+                return Response({'token' : str(token[0]), 'id': user.id}, status=status.HTTP_200_OK)
             except Exception as e:
                 print(e)
-                return Response({'error': "password does not match"}, status = status.HTTP_400_BAD_REQUEST)
+                return Response({'msg': "Invalid Password"}, status = status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'error': "Please Complete Validation"}, status = status.HTTP_403_FORBIDDEN)
+            return Response({'msg': "Please Complete Verification"}, status = status.HTTP_403_FORBIDDEN)
 
 
 class LogoutView(APIView):
@@ -131,6 +130,7 @@ class SendMailView(APIView):
         if user.validated:
             mail_subject = 'Bibliophile App  : Password Change Request'
             # message = render_to_string('OTP to verify ', otp)
+            message = f'Your OTP to verify Bibliophile account is: {otp}'
             to_email = user.email
             try:
                 userotp_obj = OtpValidation.objects.get(user=user.id)
@@ -142,7 +142,7 @@ class SendMailView(APIView):
             if userotp_obj:
                 send_mail_func.delay(mail_subject, userotp_obj.otp, to_email)
             else:
-                send_mail_func.delay(mail_subject, str(otp), to_email)
+                send_mail_func.delay(mail_subject, message, to_email)
                 userotp_obj = OtpValidation(user_id=user.id, otp=otp)
                 userotp_obj.save()
             message = {"message": "success"}
@@ -170,13 +170,13 @@ class VerifyOtpView(APIView):
                 print(otp)
                 if userotp_obj.otp == otp:
                     OtpValidation.objects.filter(user = user.id).delete()
-                    return Response({"response" : "validation success"}, status=status.HTTP_200_OK)
+                    return Response({"msg" : "validation success"}, status=status.HTTP_200_OK)
                 else:
-                    return Response({"error" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                    return Response({"msg" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
             except Exception as e:
                 print(e)
-                return Response({"response" : "Please check email"}, status = status.HTTP_400_BAD_REQUEST)
+                return Response({"msg" : "Please check email"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             try:
                 print("not valiated")
@@ -188,13 +188,13 @@ class VerifyOtpView(APIView):
                     user.validated = True
                     user.save()
                     print(user.validated, "valiate")
-                    return Response({"response" : "validation success"}, status=status.HTTP_200_OK)
+                    return Response({"msg" : "validation success"}, status=status.HTTP_200_OK)
                 else:
-                    return Response({"error" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                    return Response({"msg" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
             except Exception as e:
                 print(e)
-                return Response({"response" : "please check email"}, status = status.HTTP_400_BAD_REQUEST)
+                return Response({"msg" : "please check email"}, status = status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileAPIView(APIView):
