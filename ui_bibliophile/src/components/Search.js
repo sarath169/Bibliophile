@@ -26,7 +26,13 @@ const Search = () => {
 
   const handleSearch = () => {
     console.log(searchKey);
-    navigate("/searchresult");
+    try {
+      if (searchKey) {
+        navigate(`/search/${searchKey}`)
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
