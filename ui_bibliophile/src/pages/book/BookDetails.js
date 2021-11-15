@@ -7,6 +7,7 @@ import MenuBookOutlinedIcon from '@material-ui/icons/MenuBookOutlined';
 import ClosedCaptionOutlinedIcon from '@material-ui/icons/ClosedCaptionOutlined';
 import { getBookDetails } from '../../helpers/BookAPICalles';
 import AddBook from '../../components/AddBook';
+import Review from './Review';
 
 const useStyles = makeStyles(()=>({
     container: {
@@ -40,6 +41,9 @@ const useStyles = makeStyles(()=>({
     },
     description:{
         textAlign: 'justify'
+    },
+    review: {
+        marginTop: '10px',
     }
 }));
 
@@ -86,13 +90,16 @@ const BookDetails = () => {
                         <p><Typography variant="subtitle1" className={classes.wrapIcon}>
                             <ClosedCaptionOutlinedIcon className={classes.linkIcon}  /> Language: {bookDetails.language}
                         </Typography></p>
-                        <p><Typography className={classes.description}>{details}</Typography></p>
+                        <div><Typography className={classes.description}>{details}</Typography></div>
                     </div>
                 </Grid>
                 <Grid item xs={12} sm={2}>
-                    <AddBook />
+                    <AddBook bookId={bookId}/>
                 </Grid>
             </Grid>
+            <div className={classes.review}>
+                <Review bookId={bookId} />
+            </div>
         </Container>
     )
 }

@@ -23,6 +23,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.name
 
+    def get_image_url(self, obj):
+        return obj.image.url
+
     class Meta:
         db_table = "User"
 
