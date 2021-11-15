@@ -74,3 +74,14 @@ export const getUsersBook = (id) => {
     })
     .catch((err) => console.log(err));
 };
+
+export const getSearchResults = (searchKey) => {
+  const API_URL = `https://www.googleapis.com/books/v1/volumes?q=${searchKey}&download=epub&maxResults=12&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w`;
+  return axios
+    .get(API_URL)
+    .then((res) => {
+      console.log(res.data.items);
+      return res.data.items;
+    })
+    .catch((err) => console.log(err));
+};

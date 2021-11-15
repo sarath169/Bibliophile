@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import {
-  CircularProgress,
   Container,
   Grid,
   makeStyles,
@@ -10,6 +8,7 @@ import {
 } from "@material-ui/core";
 
 import BookCard from "../../components/BookCard";
+import { getSearchResults } from "../../helpers/BookAPICalles";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -35,7 +34,6 @@ const SearchResult = () => {
   console.log(searchKey);
 
   const [searchResult, setSearchResult] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const displayImages = () => {
     console.log(searchResult);
@@ -68,17 +66,9 @@ const SearchResult = () => {
   };
 
   useEffect(() => {
-    // https://www.googleapis.com/books/v1/volumes?q=harrypotter&download=epub&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w
-    const API_URL = `https://www.googleapis.com/books/v1/volumes?q=${searchKey}&download=epub&maxResults=12&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w`;
-    axios
-      .get(API_URL)
-      .then(function (response) {
-        console.log(response.data.items);
-        setSearchResult(response.data.items);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    getSearchResults(searchKey)
+      .then((res) => setSearchResult(res))
+      .catch((err) => console.log(err));
   }, [searchKey]);
 
   return (
