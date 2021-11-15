@@ -1,0 +1,13 @@
+.container{
+    display: "flex";
+    align-items: "center";
+    justify-content: "center";
+}
+.media{
+    padding-top: 3px;
+    width: "auto";
+    max-height: 150;
+}
+.bookTitle{
+    font-weight: 'bold';
+}
