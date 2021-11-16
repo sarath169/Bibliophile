@@ -26,7 +26,7 @@ function App() {
           <Route path='/' element={<ProtectedRoute />} >
             <Route path='/books' element={<Books/>} />
             <Route path='/profile' element={<Profile/>} />
-            <Route path='/searchresult' element={<SearchResult/>} />
+            <Route path='/search/:searchKey' element={<SearchResult/>} />
           </Route>
         </Routes>
       </Router>
