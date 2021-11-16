@@ -227,7 +227,7 @@ class BooksReviewAPIView(APIView):
         :param book_id: str, id of a book
         :return: dict, reviews of a book along with user details
         """
-        reviews = Review.objects.select_related().filter(book=book_id)
+        reviews = Review.objects.select_related().filter(book=book_id).order_by('-id')
         if not reviews:
             return Response({"msg": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
         bid = None
@@ -236,11 +236,17 @@ class BooksReviewAPIView(APIView):
         for review in reviews:
             bid = review.book.id
             book_title = review.book.title
+            if review.user.profile_picture:
+                img_url = review.user.profile_picture.url
+            else:
+                img_url = ""
             rvw = {
                 "user_id": review.user.id,
                 "user_name": review.user.name,
+                "user_image": img_url,
                 "rating": review.rating,
-                "comment": review.comment
+                "comment": review.comment,
+                "reviewed_at": review.created_at
             }
             book_reviews.append(rvw)
         send_reviews = {

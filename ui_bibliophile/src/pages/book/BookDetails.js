@@ -11,6 +11,7 @@ import {
 } from "../../helpers/BookAPICalles";
 import AddBook from "../../components/AddBook";
 
+
 const useStyles = makeStyles(() => ({
   container: {
     marginTop: "20px",
@@ -25,25 +26,28 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     width: "100%",
   },
-  title: {
-    margin: "20px 0px",
-    textAlign: "center",
-  },
-  bookDetails: {
-    "& p": {
-      marginTop: "3px",
+    title: {
+        margin: '20px 0px',
+        textAlign: 'center'
     },
-  },
-  wrapIcon: {
-    verticalAlign: "middle",
-    display: "inline-flex",
-  },
-  linkIcon: {
-    marginRight: "5px",
-  },
-  description: {
-    textAlign: "justify",
-  },
+    bookDetails:{
+        "& p":{
+            marginTop: '3px',
+        }
+    },
+    wrapIcon: {
+        verticalAlign: 'middle',
+        display: 'inline-flex',
+    },
+    linkIcon:{
+        marginRight: '5px',
+    },
+    description:{
+        textAlign: 'justify'
+    },
+    review: {
+        marginTop: '10px',
+    }
 }));
 
 const BookDetails = () => {
@@ -76,7 +80,7 @@ const BookDetails = () => {
   }, [bookId, isGoogleSearch]);
 
   let details = String(bookDetails.description).replace(/(<([^>]+)>)/gi, "");
-
+  
   return (
     <Container className={classes.container}>
       <Grid container spacing={2}>
