@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 import AccountCircleOutlinedIcon from "@material-ui/icons/AccountCircleOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
@@ -10,7 +10,6 @@ import {
   getGoogleBookDetails,
 } from "../../helpers/BookAPICalles";
 import AddBook from "../../components/AddBook";
-
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -26,61 +25,55 @@ const useStyles = makeStyles(() => ({
     height: "100%",
     width: "100%",
   },
-    title: {
-        margin: '20px 0px',
-        textAlign: 'center'
+  title: {
+    margin: "20px 0px",
+    textAlign: "center",
+  },
+  bookDetails: {
+    "& p": {
+      marginTop: "3px",
     },
-    bookDetails:{
-        "& p":{
-            marginTop: '3px',
-        }
-    },
-    wrapIcon: {
-        verticalAlign: 'middle',
-        display: 'inline-flex',
-    },
-    linkIcon:{
-        marginRight: '5px',
-    },
-    description:{
-        textAlign: 'justify'
-    },
-    review: {
-        marginTop: '10px',
-    }
+  },
+  wrapIcon: {
+    verticalAlign: "middle",
+    display: "inline-flex",
+  },
+  linkIcon: {
+    marginRight: "5px",
+  },
+  description: {
+    textAlign: "justify",
+  },
+  review: {
+    marginTop: "10px",
+  },
 }));
 
 const BookDetails = () => {
   const classes = useStyles();
-  const location = useLocation();
+  const { seoId } = useParams();
 
-  const [bookDetails, setBookDetails] = useState({});
-  console.log(location.state);
-  const bookId = location.state.bookId;
-  const isGoogleSearch = location.state.isGoogleSearch;
+  const [bookDetails, setBookDetails] = useState([]);
 
   useEffect(() => {
-    if (isGoogleSearch) {
-      console.log(bookId);
-      console.log(isGoogleSearch);
-      getGoogleBookDetails(bookId)
-        .then((res) => {
+    getBookDetails(seoId)
+      .then((res) => {
+        if (res) {
           setBookDetails(res);
-        })
-        .catch((err) => console.log(err));
-    } else {
-      console.log(bookId);
-      console.log(isGoogleSearch);
-      getBookDetails(bookId)
-        .then((res) => {
-          setBookDetails(res);
-        })
-        .catch((err) => console.log(err));
-    }
-  }, [bookId, isGoogleSearch]);
+        } else {
+          getGoogleBookDetails(seoId)
+            .then((res) => {
+              console.log(res);
+              setBookDetails(res);
+            })
+            .catch((err) => console.log(err));
+        }
+      })
+      .catch((err) => console.log(err));
+  }, [seoId]);
 
   let details = String(bookDetails.description).replace(/(<([^>]+)>)/gi, "");
-  
+
   return (
     <Container className={classes.container}>
       <Grid container spacing={2}>

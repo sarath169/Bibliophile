@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -8,6 +8,8 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
+
+import { getBookSeoId } from "../helpers/BookAPICalles";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -31,6 +33,7 @@ const useStyles = makeStyles(() => ({
 const BookCard = ({ book }) => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const [seoId, setSeoId] = useState("");
 
   return (
     <Card className={classes.card}>
@@ -52,7 +55,8 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-              navigate("/bookdetails", {
+              let seoid = book.title.split(" ").join("-");
+              navigate(`/bookdetails/${seoid}`, {
                 state: { bookId: book.id, isGoogleSearch: book.googleSearch },
               });
             }}
@@ -65,9 +69,17 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-                navigate("/bookdetails", {
-                  state: { bookId: book.id, isGoogleSearch: book.googleSearch },
-                });
+              getBookSeoId(book.id)
+                .then((res) => {
+                  console.log(res);
+                  navigate(`/bookdetails/${res.seoid}`, {
+                    state: {
+                      bookId: book.id,
+                      isGoogleSearch: book.googleSearch,
+                    },
+                  });
+                })
+                .catch((err) => console.log(err));
             }}
           >
             Details

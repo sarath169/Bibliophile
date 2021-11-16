@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from books.models import Book, BookShelf, Review
+from books.models import Book, BookShelf, Review, BookSeoid
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -27,3 +27,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = "__all__"
 
+class BookSeoidSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookSeoid
+        fields = '__all__'
