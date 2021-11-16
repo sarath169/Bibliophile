@@ -51,26 +51,28 @@ const useStyles = makeStyles(() => ({
 
 const BookDetails = () => {
   const classes = useStyles();
-  const { seoId } = useParams();
-
+  const { bookId, title } = useParams();
+  console.log(bookId, title)
   const [bookDetails, setBookDetails] = useState([]);
 
   useEffect(() => {
-    getBookDetails(seoId)
+    getBookDetails(bookId)
       .then((res) => {
         if (res) {
+            console.log("local book details")
           setBookDetails(res);
         } else {
-          getGoogleBookDetails(seoId)
+          getGoogleBookDetails(bookId)
             .then((res) => {
               console.log(res);
+              console.log("google book details")
               setBookDetails(res);
             })
             .catch((err) => console.log(err));
         }
       })
       .catch((err) => console.log(err));
-  }, [seoId]);
+  }, [bookId]);
 
   let details = String(bookDetails.description).replace(/(<([^>]+)>)/gi, "");
 

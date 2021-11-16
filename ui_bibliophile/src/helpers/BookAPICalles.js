@@ -23,53 +23,38 @@ export const getTopRatedBooks = () => {
     .catch((err) => console.log(err));
 };
 
-export const getBookDetails = (seoId) => {
+export const getBookDetails = (id) => {
   return axios
-    .get(`${API}/book/getbookid/${seoId}/`)
+    .get(`${API}/book/get/${id}/`)
     .then((res) => {
       console.log(res);
-      axios
-        .get(`${API}/book/get/${res.data.book}/`)
-        .then((res) => {
-          console.log(res);
-          return res.data;
-        })
-        .catch((err) => {
-          return;
-        });
+      return res.data;
     })
     .catch((err) => {
       return;
     });
 };
-export const getGoogleBookDetails = (seoId) => {
+export const getGoogleBookDetails = (id) => {
   return axios
-    .get(`${API}/book/getbookid/${seoId}/`)
+    .get(`https://www.googleapis.com/books/v1/volumes/${id}/`)
     .then((res) => {
-      console.log(res);
-      axios
-        .get(`https://www.googleapis.com/books/v1/volumes/${res.data.book}/`)
-        .then((res) => {
-          let data = {
-            author: res.data.volumeInfo.authors,
-            category: res.data.volumeInfo.categories,
-            title: res.data.volumeInfo.title,
-            description: res.data.volumeInfo.description,
-            page_count: res.data.volumeInfo.pageCount,
-            publisher: res.data.volumeInfo.publisher,
-            image_link_small: res.data.volumeInfo.imageLinks.smallThumbnail,
-            image_link_large: res.data.volumeInfo.imageLinks.thumbnail,
-            language: res.data.volumeInfo.language,
-            preview_link: res.data.volumeInfo.previewLink,
-          };
-          console.log(data, "google API");
-          return data;
-        })
-        .catch((err) => console.log(err));
+      console.log(res.data, "google");
+      let data = {
+        author: res.data.volumeInfo.authors,
+        category: res.data.volumeInfo.categories,
+        title: res.data.volumeInfo.title,
+        description: res.data.volumeInfo.description,
+        page_count: res.data.volumeInfo.pageCount,
+        publisher: res.data.volumeInfo.publisher,
+        image_link_small: res.data.volumeInfo.imageLinks.smallThumbnail,
+        image_link_large: res.data.volumeInfo.imageLinks.thumbnail,
+        language: res.data.volumeInfo.language,
+        preview_link: res.data.volumeInfo.previewLink,
+      };
+      console.log(data, "google");
+      return data;
     })
-    .catch((err) => {
-      return;
-    });
+    .catch((err) => console.log(err));
 };
 
 export const getAllBooks = () => {
@@ -159,17 +144,6 @@ export const getSearchResults = (searchKey) => {
     .then((res) => {
       console.log(res.data.items);
       return res.data.items;
-    })
-    .catch((err) => console.log(err));
-};
-
-export const getBookSeoId = (bookId) => {
-  const API_URL = `${API}/book/getseoid/${bookId}/`;
-  return axios
-    .get(API_URL)
-    .then((res) => {
-      console.log(res.data);
-      return res.data;
     })
     .catch((err) => console.log(err));
 };

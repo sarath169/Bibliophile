@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -8,8 +8,6 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-
-import { getBookSeoId } from "../helpers/BookAPICalles";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -33,7 +31,6 @@ const useStyles = makeStyles(() => ({
 const BookCard = ({ book }) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [seoId, setSeoId] = useState("");
 
   return (
     <Card className={classes.card}>
@@ -55,8 +52,9 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-              let seoid = book.title.split(" ").join("-");
-              navigate(`/bookdetails/${seoid}`, {
+                let title = book.title.split(' ').join('-')
+                console.log(title)
+                navigate(`/books/${book.id}/${title}`, {
                 state: { bookId: book.id, isGoogleSearch: book.googleSearch },
               });
             }}
@@ -69,17 +67,11 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-              getBookSeoId(book.id)
-                .then((res) => {
-                  console.log(res);
-                  navigate(`/bookdetails/${res.seoid}`, {
-                    state: {
-                      bookId: book.id,
-                      isGoogleSearch: book.googleSearch,
-                    },
-                  });
-                })
-                .catch((err) => console.log(err));
+                let title = book.title.split(' ').join('-')
+                console.log(title)
+                navigate(`/books/${book.id}/${title}`, {
+                  state: { bookId: book.id, isGoogleSearch: book.googleSearch },
+                });
             }}
           >
             Details

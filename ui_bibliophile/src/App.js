@@ -21,7 +21,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/verifyuser" element={<VerifyUser />} />
-          <Route path="/bookdetails/:seoId" element={<BookDetails />} />
+          <Route path="/books/:bookId/:title" element={<BookDetails />} />
 
           <Route path='/' element={<ProtectedRoute />} >
             <Route path='/books' element={<Books/>} />
