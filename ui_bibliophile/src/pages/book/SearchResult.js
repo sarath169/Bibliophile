@@ -31,12 +31,12 @@ const useStyles = makeStyles(() => ({
 const SearchResult = () => {
   const classes = useStyles();
   const { searchKey } = useParams();
-  console.log(searchKey);
+  // console.log(searchKey);
 
   const [searchResult, setSearchResult] = useState([]);
 
   const displayImages = () => {
-    console.log(searchResult);
+    // console.log(searchResult);
     return (
       <>
         <Container className={classes.container}>

@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import { AppBar, Button, makeStyles, Toolbar, Typography} from '@material-ui/core'
 import { isAuthenticated, signout } from '../helpers/AuthHelper'
 import Search from './Search'
+import { getProfileUrl } from '../helpers/ProfileHelper'
 
 
 const useStyle = makeStyles((theme) => ({
@@ -30,6 +31,22 @@ const Navbar = () => {
     const classes = useStyle();
     const navigate = useNavigate();
 
+    const [publicUrl, setPublicUrl] = useState("");
+    const bibId = localStorage.getItem("bib_id");
+
+    useEffect(()=>{
+        if(bibId){
+            getProfileUrl(localStorage.getItem("bib_id"))
+            .then(url => {
+                let profile_url = "/profile/"+url;
+                // console.log(profile_url);
+                setPublicUrl(profile_url);
+            })
+            .catch(err => console.log(err));
+        }
+    },[bibId])
+
+
     return (
         <AppBar position="static">
             <Toolbar className={classes.toolbar}>
@@ -51,7 +68,7 @@ const Navbar = () => {
                         isAuthenticated() ? (
                             <>
                                 <Button color='inherit' component={Link} to="/books">Books</Button>
-                                <Button color='inherit' component={Link} to="/profile">Profile</Button>
+                                <Button color='inherit' component={Link} to={publicUrl}>Profile</Button>
                                 <Button color='inherit' onClick={()=>{signout(()=> navigate("/"))}}>Logout</Button>
                             </>
                         ) : (

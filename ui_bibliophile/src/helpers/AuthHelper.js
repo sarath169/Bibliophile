@@ -107,10 +107,10 @@ export const signin = (email, password) => {
         }
     })
     .catch(err => {
-        // console.log(err.response.status);
+        console.log(err.response.status);
         // console.log(err.response.data.msg);
         return{
-            status: "error",
+            status: err.response.status,
             message: err.response.data.msg
         }
     })

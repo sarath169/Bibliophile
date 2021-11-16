@@ -25,7 +25,7 @@ const Search = () => {
   const [searchKey, setSearchKey] = useState("");
 
   const handleSearch = () => {
-    console.log(searchKey);
+    // console.log(searchKey);
     try {
       if (searchKey) {
         navigate(`/search/${searchKey}`)

@@ -2,7 +2,9 @@ import React, {useState, useEffect} from 'react'
 import { Box, Button, TextField, Typography, makeStyles } from '@material-ui/core'
 import { Rating } from '@material-ui/lab'
 import ReviewCard from '../../components/ReviewCard'
-import { getReview } from '../../helpers/BookAPICalles'
+import { addReview, getBookDetails, getReview } from '../../helpers/BookAPICalles'
+import { isAuthenticated } from '../../helpers/AuthHelper'
+
 
 const useStyle = makeStyles(()=>({
     addReview: {
@@ -21,29 +23,55 @@ const useStyle = makeStyles(()=>({
 const Review = ({bookId}) => {
     const classes = useStyle();
 
+    const [isBookAvailable, setIsBookAvailable] = useState(false);
     const [reviews, setReviews] = useState([])
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("")
 
     useEffect(()=>{
+        getBookDetails(bookId)
+        .then(res=>{
+            if(res)
+                setIsBookAvailable(true)
+        })
         getReview(bookId)
         .then(res => {
-            setReviews(res.reviews);
+            if(res)
+                setReviews(res.reviews);
         })
         .catch(err => console.log(err));
     },[bookId])
 
+    const addComment = (e) => {
+        e.preventDefault();
+        addReview(bookId, rating, comment)
+        .then(res=>{
+            if(res.status === 'success'){
+                getReview(bookId)
+                .then(res => {
+                    setReviews(res.reviews);
+                })
+                .catch(err => console.log(err));
+            }
+        })
+        setRating(0);
+        setComment("");
+    }
+
     return (
-        <>
+        <> { isAuthenticated() && isBookAvailable &&(
             <div className={classes.addReview}>
                 <Typography variant="h5">
                     Your Thoughts on this book
                 </Typography>
-                <form>
+                <form onSubmit={addComment}>
                     <Box component="fieldset" mb={1} borderColor="transparent">
                         <Rating
-                            // value={value}
-                            // onChange={(event, newValue) => {
-                            //     setValue(newValue);
-                            // }}
+                            name="user-rating"
+                            value={rating}
+                            onChange={(event, newValue) => {
+                                setRating(newValue);
+                            }}
                         />
                     </Box>
                     <TextField
@@ -52,6 +80,8 @@ const Review = ({bookId}) => {
                         multiline
                         rows={4}
                         fullWidth
+                        value={comment}
+                        onChange={(e)=>setComment(e.target.value)}
                     />
                     <Button
                     type="submit"
@@ -62,6 +92,7 @@ const Review = ({bookId}) => {
                     </Button>
                 </form>
             </div>
+        )}
             <div className={classes.reviews}>
                 {
                     (reviews.length > 0) 
@@ -73,8 +104,8 @@ const Review = ({bookId}) => {
                 }
                 
                 {
-                    reviews.map((review)=>(
-                        <ReviewCard key={Review.id} review={review} />
+                    reviews.map((review, index)=>(
+                        <ReviewCard key={index} review={review} />
                     ))
                 }
             </div>

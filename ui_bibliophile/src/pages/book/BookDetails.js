@@ -9,7 +9,9 @@ import {
   getBookDetails,
   getGoogleBookDetails,
 } from "../../helpers/BookAPICalles";
+import {isAuthenticated} from "../../helpers/AuthHelper"
 import AddBook from "../../components/AddBook";
+import Review from "./Review";
 
 
 const useStyles = makeStyles(() => ({
@@ -55,22 +57,22 @@ const BookDetails = () => {
   const location = useLocation();
 
   const [bookDetails, setBookDetails] = useState({});
-  console.log(location.state);
+  // console.log(location.state);
   const bookId = location.state.bookId;
   const isGoogleSearch = location.state.isGoogleSearch;
 
   useEffect(() => {
     if (isGoogleSearch) {
-      console.log(bookId);
-      console.log(isGoogleSearch);
+      // console.log(bookId);
+      // console.log(isGoogleSearch);
       getGoogleBookDetails(bookId)
         .then((res) => {
           setBookDetails(res);
         })
         .catch((err) => console.log(err));
     } else {
-      console.log(bookId);
-      console.log(isGoogleSearch);
+      // console.log(bookId);
+      // console.log(isGoogleSearch);
       getBookDetails(bookId)
         .then((res) => {
           setBookDetails(res);
@@ -121,15 +123,18 @@ const BookDetails = () => {
                 Language: {bookDetails.language}
               </Typography>
             </p>
-            <p>
               <Typography className={classes.description}>{details}</Typography>
-            </p>
           </div>
         </Grid>
         <Grid item xs={12} sm={2}>
-          <AddBook />
+          {
+          isAuthenticated() && <AddBook bookId={bookId} />
+          }
         </Grid>
       </Grid>
+      <div className={classes.review}>
+        <Review bookId={bookId}/>
+      </div>
     </Container>
   );
 };

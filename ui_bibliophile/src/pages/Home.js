@@ -47,7 +47,6 @@ const Home = () => {
           {popularBooks.map((book) => {
               book["googleSearch"] = false
             return (<Grid key={book.id} item xs={12} sm={4} md={2}>
-                {console.log(book)}
               <BookCard book={book}/>
             </Grid>)
 })}

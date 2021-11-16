@@ -245,3 +245,17 @@ class ProfileAPIView(APIView):
         else:
             return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
+class PublicProfileAPIView(APIView):
+    def get(self, request, user_id):
+        """
+        Returns profile details of a user
+        """
+
+        if user_id:
+            user = CustomUser.objects.get(id=user_id)
+            serializer = ProfileSerializer(user, context={"request": request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
