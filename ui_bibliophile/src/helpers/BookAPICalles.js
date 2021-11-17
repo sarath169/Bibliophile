@@ -45,9 +45,8 @@ export const getSearchResults = (searchKey) => {
       //   console.log(res.data.items);
       return res.data.items;
     })
-    .catch((err) => console.log(err));
-      return;
-    });
+    .catch((err) => {
+      return});
 };
 
 export const getGoogleBookDetails = (id) => {
