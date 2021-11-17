@@ -1,4 +1,5 @@
 import os
+import random
 import requests
 import logging
 from django.db import connection
@@ -11,8 +12,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 
 from books.config import LOG_LEVEL, LOG_FORMAT, LOG_DT_FORMAT
-from books.serializers import BookSerializer, BookShelfSerializer, ReviewSerializer
-from books.models import Book, BookShelf, Review
+from books.serializers import BookSerializer, BookShelfSerializer, ReviewSerializer, BookSeoidSerializer
+from books.models import Book, BookShelf, Review, BookSeoid
 from authentication.models import User
 
 
@@ -352,3 +353,50 @@ class LastTenReviewsAPIView(APIView):
             most_recent_review.append(tmp_book)
 
         return Response(most_recent_review, status=status.HTTP_200_OK)
+
+class AddBookSeoidView(APIView):
+    def post(self, request):
+        """
+        Generates an SEOID for a book and add it to database
+        """
+        token = request.auth.key
+        book_id = request.data.get("book_id")
+        book_title = str(request.data.get("book_title")).replace(' ','-')
+        seo_id = book_title
+        book_seoid_exists = BookSeoid.objects.filter(book=book_id)
+
+        if not book_seoid_exists:
+            try:
+                serializer = BookSeoidSerializer(data={"book":book_id, "seoid":seo_id})
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as ex:
+                logging.debug(str(ex))
+        else:
+            return Response({"msg": "seoid is present"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+class GetBookSeoid(APIView):
+    def get(self, request, book_id):
+        if book_id:
+            try:
+                book = BookSeoid.objects.get(book=book_id)
+                serializer = BookSeoidSerializer(book)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Book.DoesNotExist:
+                return Response({"msg": "Book Not found"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"msg": "book_if is missing"}, status=status.HTTP_400_BAD_REQUEST)
+
+class GetBookid(APIView):
+    def get(self, request, seo_id):
+        if seo_id:
+            try:
+                book = BookSeoid.objects.get(seoid=seo_id)
+                serializer = BookSeoidSerializer(book)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Book.DoesNotExist:
+                return Response({"msg": "Book Not found"}, status=status.HTTP_404_NOT_FOUND)
+        

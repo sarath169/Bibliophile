@@ -52,7 +52,9 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-              navigate("/bookdetails", {
+                let title = book.title.split(' ').join('-')
+                console.log(title)
+                navigate(`/books/${book.id}/${title}`, {
                 state: { bookId: book.id, isGoogleSearch: book.googleSearch },
               });
             }}
@@ -65,7 +67,9 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-                navigate("/bookdetails", {
+                let title = book.title.split(' ').join('-')
+                console.log(title)
+                navigate(`/books/${book.id}/${title}`, {
                   state: { bookId: book.id, isGoogleSearch: book.googleSearch },
                 });
             }}

@@ -72,7 +72,15 @@ class Review(models.Model):
         verbose_name_plural = 'Reviews'
         unique_together = (('book_id', 'user_id'),)
 
+class BookSeoid(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    seoid= models.CharField(max_length=1000, unique=True)
 
+    def __str__(self):
+        return f'{self.book} - {self.seoid}'
 
-
+    class Meta:
+        db_table = 'book_seoid'
+        verbose_name = 'Book_SEOID'
+        verbose_name_plural = 'Book_SEOIDs'
 

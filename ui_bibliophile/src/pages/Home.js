@@ -45,12 +45,13 @@ const Home = () => {
         </Typography>
         <Grid container spacing={2}>
           {popularBooks.map((book) => {
-              book["googleSearch"] = false
-            return (<Grid key={book.id} item xs={12} sm={4} md={2}>
-                {console.log(book)}
-              <BookCard book={book}/>
-            </Grid>)
-})}
+            book["googleSearch"] = false;
+            return (
+              <Grid key={book.id} item xs={12} sm={4} md={2}>
+                <BookCard book={book} />
+              </Grid>
+            );
+          })}
         </Grid>
       </section>
 
