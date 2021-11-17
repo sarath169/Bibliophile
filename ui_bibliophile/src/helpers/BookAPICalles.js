@@ -46,6 +46,8 @@ export const getSearchResults = (searchKey) => {
       return res.data.items;
     })
     .catch((err) => console.log(err));
+      return;
+    });
 };
 
 export const getGoogleBookDetails = (id) => {
@@ -65,7 +67,6 @@ export const getGoogleBookDetails = (id) => {
         language: res.data.volumeInfo.language,
         preview_link: res.data.volumeInfo.previewLink,
       };
-      //   console.log(data);
       return data;
     })
     .catch((err) => console.log(err));
@@ -82,8 +83,11 @@ export const getAllBooks = () => {
 };
 
 export const getUsersBook = (userId) => {
+  const token = localStorage.getItem("bib_token");
   return axios
-    .get(`${API}/book/get_users_book/${userId}/`)
+    .get(`${API}/book/get_users_book/${userId}/`, {
+      headers: { Authorization: `Token ${token}` },
+    })
     .then((res) => {
       // console.log(res);
       return res.data;
@@ -147,6 +151,7 @@ export const getReview = (bookId) => {
         console.log("No review");
         return;
     });
+    
 };
 
 export const addReview = (bookId, rating, comment) => {
