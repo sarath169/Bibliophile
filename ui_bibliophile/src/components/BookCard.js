@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -8,6 +8,8 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
+
+import { addSeoId, getSeoId } from "../helpers/BookAPICalles";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -32,6 +34,26 @@ const BookCard = ({ book }) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
+  const [seoId, setSeoId] = useState("");
+
+  useEffect(() => {
+    getSeoId(book.id).then((res) => {
+      console.log(res);
+      if (res.msg) {
+        console.log(res.msg);
+        let title = book.title.split(" ").join("-");
+        console.log(title);
+        setSeoId(title);
+      } else {
+        setSeoId(res.seoid);
+      }
+    });
+  }, []);
+  useEffect(() => {
+    addSeoId(book.id, book.title).then((res) => {
+      console.log(res);
+    });
+  }, [seoId]);
   return (
     <Card className={classes.card}>
       <div className={classes.container}>
@@ -52,9 +74,7 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-                let title = book.title.split(' ').join('-')
-                console.log(title)
-                navigate(`/books/${book.id}/${title}`, {
+              navigate(`/books/${seoId}`, {
                 state: { bookId: book.id, isGoogleSearch: book.googleSearch },
               });
             }}
@@ -67,11 +87,11 @@ const BookCard = ({ book }) => {
             color="primary"
             fullWidth
             onClick={() => {
-                let title = book.title.split(' ').join('-')
-                console.log(title)
-                navigate(`/books/${book.id}/${title}`, {
-                  state: { bookId: book.id, isGoogleSearch: book.googleSearch },
-                });
+              let title = book.title.split(" ").join("-");
+              console.log(title);
+              navigate(`/books/${seoId}`, {
+                state: { bookId: book.id, isGoogleSearch: book.googleSearch },
+              });
             }}
           >
             Details

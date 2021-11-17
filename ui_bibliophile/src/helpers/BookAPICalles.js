@@ -53,7 +53,7 @@ export const getGoogleBookDetails = (id) => {
   return axios
     .get(`https://www.googleapis.com/books/v1/volumes/${id}/`)
     .then((res) => {
-      //   console.log(res.data, "google");
+        console.log(res.data, "google");
       let data = {
         author: res.data.volumeInfo.authors,
         category: res.data.volumeInfo.categories,
@@ -188,3 +188,54 @@ export const addReview = (bookId, rating, comment) => {
       };
     });
 };
+
+export const getSeoId = (bookId) => {
+    return axios
+      .get(`${API}/book/getseoid/${bookId}/`)
+      .then((res) => {
+        console.log(res);
+        return res.data;
+      })
+      .catch((err) => {
+          console.log("No SEOID");
+          return;
+      });
+      
+  };
+
+  export const getBookId = (seoId) => {
+    return axios
+      .get(`${API}/book/getbookid/${seoId}/`)
+      .then((res) => {
+        console.log(res);
+        return res.data;
+      })
+      .catch((err) => {
+          console.log("No BookId");
+          return;
+      });
+  };
+
+  export const addSeoId = (bookId, bookTitle) => {
+    const token = localStorage.getItem("bib_token");
+    const data = {
+        book_id: bookId,
+        book_title: bookTitle,
+      };
+    return axios
+      .post(`${API}/book/addseoid/`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+      })
+      .then((res) => {
+        // console.log(res);
+        return res.data;
+      })
+      .catch((err) => {
+          console.log("error while adding");
+          return;
+      });
+      
+  };

@@ -2,6 +2,8 @@ import os
 import random
 import requests
 import logging
+import dotenv
+
 from django.db import connection
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
@@ -16,7 +18,7 @@ from books.serializers import BookSerializer, BookShelfSerializer, ReviewSeriali
 from books.models import Book, BookShelf, Review, BookSeoid
 from authentication.models import User
 
-
+dotenv.load_dotenv()
 class GetBookAPIView(APIView):
     """
     Get Either a single book or all available books in the database
@@ -71,10 +73,11 @@ class AddBookAPIView(APIView):
         book_id = request.data.get("book_id")
         shelf_type = request.data.get("shelf_type")
         user_id = self.get_user(token)
-        # print(book_id,shelf_type, user_id)
+        print(book_id,shelf_type, user_id)
 
         url = os.getenv('GOOGLE_BOOK_SELF_LINK')
         url = f'{url}/{book_id}'
+        print(url, "url")
         book_exists = Book.objects.filter(id=book_id)
 
         shelf = BookShelf.objects.filter(Q(book_id=book_id) & Q(user_id=user_id))
@@ -365,11 +368,11 @@ class AddBookSeoidView(APIView):
         book_id = request.data.get("book_id")
         book_title = str(request.data.get("book_title")).replace(' ','-')
         seo_id = book_title
-        book_seoid_exists = BookSeoid.objects.filter(book=book_id)
+        book_seoid_exists = BookSeoid.objects.filter(bookid=book_id)
 
         if not book_seoid_exists:
             try:
-                serializer = BookSeoidSerializer(data={"book":book_id, "seoid":seo_id})
+                serializer = BookSeoidSerializer(data={"bookid":book_id, "seoid":seo_id})
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -382,23 +385,18 @@ class AddBookSeoidView(APIView):
 
 class GetBookSeoid(APIView):
     def get(self, request, book_id):
-        if book_id:
-            try:
-                book = BookSeoid.objects.get(book=book_id)
-                serializer = BookSeoidSerializer(book)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except Book.DoesNotExist:
-                return Response({"msg": "Book Not found"}, status=status.HTTP_404_NOT_FOUND)
+        book_seoid_exists = BookSeoid.objects.filter(bookid=book_id).values()
+        print(book_seoid_exists)
+        if book_seoid_exists:
+            return Response(book_seoid_exists[0], status=status.HTTP_200_OK)
         else:
-            return Response({"msg": "book_if is missing"}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({"msg": "seoid is not present"}, status=status.HTTP_200_OK)
+            
 class GetBookid(APIView):
     def get(self, request, seo_id):
-        if seo_id:
-            try:
-                book = BookSeoid.objects.get(seoid=seo_id)
-                serializer = BookSeoidSerializer(book)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except Book.DoesNotExist:
-                return Response({"msg": "Book Not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+        book_seoid_exists = BookSeoid.objects.filter(seoid=seo_id).values()
+        # print(book_seoid_exists)
+        if book_seoid_exists:
+            return Response(book_seoid_exists[0], status=status.HTTP_200_OK)
+        else:
+            return Response({"msg": "seoid is not present"}, status=status.HTTP_404_NOT_FOUND)

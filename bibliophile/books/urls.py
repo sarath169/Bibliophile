@@ -14,7 +14,7 @@ urlpatterns = [
     path('review/last_ten/', LastTenReviewsAPIView.as_view(), name="last_ten_review"),
     path('review/book/<str:book_id>/', BooksReviewAPIView.as_view(), name="add_review"),
     path('review/user/<int:user_id>/', UsersReviewAPIView.as_view(), name="add_review"),
-    path('seoid/', AddBookSeoidView.as_view(), name = "add_book_seoid"),
+    path('addseoid/', AddBookSeoidView.as_view(), name = "add_book_seoid"),
     path('getseoid/<str:book_id>/', GetBookSeoid.as_view(), name = "get_book_seoid"),
     path('getbookid/<str:seo_id>/', GetBookid.as_view(), name = "get_book_seoid"),
 
