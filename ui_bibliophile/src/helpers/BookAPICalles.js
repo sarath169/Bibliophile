@@ -2,7 +2,8 @@ import axios from "axios";
 
 const API = process.env.REACT_APP_BACKEND;
 
-console.log(API);
+// console.log(API);
+
 export const getPopularBooks = () => {
   return axios
     .get(`${API}/book/top_ten_popular/`)
@@ -27,18 +28,33 @@ export const getBookDetails = (id) => {
   return axios
     .get(`${API}/book/get/${id}/`)
     .then((res) => {
-      console.log(res);
+      //   console.log(res);
       return res.data;
     })
     .catch((err) => {
+      // console.log(err);
       return;
     });
 };
+
+export const getSearchResults = (searchKey) => {
+  const API_URL = `https://www.googleapis.com/books/v1/volumes?q=${searchKey}&download=epub&maxResults=12&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w`;
+  return axios
+    .get(API_URL)
+    .then((res) => {
+      //   console.log(res.data.items);
+      return res.data.items;
+    })
+    .catch((err) => console.log(err));
+      return;
+    });
+};
+
 export const getGoogleBookDetails = (id) => {
   return axios
     .get(`https://www.googleapis.com/books/v1/volumes/${id}/`)
     .then((res) => {
-      console.log(res.data, "google");
+      //   console.log(res.data, "google");
       let data = {
         author: res.data.volumeInfo.authors,
         category: res.data.volumeInfo.categories,
@@ -51,7 +67,6 @@ export const getGoogleBookDetails = (id) => {
         language: res.data.volumeInfo.language,
         preview_link: res.data.volumeInfo.previewLink,
       };
-      console.log(data, "google");
       return data;
     })
     .catch((err) => console.log(err));
@@ -126,24 +141,51 @@ export const addBook = (bookId, shelfType) => {
 };
 
 export const getReview = (bookId) => {
-  const token = localStorage.getItem("bib_token");
   return axios
-    .get(`${API}/book/review/book/${bookId}/`, {
-      headers: { Authorization: `Token ${token}` },
-    })
+    .get(`${API}/book/review/book/${bookId}/`)
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       return res.data;
+    })
+    .catch((err) => {
+        console.log("No review");
+        return;
     });
+    
 };
 
-export const getSearchResults = (searchKey) => {
-  const API_URL = `https://www.googleapis.com/books/v1/volumes?q=${searchKey}&download=epub&maxResults=12&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w`;
+export const addReview = (bookId, rating, comment) => {
+  const token = localStorage.getItem("bib_token");
+  const data = {
+    "rating": rating,
+    "comment": comment,
+    "book_id": bookId
+  };
   return axios
-    .get(API_URL)
-    .then((res) => {
-      console.log(res.data.items);
-      return res.data.items;
+    .post(`${API}/book/review/`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
     })
-    .catch((err) => console.log(err));
+    .then((res) => {
+    //   console.log(res);
+      if (res.data.id) {
+        return {
+          status: "success",
+          data: res.data
+        };
+      } else {
+        return {
+          status: "error",
+        };
+      }
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+      return {
+        status: "error",
+        message: err.response.data.detail,
+      };
+    });
 };

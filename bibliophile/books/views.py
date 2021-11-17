@@ -132,7 +132,7 @@ class GetUsersBookAPIView(APIView):
     """
     Fetch all books for a specific user
     """
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
 
     def get(self, request, user_id):
         """
@@ -262,7 +262,7 @@ class UsersReviewAPIView(APIView):
     """
     Fetch all the reviews made by a specific user
     """
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
 
     def get(self, request, user_id):
         """
@@ -279,8 +279,10 @@ class UsersReviewAPIView(APIView):
             rvw = {
                 "book_id": review.book.id,
                 "book_title": review.book.title,
+                "book_image": review.book.image_link_small,
                 "rating": review.rating,
-                "comment": review.comment
+                "comment": review.comment,
+                "reviewed_at": review.created_at
             }
             users_review.append(rvw)
         send_review = {"user_id": user_id, "reviews": users_review}

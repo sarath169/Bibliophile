@@ -68,7 +68,9 @@ const SignIn = () => {
             .then(res => {
                 if(res.status === 'success'){
                     navigate("/");
-                } else {
+                } else if(res.status === 403){
+                    navigate("/verifyuser", {state: email})
+                }else {
                     setResponse(res.message);
                 }
             })
@@ -125,7 +127,6 @@ const SignIn = () => {
                         <div className={classes.links}>
                             <Link to="/signup" className={classes.link}>New Registration</Link>
                             <Link to="#" className={classes.link}>Forget Password</Link>
-                            <Link to="/verifyuser" className={classes.link}>Verify Account</Link>
                         </div>
                     </CardContent>
                 </Card>

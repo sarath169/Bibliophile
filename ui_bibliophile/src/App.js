@@ -22,10 +22,10 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/verifyuser" element={<VerifyUser />} />
           <Route path="/books/:bookId/:title" element={<BookDetails />} />
-
+          <Route path='/profile/:publicUrl' element={<Profile/>} />
+            
           <Route path='/' element={<ProtectedRoute />} >
             <Route path='/books' element={<Books/>} />
-            <Route path='/profile' element={<Profile/>} />
             <Route path='/search/:searchKey' element={<SearchResult/>} />
           </Route>
         </Routes>
