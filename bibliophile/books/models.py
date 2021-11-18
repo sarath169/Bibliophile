@@ -1,4 +1,6 @@
+import random
 from datetime import datetime
+from enum import unique
 from django.utils import timezone
 from django.db import models
 
@@ -73,11 +75,11 @@ class Review(models.Model):
         unique_together = (('book_id', 'user_id'),)
 
 class BookSeoid(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    seoid= models.CharField(max_length=1000, unique=True)
+    bookid = models.CharField(max_length= 128, unique= True)
+    seoid= models.CharField(max_length= 1000, unique= True)
 
     def __str__(self):
-        return f'{self.book} - {self.seoid}'
+        return f'{self.bookid} - {self.seoid}'
 
     class Meta:
         db_table = 'book_seoid'

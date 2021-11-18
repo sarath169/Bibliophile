@@ -34,7 +34,7 @@ const Books = () => {
             setBooks(res);
         })
         .catch(err => console.log(err))
-    },[books]);
+    },[]);
 
     return (
         <Container className={classes.container}>
