@@ -82,11 +82,8 @@ export const getAllBooks = () => {
 };
 
 export const getUsersBook = (userId) => {
-  const token = localStorage.getItem("bib_token");
   return axios
-    .get(`${API}/book/get_users_book/${userId}/`, {
-      headers: { Authorization: `Token ${token}` },
-    })
+    .get(`${API}/book/get_users_book/${userId}/`)
     .then((res) => {
       // console.log(res);
       return res.data;
@@ -193,7 +190,7 @@ export const getSeoId = (bookId) => {
     return axios
       .get(`${API}/book/getseoid/${bookId}/`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         return res.data;
       })
       .catch((err) => {

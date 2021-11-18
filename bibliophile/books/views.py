@@ -248,6 +248,7 @@ class BooksReviewAPIView(APIView):
                 "user_id": review.user.id,
                 "user_name": review.user.name,
                 "user_image": img_url,
+                "user_url": review.user.public_url,
                 "rating": review.rating,
                 "comment": review.comment,
                 "reviewed_at": review.created_at
@@ -274,7 +275,7 @@ class UsersReviewAPIView(APIView):
         :param user_id: int, id of an user
         :return: dict, user_id and all reviews
         """
-        reviews = Review.objects.select_related().filter(user=user_id)
+        reviews = Review.objects.select_related().filter(user=user_id).order_by('-created_at')
         if not reviews:
             return Response({"msg": "No reviews found"}, status=status.HTTP_404_NOT_FOUND)
         users_review = []
@@ -360,28 +361,29 @@ class LastTenReviewsAPIView(APIView):
         return Response(most_recent_review, status=status.HTTP_200_OK)
 
 class AddBookSeoidView(APIView):
-    def post(self, request):
-        """
-        Generates an SEOID for a book and add it to database
-        """
-        token = request.auth.key
-        book_id = request.data.get("book_id")
-        book_title = str(request.data.get("book_title")).replace(' ','-')
-        seo_id = book_title
-        book_seoid_exists = BookSeoid.objects.filter(bookid=book_id)
-
-        if not book_seoid_exists:
-            try:
-                serializer = BookSeoidSerializer(data={"bookid":book_id, "seoid":seo_id})
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                else:
-                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except Exception as ex:
-                logging.debug(str(ex))
-        else:
-            return Response({"msg": "seoid is present"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    pass
+    # def post(self, request):
+    #     """
+    #     Generates an SEOID for a book and add it to database
+    #     """
+    #     token = request.auth.key
+    #     book_id = request.data.get("book_id")
+    #     book_title = str(request.data.get("book_title")).replace(' ','-')
+    #     seo_id = book_title
+    #     book_seoid_exists = BookSeoid.objects.filter(bookid=book_id)
+    #
+    #     if not book_seoid_exists:
+    #         try:
+    #             serializer = BookSeoidSerializer(data={"bookid":book_id, "seoid":seo_id})
+    #             if serializer.is_valid():
+    #                 serializer.save()
+    #                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #             else:
+    #                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #         except Exception as ex:
+    #             logging.debug(str(ex))
+    #     else:
+    #         return Response({"msg": "seoid is present"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 class GetBookSeoid(APIView):
     def get(self, request, book_id):

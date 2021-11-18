@@ -1,6 +1,7 @@
 import random
 
 from django.contrib.auth import authenticate
+from django.db.models import Q
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -265,7 +266,7 @@ class PublicProfileAPIView(APIView):
         """
 
         if user_id:
-            user = CustomUser.objects.get(id=user_id)
+            user = CustomUser.objects.get(public_url=user_id)
             serializer = ProfileSerializer(user, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_200_OK)

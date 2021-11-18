@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import { AppBar, Button, makeStyles, Toolbar, Typography} from '@material-ui/core'
 import { isAuthenticated, signout } from '../helpers/AuthHelper'
 import Search from './Search'
-import { getProfileUrl } from '../helpers/ProfileHelper'
+import { getProfileById } from '../helpers/ProfileHelper'
 
 
 const useStyle = makeStyles((theme) => ({
@@ -36,10 +36,10 @@ const Navbar = () => {
 
     useEffect(()=>{
         if(bibId){
-            getProfileUrl(localStorage.getItem("bib_id"))
-            .then(url => {
-                let profile_url = "/profile/"+url;
-                // console.log(profile_url);
+            getProfileById(localStorage.getItem("bib_id"))
+            .then(data => {
+                let profile_url = "/profile/"+data.public_url;
+                // console.log("Nav Bar"+profile_url)
                 setPublicUrl(profile_url);
             })
             .catch(err => console.log(err));

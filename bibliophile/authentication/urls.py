@@ -11,6 +11,6 @@ urlpatterns = [
     path('forgotpassword/', ForgotPasswordView.as_view(), name= "forgot_password"),
     path('verifyotp/', VerifyOtpView.as_view(), name = "verifyotp"),
     path('profile/', ProfileAPIView.as_view(), name="profile"),
-    path('public/profile/<int:user_id>/', PublicProfileAPIView.as_view(), name="public_profile"),
+    path('public/profile/<str:user_id>/', PublicProfileAPIView.as_view(), name="public_profile"),
 
 ]

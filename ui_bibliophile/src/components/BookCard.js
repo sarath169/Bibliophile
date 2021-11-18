@@ -38,7 +38,7 @@ const BookCard = ({ book }) => {
 
   useEffect(() => {
     getSeoId(book.id).then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.msg) {
         console.log(res.msg);
         let title = book.title.split(" ").join("-");
