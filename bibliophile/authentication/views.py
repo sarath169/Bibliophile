@@ -62,8 +62,9 @@ class LoginView(APIView):
                 return Response({'msg': "Invalid Password"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             mail_subject = 'Bibliophile App  : Verify Account'
-            # message = render_to_string('OTP to verify ', otp)
             to_email = user.email
+            name = user.name
+            content = "Thank you for choosing Bibliophile. Use the following OTP to complete your Sign Up procedures."
             try:
                 userotp_obj = OtpValidation.objects.get(user=user.id)
                 print(userotp_obj.otp)
@@ -72,7 +73,7 @@ class LoginView(APIView):
                 userotp_obj = None
                 print("except")
             if userotp_obj:
-                send_mail_func.delay(mail_subject, userotp_obj.otp, to_email)
+                send_mail_func.delay( mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
             return Response({'msg': "Please Complete Verification"}, status = status.HTTP_403_FORBIDDEN)
 
 
