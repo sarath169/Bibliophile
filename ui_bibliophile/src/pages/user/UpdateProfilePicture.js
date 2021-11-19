@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Avatar,
   Box,
@@ -11,9 +12,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { PhotoCamera } from "@material-ui/icons";
-import React, { useState, useEffect } from "react";
 import UpdateLinks from "../../components/UpdateLinks";
-import { getProfileById, uploadImage } from "../../helpers/ProfileHelper";
+import { getProfileById, uploadProfilePicture } from "../../helpers/ProfileHelper";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -53,15 +53,18 @@ const useStyles = makeStyles(() => ({
     marginLeft: "-75px",
     marginTop: "80px",
   },
+  text: {
+    display: 'block',
+    textAlign: 'center'
+  }
 }));
 
 const UpdateProfilePicture = () => {
   const classes = useStyles();
 
   const [image, setImage] = useState("");
-  const [imageError, setImageError] = useState(false);
-
-  const [response, setResponse] = useState("");
+  const [uploadImage, setUploadImage] = useState({})
+  const [showText, setShowText] = useState(false);
 
   useEffect(() => {
     getProfileById(localStorage.getItem("bib_id"))
@@ -73,20 +76,34 @@ const UpdateProfilePicture = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  const uploadImage = () => {
+  const handleChange = (e) => {
+    setUploadImage(e.target.files[0])
+    var url = URL.createObjectURL(e.target.files[0]);
+    setImage(url);
+    setShowText(true);
+  }
+
+  const handleUploadImage = () => {
 
     let error = false;
 
     if(image===""){
-        setImageError(true);
         error = true;
     }
 
     if (!error) {
-        console.log(image);
-        // const formData = new FormData();
-        // formData.append('profile_picture', image, image.name);
+        const formData = new FormData();
+        formData.append('profile_picture', uploadImage, uploadImage.name);
         // console.log(formData);
+        uploadProfilePicture(formData)
+        .then(res=>{
+          // console.log(res);
+          setImage(res.profile_picture);
+          setShowText(false);
+        })
+        .catch(err =>{
+          console.log(err);
+        })
     }
   };
 
@@ -101,7 +118,6 @@ const UpdateProfilePicture = () => {
             <Typography variant="h4" className={classes.title}>
               Update Profile Picture
             </Typography>
-            <Typography className={classes.resp}>{response}</Typography>
             <CardContent>
               <Box display="flex" justifyContent="center" alignItems="center">
                 <Avatar src={image} className={classes.avatar} />
@@ -110,7 +126,7 @@ const UpdateProfilePicture = () => {
                   className={classes.input}
                   id="icon-button-file"
                   type="file"
-                  onChange={e=>setImage(e.target.files[0])}
+                  onChange={handleChange}
                 />
                 <label htmlFor="icon-button-file">
                   <IconButton
@@ -123,13 +139,18 @@ const UpdateProfilePicture = () => {
                   </IconButton>
                 </label>
               </Box>
+              { showText && (
+              <Typography variant="caption" className={classes.text}>
+                Upload to make it parmanent
+                </Typography>
+              )}
               <Button
                 className={classes.field}
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                onClick={uploadImage}
+                onClick={handleUploadImage}
               >
                 Upload
               </Button>

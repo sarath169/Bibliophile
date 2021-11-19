@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -8,8 +8,6 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-
-import { addSeoId, getSeoId } from "../helpers/BookAPICalles";
 
 const useStyles = makeStyles(() => ({
   card: {

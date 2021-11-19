@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Button,
   FormControl,
@@ -20,20 +19,16 @@ const useStyle = makeStyles(() => ({
 
 const AddBook = (props) => {
   const classes = useStyle();
-  const navigate = useNavigate();
   const userId = localStorage.getItem("bib_id");
   const bookId = props.bookId;
   const seoId = props.seoId;
   const [listType, setListType] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  console.log("entered addbook");
 
   useEffect(() => {
-    console.log("entered useEffect AddBook ");
     isBookInShelf(userId, bookId)
       .then((res) => {
-        console.log("entered useEffect AddBook promise ");
         setShowForm(!res);
       })
       .catch((err) => console.log(err));
@@ -44,13 +39,10 @@ const AddBook = (props) => {
 
     addBook(bookId, listType)
       .then((res) => {
-        console.log(res.status);
+        // console.log(res.status);
         if (res.status === "success") {
           setShowForm(false);
-          
-          console.log("handleBookAdded");
-          console.log(seoId);
-          navigate(`/books/${seoId}`);
+          props.setBookAdded();
         } else {
           console.log(res);
           console.log("failed to add");

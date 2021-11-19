@@ -15,6 +15,7 @@ import {
 } from "../../helpers/BookAPICalles";
 import { isAuthenticated } from "../../helpers/AuthHelper";
 
+
 const useStyle = makeStyles(() => ({
   addReview: {
     border: "1px solid black",
@@ -36,12 +37,9 @@ const Review = ({ bookId, bookAdded}) => {
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  console.log("entered review");
 
   useEffect(() => {
-    console.log("entered useEffect Review");
     getBookDetails(bookId).then((res) => {
-      console.log("entered useEffect Review promise");
       if (res) {
         setIsBookAvailable(true);
       }
@@ -51,7 +49,7 @@ const Review = ({ bookId, bookAdded}) => {
         if (res) setReviews(res.reviews);
       })
       .catch((err) => console.log(err));
-  }, [bookAdded]);
+  }, [bookAdded, bookId]);
 
   const addComment = (e) => {
     e.preventDefault();
@@ -70,8 +68,7 @@ const Review = ({ bookId, bookAdded}) => {
 
   return (
     <>
-      {console.log(isBookAvailable, "isBookAvailable")}
-      {isBookAvailable ? (
+      {isBookAvailable && isAuthenticated() && (
         <div className={classes.addReview}>
           <Typography variant="h5">Your Thoughts on this book</Typography>
           <form onSubmit={addComment}>
@@ -98,8 +95,6 @@ const Review = ({ bookId, bookAdded}) => {
             </Button>
           </form>
         </div>
-      ) : (
-        <></>
       )}
       <div className={classes.reviews}>
         {reviews.length > 0 && (

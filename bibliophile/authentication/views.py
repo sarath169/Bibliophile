@@ -1,4 +1,5 @@
 import os
+import logging
 import random
 import dotenv
 
@@ -278,5 +279,38 @@ class PublicProfileAPIView(APIView):
             user = CustomUser.objects.get(public_url=user_id)
             serializer = ProfileSerializer(user, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class PasswordChangeAPIView(APIView):
+
+    def get_user(self, token):
+        """
+        Return user_id based on token
+        :param token: Authentication token of a user
+        :return: user_id
+        """
+        try:
+            user_id = Token.objects.get(key=token).user_id
+            return user_id
+        except CustomUser.DoesNotExist:
+            return None
+
+    permission_classes = (IsAuthenticated, )
+
+    def put(self, request):
+        token = request.auth.key
+        user_id = self.get_user(token)
+
+        if user_id:
+            try:
+                user = CustomUser.objects.get(id=user_id)
+                user.set_password(request.data.get("password"))
+                user.save()
+                return Response({"msg": "Password Updated"}, status=status.HTTP_200_OK)
+            except Exception as ex:
+                logging.Logger(ex)
+                return Response({"mag": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
+
         else:
             return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)

@@ -94,14 +94,52 @@ export const updateUser = (name, url, description) =>{
         })
     }
 
-export const uploadImage = (formData) => {
+export const uploadProfilePicture = (formData) => {
+    const token = localStorage.getItem("bib_token");
     return axios
-        .put(`${API}/auth/profile/`, formData)
+        .put(`${API}/auth/profile/`, formData,{
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${token}`,
+            } ,
+            onUploadProgress: progressEvent => {
+                console.log(progressEvent.loaded / progressEvent.total)
+            }
+        })
         .then(res => {
-            console.log(res)
+            // console.log(res)
+            res.data.profile_picture = `${API}${res.data.profile_picture}`;
+            return res.data;
         })
         .catch(err => {
             console.log(err)
         })
 
+}
+
+export const changePassword = (password) => {
+    const token = localStorage.getItem("bib_token");
+    return axios
+    .put(`${API}/auth/profile/updatepassword/`,{
+        "password": password
+    },{
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${token}`,
+        }
+    })
+    .then(res => {
+        if(res.status === 200){
+            return{
+                status: "success",
+                message: "Password Updated Successfully"
+            }
+        }
+    })
+    .catch(err => {
+        return{
+            status: "error",
+            message: "Something went wrong. Please try again later"
+        }
+    })
 }
