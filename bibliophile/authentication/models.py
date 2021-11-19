@@ -15,6 +15,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     validated = models.BooleanField(default = False)
     description = models.TextField(blank=True)
+    public_url = models.CharField(unique=True, max_length=250, default="", blank=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

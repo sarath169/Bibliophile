@@ -1,3 +1,4 @@
+import time
 from rest_framework import serializers
 
 from .models import User as CustomUser, OtpValidation
@@ -15,9 +16,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
 
     def save(self):
+        user_name = self.validated_data['name']
         user = CustomUser(
             email = self.validated_data['email'],
             name = self.validated_data['name'],
+            public_url = f'{user_name.replace(" ",".")}.{str(int(time.time()))}'
         )
         password = self.validated_data['password']
         password2 = self.validated_data['password2']
@@ -40,10 +43,10 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'name', 'email', 'description', 'profile_picture')
+        fields = ('id', 'name', 'email', 'description', 'profile_picture', 'public_url')
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'name', 'description', 'profile_picture')
+        fields = ('id', 'name', 'description', 'profile_picture', 'public_url')

@@ -13,7 +13,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     search_fields = ('name', 'email', )
     fieldsets = (
         ('Login Credentials', {'fields': ('email', 'password')}),
-        ('Personal Info', {'fields': ('name', )}),
+        ('Personal Info', {'fields': ('name', 'public_url' )}),
         ('Permissions', {'fields': ('is_active', 'is_superuser', 'validated')}),
         ('Profile Picture', {'fields': ('profile_picture', )})
     )

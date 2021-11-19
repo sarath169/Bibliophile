@@ -8,6 +8,9 @@ import Home from './pages/Home';
 import Profile from './pages/user/Profile';
 import SignIn from './pages/user/SignIn';
 import SignUp from './pages/user/SignUp';
+import UpdatePassword from './pages/user/UpdatePassword';
+import UpdateProfileInfo from './pages/user/UpdateProfileInfo';
+import UpdateProfilePicture from './pages/user/UpdateProfilePicture';
 import VerifyUser from './pages/user/VerifyUser';
 
 
@@ -23,9 +26,12 @@ function App() {
           <Route path="/verifyuser" element={<VerifyUser />} />
           <Route path="/books/:seoId" element={<BookDetails />} />
           <Route path='/profile/:publicUrl' element={<Profile/>} />
-            
+
           <Route path='/' element={<ProtectedRoute />} >
             <Route path='/books' element={<Books/>} />
+            <Route path='/profile/updateinfo' element={<UpdateProfileInfo/>} />
+            <Route path='/profile/updatepicture' element={<UpdateProfilePicture/>} />
+            <Route path='/profile/updatepassword' element={<UpdatePassword/>} />
             <Route path='/search/:searchKey' element={<SearchResult/>} />
           </Route>
         </Routes>

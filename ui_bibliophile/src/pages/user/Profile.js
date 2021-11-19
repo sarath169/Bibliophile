@@ -1,13 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import { Link, useLocation } from 'react-router-dom';
-import { Container, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Container, Grid, Typography, makeStyles, Button } from '@material-ui/core';
 import { getProfile, getUersReview } from '../../helpers/ProfileHelper';
 import { getUsersBook } from '../../helpers/BookAPICalles';
 import BookCard from '../../components/BookCard';
 import ReviewCardUser from '../../components/ReviewCardUser';
 import user from '../../images/user.png';
-
-const API = process.env.REACT_APP_BACKEND;
 
 const useStyles = makeStyles(()=>({
     container: {
@@ -29,6 +27,13 @@ const useStyles = makeStyles(()=>({
         marginBottom: '10px',
         backgroundColor: '#f2f2f2',
         borderRadius: '10px'
+    },
+    button: {
+        marginTop: '15px',
+    },
+    link: {
+        color: 'white',
+        textDecoration: 'none'
     }
 }))
 
@@ -36,31 +41,37 @@ const Profile = () => {
     const location = useLocation();
     const classes = useStyles();
     
+    const [publicUrl, setPublicUrl] = useState("");
     const [userId, setUserId] = useState(0);
     const [profile, setProfile] = useState({});
-    const [bookShelf, setBookShelf] = useState({});
+    // const [bookShelf, setBookShelf] = useState({});
     const [readList, setReadList] = useState([]);
     const [wishList, setWishList] = useState([]);
     const [shelfList, setShelfList] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [owner, setOwner] = useState(false);
     
     // console.log(userId);
     
     useEffect(()=>{
         const profileUrl = location.pathname;
-        const nameId = profileUrl.split("/").at(-1);
-        setUserId(nameId.split(".").at(-1))
+        setPublicUrl(profileUrl.split("/").at(-1));
         // console.log(userId);
         // console.log("use effect called");
-        if(userId!==0){
-            getProfile(userId)
+        if(publicUrl!==""){
+            console.log(publicUrl);
+            getProfile(publicUrl)
             .then(res=>{
+                if(localStorage.getItem("bib_id") ===  String(res.id)){
+                    setOwner(true);
+                }
+                setUserId(res.id);
                 if(res){
                     setProfile(res);
                     getUsersBook(userId)
                     .then(res => {
-                        if(res){
-                            setBookShelf(res);
+                        if(res && userId!==0){
+                            // setBookShelf(res);
                             for (let i in res) {
                                 if(i==='RL')
                                     setReadList(res[i]);
@@ -81,7 +92,7 @@ const Profile = () => {
             })
         }
 
-    },[location.pathname,   userId])
+    },[location.pathname, publicUrl, userId])
 
     let img_url=""
     if(profile.profile_picture){
@@ -89,7 +100,7 @@ const Profile = () => {
     } else {
         img_url = user;
     }
-
+    
     return (
         <Container className={classes.container}>
             <Grid container spacing={4}>
@@ -107,6 +118,19 @@ const Profile = () => {
                             {`localhost:3000${location.pathname}`}
                         </Link>
                     </Typography>
+                    {
+                        owner && 
+                            <Button 
+                                variant="contained" 
+                                size="small" 
+                                fullWidth 
+                                color="primary" 
+                                className={classes.button}>
+                                    <Link to="/profile/updateinfo" className={classes.link}>
+                                        Edit Profile
+                                    </Link>
+                            </Button>
+                    }
                 </Grid>
                 <Grid item xs={12} sm={9}>
                     <div className={classes.section}>

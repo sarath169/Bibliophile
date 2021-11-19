@@ -1,6 +1,7 @@
 import { Box, Card, CardContent, CardHeader, Typography, makeStyles } from '@material-ui/core'
 import Rating from '@material-ui/lab/Rating';
 import React from 'react'
+import { Link } from 'react-router-dom'
 import user from '../images/user.png';
 
 const useStyle = makeStyles((theme)=>({
@@ -10,6 +11,11 @@ const useStyle = makeStyles((theme)=>({
     profilePicture: {
         height: '50px',
         width: '50px'
+    },
+    link: {
+        textDecoration: 'none',
+        fontSize: '15px',
+        fontWeight: 'bold'
     }
 }))
 
@@ -30,7 +36,7 @@ const ReviewCard = ({review}) => {
                 avatar={
                     <img src={img_url} className={classes.profilePicture}alt=""/>
                   }
-                title={review.user_name}
+                title={<Link to={"/profile/"+review.user_url} className={classes.link}> {review.user_name }</Link>}
                 subheader={review.reviewed_at}
             />
             <CardContent>
