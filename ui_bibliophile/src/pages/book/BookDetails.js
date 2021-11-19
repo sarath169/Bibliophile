@@ -7,7 +7,6 @@ import MenuBookOutlinedIcon from "@material-ui/icons/MenuBookOutlined";
 import ClosedCaptionOutlinedIcon from "@material-ui/icons/ClosedCaptionOutlined";
 import {
   getBookDetails,
-  getBookId,
   getGoogleBookDetails,
 } from "../../helpers/BookAPICalles";
 import { isAuthenticated } from "../../helpers/AuthHelper";
@@ -57,33 +56,31 @@ const BookDetails = () => {
     "http://127.0.0.1:8000/static/images/CoverNotFound2.jpg";
   const classes = useStyles();
   const { seoId } = useParams();
-  console.log(seoId);
-  const [bookDetails, setBookDetails] = useState([]);
-  const [bookId, setBookId] = useState("");
+  //   console.log(seoId, "seoId");
+  const bookId = seoId.split("id-").slice(-1)[0];
 
-  useEffect(() => {
-    getBookId(seoId).then((res) => {
-      console.log(res);
-      if (res) {
-        setBookId(res.bookid);
-      } else {
-        console.log("null bookid");
-      }
-    });
-  });
+  const [bookDetails, setBookDetails] = useState([]);
+  const [bookAdded, setBookAdded] = useState(false);
+  //   console.log(bookId, "bookId")
+
+  function handleBookAdded() {
+    setBookAdded(true);
+    console.log(bookAdded, "bookAdded");
+  }
 
   useEffect(() => {
     if (bookId) {
       getBookDetails(bookId)
         .then((res) => {
           if (res) {
-            console.log("local book details");
+            console.log(res, "local book details");
+            // console.log("local book details");
             setBookDetails(res);
           } else {
             getGoogleBookDetails(bookId)
               .then((res) => {
-                console.log(res);
-                console.log("google book details");
+                console.log(res, "google book details");
+                // console.log("google book details");
                 setBookDetails(res);
               })
               .catch((err) => console.log(err));
@@ -91,7 +88,7 @@ const BookDetails = () => {
         })
         .catch((err) => console.log(err));
     }
-  }, [bookId]);
+  }, [seoId]);
 
   let details = String(bookDetails.description).replace(/(<([^>]+)>)/gi, "");
 
@@ -147,11 +144,17 @@ const BookDetails = () => {
           </div>
         </Grid>
         <Grid item xs={12} sm={2}>
-          {isAuthenticated() && <AddBook bookId={bookId} seoId={seoId} />}
+          {isAuthenticated() && (
+            <AddBook
+              bookId={bookId}
+              seoId={seoId}
+              setBookAdded={handleBookAdded}
+            />
+          )}
         </Grid>
       </Grid>
       <div className={classes.review}>
-        <Review bookId={bookId} />
+        {isAuthenticated() && <Review bookId={bookId} bookAdded={bookAdded} />}
       </div>
     </Container>
   );

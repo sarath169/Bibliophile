@@ -18,17 +18,22 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const AddBook = ({ bookId, seoId }) => {
+const AddBook = (props) => {
   const classes = useStyle();
   const navigate = useNavigate();
   const userId = localStorage.getItem("bib_id");
-
+  const bookId = props.bookId;
+  const seoId = props.seoId;
   const [listType, setListType] = useState("");
   const [showForm, setShowForm] = useState(false);
 
+  console.log("entered addbook");
+
   useEffect(() => {
+    console.log("entered useEffect AddBook ");
     isBookInShelf(userId, bookId)
       .then((res) => {
+        console.log("entered useEffect AddBook promise ");
         setShowForm(!res);
       })
       .catch((err) => console.log(err));
@@ -42,7 +47,9 @@ const AddBook = ({ bookId, seoId }) => {
         console.log(res.status);
         if (res.status === "success") {
           setShowForm(false);
-          console.log(seoId)
+          
+          console.log("handleBookAdded");
+          console.log(seoId);
           navigate(`/books/${seoId}`);
         } else {
           console.log(res);
@@ -84,9 +91,12 @@ const AddBook = ({ bookId, seoId }) => {
           </Button>
         </form>
       ) : (
+        <>
+        {props.setBookAdded}
         <Typography variant="body1" color="secondary">
           This book is available in your collection.
         </Typography>
+        </>
       )}
     </div>
   );
