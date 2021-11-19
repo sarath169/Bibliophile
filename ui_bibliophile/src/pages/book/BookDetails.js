@@ -65,7 +65,6 @@ const BookDetails = () => {
 
   function handleBookAdded() {
     setBookAdded(true);
-    console.log(bookAdded, "bookAdded");
   }
 
   useEffect(() => {
@@ -73,13 +72,13 @@ const BookDetails = () => {
       getBookDetails(bookId)
         .then((res) => {
           if (res) {
-            console.log(res, "local book details");
+            // console.log(res, "local book details");
             // console.log("local book details");
             setBookDetails(res);
           } else {
             getGoogleBookDetails(bookId)
               .then((res) => {
-                console.log(res, "google book details");
+                // console.log(res, "google book details");
                 // console.log("google book details");
                 setBookDetails(res);
               })
@@ -88,7 +87,7 @@ const BookDetails = () => {
         })
         .catch((err) => console.log(err));
     }
-  }, [seoId]);
+  }, [seoId, bookId]);
 
   let details = String(bookDetails.description).replace(/(<([^>]+)>)/gi, "");
 
@@ -154,7 +153,8 @@ const BookDetails = () => {
         </Grid>
       </Grid>
       <div className={classes.review}>
-        {isAuthenticated() && <Review bookId={bookId} bookAdded={bookAdded} />}
+        {/* {isAuthenticated() && <Review bookId={bookId} bookAdded={bookAdded} />} */}
+        <Review bookId={bookId} bookAdded={bookAdded} />
       </div>
     </Container>
   );

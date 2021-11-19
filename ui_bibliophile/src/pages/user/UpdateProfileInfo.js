@@ -76,6 +76,7 @@ const UpdateProfileInfo = () => {
                 if(res.status !== 'error'){
                         if(res.status === 'success'){
                            setResponse("Profile Updated");
+                           window.location.reload(true);
                         } else {
                             setResponse(res.message)
                         }

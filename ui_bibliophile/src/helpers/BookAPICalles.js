@@ -53,7 +53,7 @@ export const getGoogleBookDetails = (id) => {
   return axios
     .get(`https://www.googleapis.com/books/v1/volumes/${id}/`)
     .then((res) => {
-        console.log(res.data, "google");
+        // console.log(res.data, "google");
       let data = {
         author: res.data.volumeInfo.authors,
         category: res.data.volumeInfo.categories,
@@ -116,7 +116,7 @@ export const addBook = (bookId, shelfType) => {
       },
     })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.data.id) {
         return {
           status: "success",
@@ -144,7 +144,7 @@ export const getReview = (bookId) => {
       return res.data;
     })
     .catch((err) => {
-        console.log("No review");
+        // console.log("No review");
         return;
     });
     

@@ -65,7 +65,6 @@ const UpdateProfilePicture = () => {
   const [image, setImage] = useState("");
   const [uploadImage, setUploadImage] = useState({})
   const [showText, setShowText] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     getProfileById(localStorage.getItem("bib_id"))
@@ -89,7 +88,6 @@ const UpdateProfilePicture = () => {
     let error = false;
 
     if(image===""){
-        setImageError(true);
         error = true;
     }
 

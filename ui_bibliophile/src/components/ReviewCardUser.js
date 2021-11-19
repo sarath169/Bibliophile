@@ -27,7 +27,7 @@ const ReviewCardUser = ({review}) => {
                 avatar={
                     <img src={review.book_image} className={classes.profilePicture}alt=""/>
                   }
-                title={<Link to="#" className={classes.link}>{review.book_title} </Link>}
+                title={<Link to={"/books/"+review.book_title.split(" ").join("-") + `-id-${review.book_id}`} className={classes.link}>{review.book_title} </Link>}
                 subheader={review.reviewed_at}
             />
             <CardContent>
