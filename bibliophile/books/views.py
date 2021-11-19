@@ -247,6 +247,7 @@ class BooksReviewAPIView(APIView):
                 "user_id": review.user.id,
                 "user_name": review.user.name,
                 "user_image": img_url,
+                "user_url": review.user.public_url,
                 "rating": review.rating,
                 "comment": review.comment,
                 "reviewed_at": review.created_at
@@ -273,7 +274,7 @@ class UsersReviewAPIView(APIView):
         :param user_id: int, id of an user
         :return: dict, user_id and all reviews
         """
-        reviews = Review.objects.select_related().filter(user=user_id)
+        reviews = Review.objects.select_related().filter(user=user_id).order_by('-created_at')
         if not reviews:
             return Response({"msg": "No reviews found"}, status=status.HTTP_404_NOT_FOUND)
         users_review = []

@@ -82,7 +82,6 @@ export const getAllBooks = () => {
 };
 
 export const getUsersBook = (userId) => {
-  const token = localStorage.getItem("bib_token");
   return axios
     .get(`${API}/book/get_users_book/${userId}/`)
     .then((res) => {
@@ -186,3 +185,4 @@ export const addReview = (bookId, rating, comment) => {
       };
     });
 };
+
