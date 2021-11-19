@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Container, Grid, makeStyles, TextField, Typography } from '@material-ui/core'
 import React, {useState } from 'react'
 import UpdateLinks from '../../components/UpdateLinks';
-import {  } from '../../helpers/ProfileHelper';
+import { changePassword } from '../../helpers/ProfileHelper';
 
 const useStyles = makeStyles(()=>({
     card:{
@@ -32,7 +32,7 @@ const useStyles = makeStyles(()=>({
     resp: {
         display: 'block',
         textAlign: 'center',
-        color: 'red',
+        color: 'blue',
     }
 }))
 
@@ -40,9 +40,9 @@ const UpdatePassword = () => {
     const classes = useStyles();
     
     const [newPassword, setNewPassword] = useState("")
-    const [newPasswordError, setNewPasswordError] = useState("")
+    const [newPasswordError, setNewPasswordError] = useState(false)
     const [confirmNewPassword, setConfirmNewPassword] = useState("")
-    const [confirmNewPasswordError, setConfirmNewPasswordError] = useState("")
+    const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false)
     
     const [response, setResponse] = useState('');
 
@@ -64,7 +64,25 @@ const UpdatePassword = () => {
             error = true;
         }
 
+        if(newPassword !== confirmNewPassword){
+            setConfirmNewPasswordError(true);
+            error = true;
+        }
+
         if(!error){
+            changePassword(newPassword)
+            .then(res=>{
+                // console.log(res);
+                if(res){
+                    setResponse(res.message);
+                }
+
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            setNewPassword("");
+            setConfirmNewPassword("");
         }
     }
 
