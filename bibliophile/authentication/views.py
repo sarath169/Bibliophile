@@ -1,4 +1,6 @@
+import os
 import random
+import dotenv
 
 from django.contrib.auth import authenticate
 from django.db.models import Q
@@ -8,12 +10,16 @@ from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
 from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from .models import OtpValidation, User as CustomUser
 from .serializers import RegisterSerializer, VerifyOtpSerializer, ProfileSerializer, UpdateProfileSerializer
 from django.conf import settings
 from .task import send_mail_func
 
+dotenv.load_dotenv()
 
 class RegistrationView(CreateAPIView):
     # This view is to register new users
@@ -121,8 +127,9 @@ class SendMailView(APIView):
 
         if not user.validated:
             mail_subject = 'Bibliophile App  : Verify Account'
-            # message = render_to_string('OTP to verify ', otp)
             to_email = user.email
+            name = user.name
+            content = "Thank you for choosing Bibliophile. Use the following OTP to complete your Sign Up procedures."
             try:
                 userotp_obj = OtpValidation.objects.get(user=user.id)
                 print(userotp_obj.otp)
@@ -131,20 +138,22 @@ class SendMailView(APIView):
                 userotp_obj = None
                 print("except")
             if userotp_obj:
-                send_mail_func.delay(mail_subject, userotp_obj.otp, to_email)
+                send_mail_func.delay( mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
 
             else:
-                send_mail_func.delay(mail_subject, str(otp), to_email)
+                send_mail_func.delay( mail_subject, content, otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
                 userotp_obj = OtpValidation(user_id=user.id, otp=otp)
                 userotp_obj.save()
             message = {"message": "success"}
             return Response(message, status=status.HTTP_200_OK)
 
         if user.validated:
+            
             mail_subject = 'Bibliophile App  : Password Change Request'
             # message = render_to_string('OTP to verify ', otp)
-            message = f'Your OTP to verify Bibliophile account is: {otp}'
+            content = 'Forgot your password?. Use the following OTP to change the password.'
             to_email = user.email
+            name = user.name
             try:
                 userotp_obj = OtpValidation.objects.get(user=user.id)
                 print(userotp_obj.otp)
@@ -153,9 +162,9 @@ class SendMailView(APIView):
                 userotp_obj = None
                 print("except")
             if userotp_obj:
-                send_mail_func.delay(mail_subject, userotp_obj.otp, to_email)
+                send_mail_func.delay(mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
             else:
-                send_mail_func.delay(mail_subject, message, to_email)
+                send_mail_func.delay(mail_subject, content, otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
                 userotp_obj = OtpValidation(user_id=user.id, otp=otp)
                 userotp_obj.save()
             message = {"message": "success"}
@@ -236,7 +245,6 @@ class ProfileAPIView(APIView):
             user = CustomUser.objects.get(id=user_id)
             serializer = ProfileSerializer(user, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_200_OK)
         else:
             return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -269,6 +277,5 @@ class PublicProfileAPIView(APIView):
             user = CustomUser.objects.get(public_url=user_id)
             serializer = ProfileSerializer(user, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_200_OK)
         else:
             return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
