@@ -38,12 +38,12 @@ export const getBookDetails = (id) => {
 };
 
 export const getSearchResults = (searchKey) => {
-  const API_URL = `https://www.googleapis.com/books/v1/volumes?q=${searchKey}&download=epub&maxResults=12&key=AIzaSyDyxUzn7KYQ1j5_lZIQbz0PUxJrzKFHU2w`;
+  const API_URL = `${API}/search/${searchKey}`
   return axios
     .get(API_URL)
     .then((res) => {
-      //   console.log(res.data.items);
-      return res.data.items;
+        // console.log(res.data);
+      return res.data;
     })
     .catch((err) => {
       return});
@@ -51,22 +51,10 @@ export const getSearchResults = (searchKey) => {
 
 export const getGoogleBookDetails = (id) => {
   return axios
-    .get(`https://www.googleapis.com/books/v1/volumes/${id}/`)
+    .get(`${API}/search/get/${id}/`)
     .then((res) => {
         // console.log(res.data, "google");
-      let data = {
-        author: res.data.volumeInfo.authors,
-        category: res.data.volumeInfo.categories,
-        title: res.data.volumeInfo.title,
-        description: res.data.volumeInfo.description,
-        page_count: res.data.volumeInfo.pageCount,
-        publisher: res.data.volumeInfo.publisher,
-        image_link_small: res.data.volumeInfo.imageLinks.smallThumbnail,
-        image_link_large: res.data.volumeInfo.imageLinks.thumbnail,
-        language: res.data.volumeInfo.language,
-        preview_link: res.data.volumeInfo.previewLink,
-      };
-      return data;
+      return res.data;
     })
     .catch((err) => console.log(err));
 };

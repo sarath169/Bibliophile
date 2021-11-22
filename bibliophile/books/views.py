@@ -16,6 +16,7 @@ from books.config import LOG_LEVEL, LOG_FORMAT, LOG_DT_FORMAT
 from books.serializers import BookSerializer, BookShelfSerializer, ReviewSerializer
 from books.models import Book, BookShelf, Review
 from authentication.models import User
+from search.views import GetBookDetails
 
 dotenv.load_dotenv()
 class GetBookAPIView(APIView):
@@ -74,38 +75,15 @@ class AddBookAPIView(APIView):
         user_id = self.get_user(token)
         print(book_id,shelf_type, user_id)
 
-        url = os.getenv('GOOGLE_BOOK_SELF_LINK')
-        url = f'{url}/{book_id}'
-        print(url, "url")
+        # print(url, "url")
         book_exists = Book.objects.filter(id=book_id)
 
         shelf = BookShelf.objects.filter(Q(book_id=book_id) & Q(user_id=user_id))
 
         if not book_exists:
-            book = None
-            try:
-                res = requests.get(url)
-                book = res.json()
-            except Exception as ex:
-                logging.debug(str(ex))
-
-            if book:
-                book_to_save={}
-                book_to_save["id"] = book["id"]
-                book_to_save["title"] = book["volumeInfo"].get("title")
-                volume_info = book["volumeInfo"]
-                authors = volume_info.get("authors")
-                author = ', '.join([str(a) for a in authors])
-                book_to_save["author"] = author
-                book_to_save["publisher"] = volume_info.get("publisher")
-                book_to_save["description"] = volume_info.get("description")
-                book_to_save["page_count"] = volume_info.get("pageCount")
-                book_to_save["category"] = volume_info["categories"][0] if volume_info.get("categories") else "Unknown"
-                book_to_save["image_link_small"] = volume_info.get("imageLinks").get("smallThumbnail")
-                book_to_save["image_link_large"] = volume_info.get("imageLinks").get("large") if volume_info.get("imageLinks").get("large") else volume_info.get("imageLinks").get("smallThumbnail")
-                book_to_save["language"] = volume_info["language"]
-                book_to_save["preview_link"] = volume_info["previewLink"]
-
+            get_book_details = GetBookDetails()
+            book_to_save = get_book_details.getDetails(book_id)
+            if book_to_save:
                 book_serializer = BookSerializer(data=book_to_save)
                 if book_serializer.is_valid():
                     book_serializer.save()
@@ -230,7 +208,7 @@ class BooksReviewAPIView(APIView):
         :param book_id: str, id of a book
         :return: dict, reviews of a book along with user details
         """
-        reviews = Review.objects.select_related().filter(book=book_id).order_by('-id')
+        reviews = Review.objects.select_related().filter(book=book_id).order_by('-updated_at')
         if not reviews:
             return Response({"msg": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
         bid = None
@@ -274,7 +252,7 @@ class UsersReviewAPIView(APIView):
         :param user_id: int, id of an user
         :return: dict, user_id and all reviews
         """
-        reviews = Review.objects.select_related().filter(user=user_id).order_by('-created_at')
+        reviews = Review.objects.select_related().filter(user=user_id).order_by('-updated_at')
         if not reviews:
             return Response({"msg": "No reviews found"}, status=status.HTTP_404_NOT_FOUND)
         users_review = []

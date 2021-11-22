@@ -9,6 +9,7 @@ import {
 
 import BookCard from "../../components/BookCard";
 import { getSearchResults } from "../../helpers/BookAPICalles";
+import defaultBook from "../../images/default-book.jpg";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -49,7 +50,7 @@ const SearchResult = () => {
                     book={{
                       id: book.id,
                       image_link_small:
-                        book.volumeInfo.imageLinks.smallThumbnail,
+                        book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : defaultBook,
                       title: book.volumeInfo.title,
                       googleSearch:true,
                     }}

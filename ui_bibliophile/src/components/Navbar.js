@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
-import { AppBar, Button, makeStyles, Toolbar, Typography} from '@material-ui/core'
+import { AppBar, Button, Grid, makeStyles, Toolbar, Typography} from '@material-ui/core'
 import { isAuthenticated, signout } from '../helpers/AuthHelper'
 import Search from './Search'
+import SearchAuto from './SearchAuto'
 import { getProfileById } from '../helpers/ProfileHelper'
 
 
@@ -17,11 +18,11 @@ const useStyle = makeStyles((theme) => ({
         justifyContent: 'space-between'
     },
     logoSearch:{
-        display: 'felx',
-        flexGrow: 1
+        // display: 'felx',
+        // flexGrow: 1
     },
     search: {
-        display: 'inline'
+        // display: 'inline'
     }
 }))
 
@@ -51,16 +52,30 @@ const Navbar = () => {
         <AppBar position="static">
             <Toolbar className={classes.toolbar}>
                 <div className={classes.logoSearch}>
-                    <Typography variant="h6" className={classes.logo}>
-                        Bibliophile
-                    </Typography>
-                    <div className={classes.search}>
-                        {
-                            isAuthenticated() && (
-                                <Search />
-                            )
-                        }
-                    </div>
+                    <Grid container spacing={2}>
+                        <Grid item sm={4}>
+                            <Typography variant="h6" className={classes.logo}>
+                                Bibliophile
+                            </Typography>
+                        </Grid>
+                        <Grid item sm={8}>
+
+                            {/* <div className={classes.search}>
+                                {
+                                    isAuthenticated() && (
+                                        <Search />
+                                    )
+                                }
+                            </div> */}
+                            <div className={classes.search} style={{marginLeft: '10px'}}>
+                                {
+                                    isAuthenticated() && (
+                                        <SearchAuto />
+                                    )
+                                }
+                            </div>
+                        </Grid>
+                    </Grid>
                 </div>
                 <div>
                     <Button color='inherit' component={Link} to="/" >Home</Button>
