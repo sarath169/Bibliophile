@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Container, Grid, makeStyles, TextField, Typography } from '@material-ui/core'
 import React, {useState } from 'react'
 import UpdateLinks from '../../components/UpdateLinks';
-import { changePassword } from '../../helpers/ProfileHelper';
+import { updatePassword } from '../../helpers/ProfileHelper';
 
 const useStyles = makeStyles(()=>({
     card:{
@@ -70,7 +70,7 @@ const UpdatePassword = () => {
         }
 
         if(!error){
-            changePassword(newPassword)
+            updatePassword(newPassword)
             .then(res=>{
                 // console.log(res);
                 if(res){

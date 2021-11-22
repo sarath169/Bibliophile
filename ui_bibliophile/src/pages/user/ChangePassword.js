@@ -1,20 +1,21 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Avatar,
   Box,
-  Container,
-  Grid,
-  TextField,
+  Button,
   Card,
   CardContent,
-  Button,
-  Typography,
+  Container,
+  Grid,
   makeStyles,
+  TextField,
+  Typography,
 } from "@material-ui/core";
-import { signin, isAuthenticated } from "../../helpers/AuthHelper";
 
-const useStyle = makeStyles((theme) => ({
+import { changePassword } from "../../helpers/AuthHelper";
+
+const useStyles = makeStyles(() => ({
   card: {
     marginTop: "25px",
     minWidth: "450px",
@@ -43,54 +44,67 @@ const useStyle = makeStyles((theme) => ({
   resp: {
     display: "block",
     textAlign: "center",
-    color: "red",
+    color: "blue",
   },
 }));
 
-const SignIn = () => {
-  const classes = useStyle();
+const ChangePassword = () => {
+  const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(location.state);
   const [emailError, setEmailError] = useState(false);
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [newPasswordError, setNewPasswordError] = useState(false);
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
+
   const [response, setResponse] = useState("");
 
-  if (isAuthenticated()) {
-    console.log("Authenticated");
-    navigate("/");
-    // return null;
-  }
-
-  const handleSignIn = (e) => {
+  const handleChangePassword = (e) => {
     e.preventDefault();
+
+    let error = false;
+
     setEmailError(false);
-    setPasswordError(false);
+    setNewPasswordError(false);
+    setConfirmNewPasswordError(false);
 
     if (email === "") {
       setEmailError(true);
     }
-    if (password === "") {
-      setPasswordError(true);
+
+    if (newPassword === "") {
+      setNewPasswordError(true);
+      error = true;
     }
-    if (email && password) {
-      signin(email, password)
+
+    if (confirmNewPassword === "") {
+      setConfirmNewPasswordError(true);
+      error = true;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      setConfirmNewPasswordError(true);
+      error = true;
+    }
+
+    if (!error) {
+      changePassword(email, newPassword, confirmNewPassword)
         .then((res) => {
-          if (res.status === "success") {
-            navigate("/");
-          } else if (res.status === 403) {
-            navigate("/verifyuser", {
-              state: { email: email, isForgotPassword: false },
-            });
-          } else {
+          // console.log(res);
+          if (res) {
             setResponse(res.message);
+            navigate("/signin");
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+        });
+      setNewPassword("");
+      setConfirmNewPassword("");
     }
-    setEmail("");
-    setPassword("");
   };
 
   return (
@@ -102,11 +116,11 @@ const SignIn = () => {
               <Avatar className={classes.avatar} />
             </Box>
             <Typography variant="h4" className={classes.title}>
-              Sign In
+              Change Password
             </Typography>
             <Typography className={classes.resp}>{response}</Typography>
             <CardContent>
-              <form noValidate onSubmit={handleSignIn}>
+              <form noValidate onSubmit={handleChangePassword}>
                 <TextField
                   className={classes.field}
                   label="Email"
@@ -115,7 +129,7 @@ const SignIn = () => {
                   required
                   error={emailError}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  inputProps={{ readOnly: true }}
                 />
                 <TextField
                   className={classes.field}
@@ -124,9 +138,20 @@ const SignIn = () => {
                   variant="outlined"
                   fullWidth
                   required
-                  error={passwordError}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  error={newPasswordError}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <TextField
+                  className={classes.field}
+                  type="password"
+                  label="ConfirmPassword"
+                  variant="outlined"
+                  fullWidth
+                  required
+                  error={confirmNewPasswordError}
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
                 />
                 <Button
                   className={classes.field}
@@ -135,15 +160,15 @@ const SignIn = () => {
                   color="primary"
                   fullWidth
                 >
-                  Sign In
+                  Change Password
                 </Button>
               </form>
               <div className={classes.links}>
                 <Link to="/signup" className={classes.link}>
                   New Registration
                 </Link>
-                <Link to="/verifyemail" className={classes.link}>
-                  Forgot Password
+                <Link to="/signin" className={classes.link}>
+                  Login
                 </Link>
               </div>
             </CardContent>
@@ -154,4 +179,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default ChangePassword;

@@ -1,4 +1,5 @@
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+
 import Navbar from "./components/Navbar";
 import ProtectedRoute from './helpers/ProtectedRoute';
 import BookDetails from './pages/book/BookDetails';
@@ -11,8 +12,10 @@ import SignUp from './pages/user/SignUp';
 import UpdatePassword from './pages/user/UpdatePassword';
 import UpdateProfileInfo from './pages/user/UpdateProfileInfo';
 import UpdateProfilePicture from './pages/user/UpdateProfilePicture';
+import VerifyEmail from './pages/user/VerifyEmail';
 import VerifyUser from './pages/user/VerifyUser';
-
+import ChangePassword from './pages/user/ChangePassword'
+import SocialShare from './components/SocialShare';
 
 function App() {
   return (
@@ -23,9 +26,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/verifyemail" element={<VerifyEmail />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/verifyuser" element={<VerifyUser />} />
           <Route path="/books/:seoId" element={<BookDetails />} />
           <Route path='/profile/:publicUrl' element={<Profile/>} />
+          <Route path='/socialshare' element={<SocialShare/>}/>
 
           <Route path='/' element={<ProtectedRoute />} >
             <Route path='/books' element={<Books/>} />
