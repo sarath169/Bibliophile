@@ -73,6 +73,10 @@ const VerifyUser = () => {
               .then((res) => {
                 if (res.status === "success") {
                   navigate("/changepassword", {state: email});
+//             .then(res => {
+//                 if(res.status === 'success'){
+//                     // alert("Your account is verified successfully. Please login to continue")
+//                     navigate("/signin", {state:{accountVerified: true}});
                 } else {
                   setResponse("Invalid OTP");
                 }
@@ -100,53 +104,54 @@ const VerifyUser = () => {
     // setOTP('');
   };
 
-  return (
-    <Container>
-      <Grid container justifyContent="center" alignItems="center">
-        <Grid item xs={12} sm={6} md={4}>
-          <Card className={classes.card} variant="outlined">
-            <Typography variant="h4" className={classes.title}>
-              Please Verify Your Account
-            </Typography>
-            <Typography variant="caption" className={classes.subtitle}>
-              Check your registerd email for the OTP
-            </Typography>
-            <Typography className={classes.resp}>{response}</Typography>
-            <CardContent>
-              <form noValidate onSubmit={handleSignIn}>
-                <TextField
-                  className={classes.field}
-                  label="Email"
-                  variant="outlined"
-                  fullWidth
-                  required
-                  error={emailError}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <TextField
-                  className={classes.field}
-                  type="text"
-                  label="OTP"
-                  variant="outlined"
-                  fullWidth
-                  required
-                  error={otpError}
-                  value={otp}
-                  onChange={(e) => setOTP(e.target.value)}
-                />
-                <Button
-                  className={classes.field}
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Verify
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+    return (
+        <Container>
+        <Grid container justifyContent="center" alignItems="center">
+            <Grid item xs={12} sm={6} md={4} >
+                <Card className={classes.card} variant="outlined">
+                    
+                    <Typography variant="h4" className={classes.title}>
+                        Please Verify Your Account
+                    </Typography>
+                    <Typography variant="caption" className={classes.subtitle}>
+                        Check your registerd email for the OTP
+                    </Typography>
+                    <Typography className={classes.resp}>{response}</Typography>
+                    <CardContent>
+                        <form noValidate onSubmit={handleSignIn}>
+                            <TextField
+                                className={classes.field}
+                                label="Email"
+                                variant="outlined"
+                                fullWidth
+                                required
+                                disabled
+                                error={emailError}
+                                value={email}
+                                onChange={(e)=>setEmail(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.field}
+                                type="text"
+                                label="OTP"
+                                variant="outlined"
+                                fullWidth
+                                required
+                                error={otpError}
+                                value={otp}
+                                onChange={(e)=>setOTP(e.target.value)}
+                            />
+                            <Button
+                                className={classes.field}
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                            >Verify</Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </Grid>
         </Grid>
       </Grid>
     </Container>

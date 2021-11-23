@@ -21,7 +21,7 @@ const AddBook = (props) => {
   const classes = useStyle();
   const userId = localStorage.getItem("bib_id");
   const bookId = props.bookId;
-  const seoId = props.seoId;
+  // const seoId = props.seoId;
   const [listType, setListType] = useState("");
   const [showForm, setShowForm] = useState(false);
 

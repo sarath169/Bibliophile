@@ -50,6 +50,7 @@ const useStyle = makeStyles((theme) => ({
 const SignIn = () => {
   const classes = useStyle();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
@@ -89,65 +90,68 @@ const SignIn = () => {
         })
         .catch((err) => console.log(err));
     }
-    setEmail("");
-    setPassword("");
-  };
+    
+    let verificationMessage ="";
+    if(location.state){
+        if(location.state.accountVerified){
+            verificationMessage = "Account Verified Successfully. Please login to continue"
+        } else {
+            verificationMessage = "";
+        }
+    }
 
-  return (
-    <Container>
-      <Grid container justifyContent="center" alignItems="center">
-        <Grid item xs={12} sm={6} md={4}>
-          <Card className={classes.card} variant="outlined">
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <Avatar className={classes.avatar} />
-            </Box>
-            <Typography variant="h4" className={classes.title}>
-              Sign In
-            </Typography>
-            <Typography className={classes.resp}>{response}</Typography>
-            <CardContent>
-              <form noValidate onSubmit={handleSignIn}>
-                <TextField
-                  className={classes.field}
-                  label="Email"
-                  variant="outlined"
-                  fullWidth
-                  required
-                  error={emailError}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <TextField
-                  className={classes.field}
-                  type="password"
-                  label="Password"
-                  variant="outlined"
-                  fullWidth
-                  required
-                  error={passwordError}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <Button
-                  className={classes.field}
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Sign In
-                </Button>
-              </form>
-              <div className={classes.links}>
-                <Link to="/signup" className={classes.link}>
-                  New Registration
-                </Link>
-                <Link to="/verifyemail" className={classes.link}>
-                  Forgot Password
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+    return (
+        <Container>
+        <Grid container justifyContent="center" alignItems="center">
+            <Grid item xs={12} sm={6} md={4} >
+                <Card className={classes.card} variant="outlined">
+                    
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <Avatar className={classes.avatar} />
+                    </Box>
+                    <Typography variant="h4" className={classes.title}>
+                        Sign In
+                    </Typography>
+                    <Typography className={classes.success}>{verificationMessage}</Typography>
+                    <Typography className={classes.resp}>{response}</Typography>
+                    <CardContent>
+                        <form noValidate onSubmit={handleSignIn}>
+                            <TextField
+                                className={classes.field}
+                                label="Email"
+                                variant="outlined"
+                                fullWidth
+                                required
+                                error={emailError}
+                                value={email}
+                                onChange={(e)=>setEmail(e.target.value)}
+                            />
+                            <TextField
+                                className={classes.field}
+                                type="password"
+                                label="Password"
+                                variant="outlined"
+                                fullWidth
+                                required
+                                error={passwordError}
+                                value={password}
+                                onChange={(e)=>setPassword(e.target.value)}
+                            />
+                            <Button
+                                className={classes.field}
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                            >Sign In</Button>
+                        </form>
+                        <div className={classes.links}>
+                            <Link to="/signup" className={classes.link}>New Registration</Link>
+                            <Link to="/verifyemail" className={classes.link}>Forget Password</Link>
+                        </div>
+                    </CardContent>
+                </Card>
+            </Grid>
         </Grid>
       </Grid>
     </Container>
