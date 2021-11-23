@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import { AppBar, Button, Grid, makeStyles, Toolbar, Typography} from '@material-ui/core'
 import { isAuthenticated, signout } from '../helpers/AuthHelper'
-import Search from './Search'
 import SearchAuto from './SearchAuto'
 import { getProfileById } from '../helpers/ProfileHelper'
 
@@ -59,14 +58,6 @@ const Navbar = () => {
                             </Typography>
                         </Grid>
                         <Grid item sm={8}>
-
-                            {/* <div className={classes.search}>
-                                {
-                                    isAuthenticated() && (
-                                        <Search />
-                                    )
-                                }
-                            </div> */}
                             <div className={classes.search} style={{marginLeft: '10px'}}>
                                 {
                                     isAuthenticated() && (

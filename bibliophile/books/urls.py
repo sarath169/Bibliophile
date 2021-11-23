@@ -1,10 +1,11 @@
 from django.urls import path
-from books.views import GetBookAPIView, AddBookAPIView, GetUsersBookAPIView, \
+from books.views import GetBookAPIView, GetBooksByPageAPIView, AddBookAPIView, GetUsersBookAPIView, \
     AddReviewAPIView, BooksReviewAPIView, UsersReviewAPIView, TopTenPopularBooksAPIView, \
     TopTenRatedBooksAPIView, LastTenReviewsAPIView
 
 urlpatterns = [
     path('', GetBookAPIView.as_view(), name="get_all_books"),
+    path('paged/', GetBooksByPageAPIView.as_view(), name="get_all_books"),
     path('get/<str:book_id>/', GetBookAPIView.as_view(), name="get_one_books"),
     path('add/', AddBookAPIView.as_view(), name="add_book"),
     path('get_users_book/<int:user_id>/', GetUsersBookAPIView.as_view(), name="get_users_book"),

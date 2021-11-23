@@ -1,9 +1,10 @@
+import React from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from './helpers/ProtectedRoute';
 import BookDetails from './pages/book/BookDetails';
-import Books from './pages/book/Books';
+import Books from './pages/book/BooksInfinite';
 import SearchResult from './pages/book/SearchResult';
 import Home from './pages/Home';
 import Profile from './pages/user/Profile';

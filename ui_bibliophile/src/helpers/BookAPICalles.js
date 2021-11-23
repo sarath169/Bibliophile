@@ -38,22 +38,23 @@ export const getBookDetails = (id) => {
 };
 
 export const getSearchResults = (searchKey) => {
-  const API_URL = `${API}/search/${searchKey}`
+  const API_URL = `${API}/search/${searchKey}`;
   return axios
     .get(API_URL)
     .then((res) => {
-        // console.log(res.data);
+      // console.log(res.data);
       return res.data;
     })
     .catch((err) => {
-      return});
+      return;
+    });
 };
 
 export const getGoogleBookDetails = (id) => {
   return axios
     .get(`${API}/search/get/${id}/`)
     .then((res) => {
-        // console.log(res.data, "google");
+      // console.log(res.data, "google");
       return res.data;
     })
     .catch((err) => console.log(err));
@@ -64,6 +65,15 @@ export const getAllBooks = () => {
     .get(`${API}/book/`)
     .then((res) => {
       // console.log(res);
+      return res.data;
+    })
+    .catch((err) => console.log(err));
+};
+
+export const getBooksByPage = (pageNumber) => {
+  return axios
+    .get(`${API}/book/paged?page=${pageNumber}`)
+    .then((res) => {
       return res.data;
     })
     .catch((err) => console.log(err));
@@ -132,18 +142,17 @@ export const getReview = (bookId) => {
       return res.data;
     })
     .catch((err) => {
-        // console.log("No review");
-        return;
+      // console.log("No review");
+      return;
     });
-    
 };
 
 export const addReview = (bookId, rating, comment) => {
   const token = localStorage.getItem("bib_token");
   const data = {
-    "rating": rating,
-    "comment": comment,
-    "book_id": bookId
+    rating: rating,
+    comment: comment,
+    book_id: bookId,
   };
   return axios
     .post(`${API}/book/review/`, data, {
@@ -153,11 +162,11 @@ export const addReview = (bookId, rating, comment) => {
       },
     })
     .then((res) => {
-    //   console.log(res);
+      //   console.log(res);
       if (res.data.id) {
         return {
           status: "success",
-          data: res.data
+          data: res.data,
         };
       } else {
         return {
@@ -173,4 +182,3 @@ export const addReview = (bookId, rating, comment) => {
       };
     });
 };
-
