@@ -62,8 +62,8 @@ const VerifyUser = () => {
             verifyUser(email, otp)
             .then(res => {
                 if(res.status === 'success'){
-                    alert("Your account is verified successfully. Please login to continue")
-                    navigate("/signin");
+                    // alert("Your account is verified successfully. Please login to continue")
+                    navigate("/signin", {state:{accountVerified: true}});
                 } else {
                     setResponse("Invalid OTP");
                 }
@@ -95,6 +95,7 @@ const VerifyUser = () => {
                                 variant="outlined"
                                 fullWidth
                                 required
+                                disabled
                                 error={emailError}
                                 value={email}
                                 onChange={(e)=>setEmail(e.target.value)}

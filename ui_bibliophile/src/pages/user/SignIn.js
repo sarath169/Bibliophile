@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Avatar, Box, Container, Grid, TextField, Card, CardContent, Button, Typography, makeStyles } from '@material-ui/core';
 import { signin, isAuthenticated } from '../../helpers/AuthHelper';
 
@@ -33,12 +33,18 @@ const useStyle = makeStyles((theme) => ({
         display: 'block',
         textAlign: 'center',
         color: 'red',
+    },
+    success: {
+        display: 'block',
+        textAlign: 'center',
+        color: 'green',
     }
 }))
 
 const SignIn = () => {
     const classes = useStyle();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState(false);
@@ -79,6 +85,14 @@ const SignIn = () => {
         setEmail('');
         setPassword('');
     }
+    let verificationMessage ="";
+    if(location.state){
+        if(location.state.accountVerified){
+            verificationMessage = "Account Verified Successfully. Please login to continue"
+        } else {
+            verificationMessage = "";
+        }
+    }
 
     return (
         <Container>
@@ -92,6 +106,7 @@ const SignIn = () => {
                     <Typography variant="h4" className={classes.title}>
                         Sign In
                     </Typography>
+                    <Typography className={classes.success}>{verificationMessage}</Typography>
                     <Typography className={classes.resp}>{response}</Typography>
                     <CardContent>
                         <form noValidate onSubmit={handleSignIn}>

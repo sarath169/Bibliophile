@@ -12,6 +12,7 @@ import {
 import { isAuthenticated } from "../../helpers/AuthHelper";
 import AddBook from "../../components/AddBook";
 import Review from "./Review";
+import defaultBookCover from "../../images/default-book.jpg";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -52,8 +53,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 const BookDetails = () => {
-  const default_cover_image =
-    "http://127.0.0.1:8000/static/images/CoverNotFound2.jpg";
   const classes = useStyles();
   const { seoId } = useParams();
   //   console.log(seoId, "seoId");
@@ -104,7 +103,7 @@ const BookDetails = () => {
               />
             ) : (
               <img
-                src={default_cover_image}
+                src={defaultBookCover}
                 alt={bookDetails.title}
                 className={classes.bookImage}
               />
