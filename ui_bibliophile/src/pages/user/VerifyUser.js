@@ -1,78 +1,108 @@
-import React, { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Container, Grid, TextField, Card, CardContent, Button, Typography, makeStyles } from '@material-ui/core';
-import { verifyUser, isAuthenticated } from '../../helpers/AuthHelper';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  Container,
+  Grid,
+  TextField,
+  Card,
+  CardContent,
+  Button,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
+import { verifyUser, isAuthenticated } from "../../helpers/AuthHelper";
 
 const useStyle = makeStyles((theme) => ({
-    card:{
-        marginTop: '25px',
-        minWidth: '450px',
-        padding: '5px'
-    },
-    avatar: {
-        height: '100px',
-        width: '100px'
-    },
-    title: {
-        textAlign: "center"
-    },
-    subtitle:{
-        paddingLeft: '20px',
-    },
-    field: {
-        marginTop: '8px'
-    },
-    resp: {
-        display: 'block',
-        textAlign: 'center',
-        color: 'red',
-    }
-}))
+  card: {
+    marginTop: "25px",
+    minWidth: "450px",
+    padding: "5px",
+  },
+  avatar: {
+    height: "100px",
+    width: "100px",
+  },
+  title: {
+    textAlign: "center",
+  },
+  subtitle: {
+    paddingLeft: "20px",
+  },
+  field: {
+    marginTop: "8px",
+  },
+  resp: {
+    display: "block",
+    textAlign: "center",
+    color: "red",
+  },
+}));
 
 const VerifyUser = () => {
-    const classes = useStyle();
-    const navigate = useNavigate();
-    const location = useLocation();
+  const classes = useStyle();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const [email, setEmail] = useState(location.state);
-    const [emailError, setEmailError] = useState(false);
-    const [otp, setOTP] = useState('');
-    const [otpError, setOtpError] = useState(false);
-    const [response, setResponse] = useState('');
+  const [email, setEmail] = useState(location.state.email);
+  const [emailError, setEmailError] = useState(false);
+  const [otp, setOTP] = useState("");
+  const [otpError, setOtpError] = useState(false);
+  const [response, setResponse] = useState("");
 
-    if(isAuthenticated()){
-        console.log("Authenticated");
-        navigate("/"); 
-        // return null;
+  if (isAuthenticated()) {
+    console.log("Authenticated");
+    navigate("/");
+    // return null;
+  }
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+
+    setEmailError(false);
+    setOtpError(false);
+
+    if (email === "") {
+      setEmailError(true);
     }
-
-    const handleSignIn = (e) => {
-        e.preventDefault();
-
-        setEmailError(false);
-        setOtpError(false);
-
-        if(email===''){
-            setEmailError(true);
-        }
-        if(otp===''){
-            setOtpError(true);
-        }
-        if(email && otp){
+    if (otp === "") {
+      setOtpError(true);
+    }
+    if (location.state.isForgotPassword) {
+        if (email && otp) {
             verifyUser(email, otp)
-            .then(res => {
-                if(res.status === 'success'){
-                    // alert("Your account is verified successfully. Please login to continue")
-                    navigate("/signin", {state:{accountVerified: true}});
+              .then((res) => {
+                if (res.status === "success") {
+                  navigate("/changepassword", {state: email});
+//             .then(res => {
+//                 if(res.status === 'success'){
+//                     // alert("Your account is verified successfully. Please login to continue")
+//                     navigate("/signin", {state:{accountVerified: true}});
                 } else {
-                    setResponse("Invalid OTP");
+                  setResponse("Invalid OTP");
                 }
-            })
-            .catch(err => console.log(err));
+              })
+              .catch((err) => console.log(err));
+          }
         }
-        // setEmail('');
-        // setOTP('');
+    else{
+      if (email && otp) {
+        verifyUser(email, otp)
+          .then((res) => {
+            if (res.status === "success") {
+              alert(
+                "Your account is verified successfully. Please login to continue"
+              );
+              navigate("/signin");
+            } else {
+              setResponse("Invalid OTP");
+            }
+          })
+          .catch((err) => console.log(err));
+      }
     }
+    // setEmail('');
+    // setOTP('');
+  };
 
     return (
         <Container>
@@ -123,8 +153,9 @@ const VerifyUser = () => {
                 </Card>
             </Grid>
         </Grid>
-        </Container>
-    )
-}
+      </Grid>
+    </Container>
+  );
+};
 
-export default VerifyUser
+export default VerifyUser;

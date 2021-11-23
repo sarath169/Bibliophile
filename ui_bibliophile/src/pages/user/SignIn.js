@@ -1,90 +1,96 @@
-import React, { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Avatar, Box, Container, Grid, TextField, Card, CardContent, Button, Typography, makeStyles } from '@material-ui/core';
-import { signin, isAuthenticated } from '../../helpers/AuthHelper';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Avatar,
+  Box,
+  Container,
+  Grid,
+  TextField,
+  Card,
+  CardContent,
+  Button,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
+import { signin, isAuthenticated } from "../../helpers/AuthHelper";
 
 const useStyle = makeStyles((theme) => ({
-    card:{
-        marginTop: '25px',
-        minWidth: '450px',
-        padding: '5px'
-    },
-    avatar: {
-        height: '100px',
-        width: '100px'
-    },
-    title: {
-        textAlign: "center"
-    },
-    field: {
-        marginTop: '8px'
-    },
-    links: {
-        marginTop: '10px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    link:{
-        color: 'blue',
-        textDecoration: 'none',
-    },
-    resp: {
-        display: 'block',
-        textAlign: 'center',
-        color: 'red',
-    },
-    success: {
-        display: 'block',
-        textAlign: 'center',
-        color: 'green',
-    }
-}))
+  card: {
+    marginTop: "25px",
+    minWidth: "450px",
+    padding: "5px",
+  },
+  avatar: {
+    height: "100px",
+    width: "100px",
+  },
+  title: {
+    textAlign: "center",
+  },
+  field: {
+    marginTop: "8px",
+  },
+  links: {
+    marginTop: "10px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  link: {
+    color: "blue",
+    textDecoration: "none",
+  },
+  resp: {
+    display: "block",
+    textAlign: "center",
+    color: "red",
+  },
+}));
 
 const SignIn = () => {
-    const classes = useStyle();
-    const navigate = useNavigate();
-    const location = useLocation();
+  const classes = useStyle();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState(false);
-    const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
-    const [response, setResponse] = useState('');
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [response, setResponse] = useState("");
 
-    if(isAuthenticated()){
-        console.log("Authenticated");
-        navigate("/"); 
-        // return null;
+  if (isAuthenticated()) {
+    console.log("Authenticated");
+    navigate("/");
+    // return null;
+  }
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    setEmailError(false);
+    setPasswordError(false);
+
+    if (email === "") {
+      setEmailError(true);
     }
-
-    const handleSignIn = (e) => {
-        e.preventDefault();
-        setEmailError(false);
-        setPasswordError(false);
-
-        if(email===''){
-            setEmailError(true);
-        }
-        if(password===''){
-            setPasswordError(true);
-        }
-        if(email&&password){
-            signin(email, password)
-            .then(res => {
-                if(res.status === 'success'){
-                    navigate("/");
-                } else if(res.status === 403){
-                    navigate("/verifyuser", {state: email})
-                }else {
-                    setResponse(res.message);
-                }
-            })
-            .catch(err => console.log(err));
-        }
-        setEmail('');
-        setPassword('');
+    if (password === "") {
+      setPasswordError(true);
     }
+    if (email && password) {
+      signin(email, password)
+        .then((res) => {
+          if (res.status === "success") {
+            navigate("/");
+          } else if (res.status === 403) {
+            navigate("/verifyuser", {
+              state: { email: email, isForgotPassword: false },
+            });
+          } else {
+            setResponse(res.message);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+    
     let verificationMessage ="";
     if(location.state){
         if(location.state.accountVerified){
@@ -141,14 +147,15 @@ const SignIn = () => {
                         </form>
                         <div className={classes.links}>
                             <Link to="/signup" className={classes.link}>New Registration</Link>
-                            <Link to="#" className={classes.link}>Forget Password</Link>
+                            <Link to="/verifyemail" className={classes.link}>Forget Password</Link>
                         </div>
                     </CardContent>
                 </Card>
             </Grid>
         </Grid>
-        </Container>
-    )
-}
+      </Grid>
+    </Container>
+  );
+};
 
-export default SignIn
+export default SignIn;

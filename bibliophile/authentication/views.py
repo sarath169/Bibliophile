@@ -92,16 +92,76 @@ class LogoutView(APIView):
             message = {"message": "Token not found"}
             return Response(message, status=status.HTTP_404_NOT_FOUND)
 
+class VerifyEmailView(APIView):
+
+    def post(self, request):
+        otp = random.randrange(99999, 999999)
+        email = request.data.get('email')
+        if not email:
+            return Response({"msg": "email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = CustomUser.objects.get(email=email)
+            if user:
+                if not user.validated:
+                    mail_subject = 'Bibliophile App  : Verify Account'
+                    to_email = user.email
+                    name = user.name
+                    content = "Thank you for choosing Bibliophile. Use the following OTP to complete your Sign Up procedures."
+                    try:
+                        userotp_obj = OtpValidation.objects.get(user=user.id)
+                        print(userotp_obj.otp)
+                        print("tried")
+                    except:
+                        userotp_obj = None
+                        print("except")
+                    if userotp_obj:
+                        send_mail_func.delay( mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
+
+                    else:
+                        send_mail_func.delay( mail_subject, content, otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
+                        userotp_obj = OtpValidation(user_id=user.id, otp=otp)
+                        userotp_obj.save()
+                    message = {"message": "success"}
+                    return Response(message, status=status.HTTP_200_OK)
+
+            if user.validated:
+            
+                mail_subject = 'Bibliophile App  : Password Change Request'
+                # message = render_to_string('OTP to verify ', otp)
+                content = 'Forgot your password?. Use the following OTP to change the password.'
+                to_email = user.email
+                name = user.name
+                try:
+                    userotp_obj = OtpValidation.objects.get(user=user.id)
+                    print(userotp_obj.otp)
+                    print("tried")
+                except:
+                    userotp_obj = None
+                    print("except")
+                if userotp_obj:
+                    send_mail_func.delay(mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
+                else:
+                    send_mail_func.delay(mail_subject, content, otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
+                    userotp_obj = OtpValidation(user_id=user.id, otp=otp)
+                    userotp_obj.save()
+                message = {"message": "success"}
+                return Response(message, status=status.HTTP_200_OK)
+                
+        except Exception as e:
+            print(e)
+            response = {"message": "user with email not found"}
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
 
 class ForgotPasswordView(APIView):
 
     def post(self, request):
-        print(request.data['email'], request.data['password'], request.data['password2'])
+        print(request.data['email'], request.data['newpassword'], request.data['confirmnewpassword'])
         try:
             # simply delete the token to force a login
             email = request.data['email']
-            password = request.data['password']
-            password2 = request.data['password2']
+            password = request.data['newpassword']
+            password2 = request.data['confirmnewpassword']
             user = CustomUser.objects.get(email=email)
 
             if password == password2:

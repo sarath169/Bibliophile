@@ -117,7 +117,7 @@ export const uploadProfilePicture = (formData) => {
 
 }
 
-export const changePassword = (password) => {
+export const updatePassword = (password) => {
     const token = localStorage.getItem("bib_token");
     return axios
     .put(`${API}/auth/profile/updatepassword/`,{
