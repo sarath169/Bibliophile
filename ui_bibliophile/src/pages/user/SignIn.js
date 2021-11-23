@@ -148,7 +148,7 @@ const SignIn = () => {
                         </form>
                         <div className={classes.links}>
                             <Link to="/signup" className={classes.link}>New Registration</Link>
-                            <Link to="/verifyemail" className={classes.link}>Forget Password</Link>
+                            <Link to="/verifyemail" className={classes.link}>Forgot Password</Link>
                         </div>
                     </CardContent>
                 </Card>
