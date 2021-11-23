@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -57,6 +57,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [response, setResponse] = useState("");
+  const [verificationMessage, setVerificationMessage] = useState("");
 
   if (isAuthenticated()) {
     console.log("Authenticated");
@@ -91,14 +92,14 @@ const SignIn = () => {
         .catch((err) => console.log(err));
     }
     
-    let verificationMessage ="";
     if(location.state){
         if(location.state.accountVerified){
-            verificationMessage = "Account Verified Successfully. Please login to continue"
+            setVerificationMessage("Account Verified Successfully. Please login to continue");
         } else {
-            verificationMessage = "";
+            setVerificationMessage("");
         }
     }
+  }
 
     return (
         <Container>
@@ -153,7 +154,6 @@ const SignIn = () => {
                 </Card>
             </Grid>
         </Grid>
-      </Grid>
     </Container>
   );
 };
