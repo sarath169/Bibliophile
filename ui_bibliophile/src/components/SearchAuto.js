@@ -72,13 +72,17 @@ const SearchAuto = () => {
   const onSuggestClickHandler = (text) => {
     setSearchKey(text);
     setSuggestions([]);
+    handleSearch(text);
   }
 
-  const handleSearch = () => {
-    // console.log(searchKey);
+  const handleSearch = (searchText = "") => {
+    let searchItem = searchKey;
+    if (searchText.length > searchKey.length){
+      searchItem = searchText
+    }
     try {
-      if (searchKey) {
-        navigate(`/search/${searchKey}`)
+      if (searchItem!=="") {
+        navigate(`/search/${searchItem}`)
       }
     } catch (error) {
       console.log(error);

@@ -18,7 +18,8 @@ class SearchBook(APIView):
         :return: list, list of books with details
         """
         url = os.getenv('GOOGLE_BOOK_SELF_LINK')
-        url = f'{url}?q={search_key}'
+        api_key = os.getenv('GOOGLE_BOOK_API_KEY')
+        url = f'{url}?q={search_key}&maxResults=40&key={api_key}'
 
         try:
             res = requests.get(url)

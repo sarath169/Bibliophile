@@ -11,7 +11,12 @@ import {
 
 const useStyles = makeStyles(() => ({
   card: {
-    // maxHeight: '250px',
+    width: '175px',
+    alignSelf: 'auto',
+    marginTop: '20px',
+    marginLeft: '15px',
+    flexgrow: 1,
+    verticalAlign: 'middle',
   },
   container: {
     display: "flex",

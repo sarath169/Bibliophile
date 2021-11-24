@@ -59,7 +59,7 @@ const Home = () => {
         <Typography variant="h5" className={classes.title}>
           Top Rated Books
         </Typography>
-        <Grid container spacing={2}>
+        <Grid container>
           {topRatedBooks.map((book) => (
             <Grid key={book.id} item xs={12} sm={4} md={2}>
               <BookCard book={book} />

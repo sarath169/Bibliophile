@@ -43,7 +43,7 @@ const SearchResult = () => {
             <Typography variant="h5" className={classes.title}>
               Search Result
             </Typography>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
               {searchResult.map((book) => (
                 <Grid key={book.id} item xs={12} sm={4} md={2}>
                   <BookCard

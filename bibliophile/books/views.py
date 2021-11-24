@@ -4,6 +4,7 @@ import logging
 import dotenv
 
 from django.db import connection
+from django.core.paginator import Paginator
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from rest_framework import status
@@ -42,6 +43,25 @@ class GetBookAPIView(APIView):
             serializer = BookSerializer(books, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class GetBooksByPageAPIView(APIView):
+    def get(self, request):
+        books = self.get_pages(request)
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_pages(self, request):
+        """
+        Return content for specific page
+        :param request: request, request object
+        :param store_type: str, store type
+        :return: dict, stores and store_type will be returned as context
+        """
+        books = Book.objects.all()
+        paginator = Paginator(books, 12)
+        page = request.GET.get('page')
+        paged_books = paginator.get_page(page)
+        return paged_books
 
 class AddBookAPIView(APIView):
     """
