@@ -51,7 +51,7 @@ const SignUp = () => {
 
     const handleSignUp = (e) => {
         e.preventDefault();
-
+        
         let error = false;
 
         setNameError(false);
@@ -91,7 +91,7 @@ const SignUp = () => {
                     sendMail(email)
                     .then(res=>{
                         if(res.status === 'success'){
-                            navigate("/verifyuser",{state: email})
+                            navigate("/verifyuser",{state: {email:email, isForgotPassword: false}})
                         } else {
                             setResponse(res.message)
                         }

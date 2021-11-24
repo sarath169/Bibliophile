@@ -1,8 +1,18 @@
 import React from "react";
+import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import {
+  Container,
+  Grid,
+} from "@material-ui/core";
 
-function SocialShare() {
-  const uri = "https://www.mindfiresolutions.com/";
+function SocialShare(props) {
+  const uri = props.url;
+  console.log(uri)
   const absoluteURI = encodeURI(uri);
+  console.log(absoluteURI)
   const text = "Visit our company page for more details ";
   const title = "Mindfire Solutions";
   const provider = "sarath";
@@ -14,17 +24,32 @@ function SocialShare() {
   `;
   return (
     <div>
-      <a href={facebookShare}> Facebook </a>
-      <br />
-      <br />
-      <a href={twitterShare}>Twitter </a>
-      <br />
-      <br />
-
-      <a href={whatsappShare}> Whatsapp </a>
-      <br />
-      <br />
-      <a href={linkedinShare}> Linkedin </a>
+      <Grid container spacing={1}>
+        <Grid item xs={1}>
+          <a href={facebookShare} target="_blank">
+            {" "}
+            <FacebookOutlinedIcon color="primary" />{" "}
+          </a>
+        </Grid>
+        <Grid item xs={1}>
+          <a href={twitterShare} target="_blank">
+            <TwitterIcon color="primary" />{" "}
+          </a>
+        </Grid>
+        <Grid item xs={1}>
+          <a href={whatsappShare} target="_blank">
+            {" "}
+            <WhatsAppIcon color="success" />{" "}
+          </a>
+        </Grid>
+        <Grid item xs={1}>
+          <a href={linkedinShare} target="_blank">
+            {" "}
+            <LinkedInIcon color="primary" />{" "}
+          </a>
+        </Grid>
+      </Grid>
+      
     </div>
   );
 }

@@ -13,6 +13,7 @@ import { isAuthenticated } from "../../helpers/AuthHelper";
 import AddBook from "../../components/AddBook";
 import Review from "./Review";
 import defaultBookCover from "../../images/default-book.jpg";
+import SocialShare from "../../components/SocialShare";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -46,6 +47,10 @@ const useStyles = makeStyles(() => ({
   },
   description: {
     textAlign: "justify",
+  },
+  socialshare: {
+    textAlign: "justify",
+    paddingTop: "10px",
   },
   review: {
     marginTop: "10px",
@@ -139,6 +144,11 @@ const BookDetails = () => {
               </Typography>
             </p>
             <Typography className={classes.description}>{details}</Typography>
+            <Typography className={classes.socialshare}>
+              <SocialShare
+                url={`https://7958-2405-201-c009-f05c-ebd0-c730-312-96a0.ngrok.io/books/${seoId}`}
+              />
+            </Typography>
           </div>
         </Grid>
         <Grid item xs={12} sm={2}>
