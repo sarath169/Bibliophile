@@ -69,7 +69,7 @@ const UpdateProfilePicture = () => {
   const [image, setImage] = useState("");
   const [uploadImage, setUploadImage] = useState({})
   const [showText, setShowText] = useState(false);
-  const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     getProfileById(localStorage.getItem("bib_id"))
@@ -85,19 +85,21 @@ const UpdateProfilePicture = () => {
     setUploadImage(e.target.files[0])
     var url = URL.createObjectURL(e.target.files[0]);
     setImage(url);
-    setError("");
+    setErrorMessage("");
     setShowText(true);
   }
 
   const handleUploadImage = () => {
 
-    setError("");
+    setErrorMessage("");
+    let error = false; 
 
-    if(Object.keys(uploadImage).length === 0){
-        setError("Please select an Image first");
+    if(!uploadImage.name){
+        setErrorMessage("Please select an Image first");
+        error = true;
     }
-
-    if (error !== "") {
+    console.log(error);
+    if (!error) {
         const formData = new FormData();
         formData.append('profile_picture', uploadImage, uploadImage.name);
         // console.log(formData);
@@ -145,7 +147,7 @@ const UpdateProfilePicture = () => {
                   </IconButton>
                 </label>
               </Box>
-              <p className={classes.error}>{error}</p>
+              <p className={classes.error}>{errorMessage}</p>
               { showText && (
               <Typography variant="caption" className={classes.text}>
                 Upload to make it parmanent

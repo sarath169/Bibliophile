@@ -147,6 +147,18 @@ export const getReview = (bookId) => {
     });
 };
 
+export const getReviewByPage = (bookId, pageNumber) => {
+  return axios
+    .get(`${API}/book/review/paged/book/${bookId}/?page=${pageNumber}`)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err)
+      return;
+    });
+};
+
 export const addReview = (bookId, rating, comment) => {
   const token = localStorage.getItem("bib_token");
   const data = {

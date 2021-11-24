@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Avatar,
@@ -45,7 +45,13 @@ const useStyle = makeStyles((theme) => ({
     textAlign: "center",
     color: "red",
   },
+  success: {
+    display: "block",
+    textAlign: "center",
+    color: "green",
+  },
 }));
+
 
 const SignIn = () => {
   const classes = useStyle();
@@ -57,13 +63,28 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [response, setResponse] = useState("");
-  const [verificationMessage, setVerificationMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("red");
 
   if (isAuthenticated()) {
     console.log("Authenticated");
     navigate("/");
     // return null;
   }
+
+  useEffect(()=>{
+    if (location.state) {
+      if (location.state.accountVerified) {
+        setResponse("Account Verified Successfully. Please login to continue");
+        setMessageColor("green");
+      } else if (location.state.passwordChnaged) {
+        setResponse("Password is changed successfully. Please login to continue");
+        setMessageColor("green");
+      } else {
+        setResponse("");
+      }
+    }
+  }, [location.state]);
+  
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -87,73 +108,72 @@ const SignIn = () => {
             });
           } else {
             setResponse(res.message);
+            setMessageColor('red');
           }
         })
         .catch((err) => console.log(err));
     }
-    
-    if(location.state){
-        if(location.state.accountVerified){
-            setVerificationMessage("Account Verified Successfully. Please login to continue");
-        } else {
-            setVerificationMessage("");
-        }
-    }
-  }
+  };
+  
 
-    return (
-        <Container>
-        <Grid container justifyContent="center" alignItems="center">
-            <Grid item xs={12} sm={6} md={4} >
-                <Card className={classes.card} variant="outlined">
-                    
-                    <Box display="flex" justifyContent="center" alignItems="center">
-                        <Avatar className={classes.avatar} />
-                    </Box>
-                    <Typography variant="h4" className={classes.title}>
-                        Sign In
-                    </Typography>
-                    <Typography className={classes.success}>{verificationMessage}</Typography>
-                    <Typography className={classes.resp}>{response}</Typography>
-                    <CardContent>
-                        <form noValidate onSubmit={handleSignIn}>
-                            <TextField
-                                className={classes.field}
-                                label="Email"
-                                variant="outlined"
-                                fullWidth
-                                required
-                                error={emailError}
-                                value={email}
-                                onChange={(e)=>setEmail(e.target.value)}
-                            />
-                            <TextField
-                                className={classes.field}
-                                type="password"
-                                label="Password"
-                                variant="outlined"
-                                fullWidth
-                                required
-                                error={passwordError}
-                                value={password}
-                                onChange={(e)=>setPassword(e.target.value)}
-                            />
-                            <Button
-                                className={classes.field}
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                            >Sign In</Button>
-                        </form>
-                        <div className={classes.links}>
-                            <Link to="/signup" className={classes.link}>New Registration</Link>
-                            <Link to="/verifyemail" className={classes.link}>Forgot Password</Link>
-                        </div>
-                    </CardContent>
-                </Card>
-            </Grid>
+  return (
+    <Container>
+      <Grid container justifyContent="center" alignItems="center">
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className={classes.card} variant="outlined">
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Avatar className={classes.avatar} />
+            </Box>
+            <Typography variant="h4" className={classes.title}>
+              Sign In
+            </Typography>
+            {/* <Typography className={classes.success}>{message}</Typography> */}
+            <Typography className={classes.resp} style={{color: messageColor}}>{response}</Typography>
+            <CardContent>
+              <form noValidate onSubmit={handleSignIn}>
+                <TextField
+                  className={classes.field}
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  required
+                  error={emailError}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <TextField
+                  className={classes.field}
+                  type="password"
+                  label="Password"
+                  variant="outlined"
+                  fullWidth
+                  required
+                  error={passwordError}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <Button
+                  className={classes.field}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Sign In
+                </Button>
+              </form>
+              <div className={classes.links}>
+                <Link to="/signup" className={classes.link}>
+                  New Registration
+                </Link>
+                <Link to="/verifyemail" className={classes.link}>
+                  Forgot Password
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </Grid>
+      </Grid>
     </Container>
   );
 };

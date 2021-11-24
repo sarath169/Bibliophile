@@ -168,7 +168,6 @@ export const verifyEmail = (email) => {
 };
 
 export const changePassword = (email, newPassword, confirmNewPassword) => {
-  const token = localStorage.getItem("bib_token");
   return axios
     .post(`${API}/auth/forgotpassword/`, {
       email: email,
