@@ -143,3 +143,15 @@ export const updatePassword = (password) => {
         }
     })
 }
+
+export const getAllUsers = () => {
+    return axios
+        .get(`${API}/auth/getallusers/`)
+        .then(res => {
+            console.log(res)
+            return res.data;
+        })
+        .catch(err => {
+            console.log(err);
+        })
+}
