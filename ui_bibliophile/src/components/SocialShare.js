@@ -49,6 +49,7 @@ function SocialShare(props) {
           </a>
         </Grid>
       </Grid>
+      
     </div>
   );
 }
