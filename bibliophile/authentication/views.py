@@ -16,7 +16,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 from .models import OtpValidation, User as CustomUser
-from .serializers import RegisterSerializer, VerifyOtpSerializer, ProfileSerializer, UpdateProfileSerializer
+from .serializers import RegisterSerializer, VerifyOtpSerializer, ProfileSerializer, UpdateProfileSerializer, GetUserSerializer
 from django.conf import settings
 from .task import send_mail_func
 
@@ -374,3 +374,14 @@ class PasswordChangeAPIView(APIView):
 
         else:
             return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class GetAllUsersAPIView(APIView):
+    def get(self, request):
+        """
+        Returns profile details of a user
+        """
+
+        users = CustomUser.objects.values('id', 'name', 'email').all()
+        print(users)
+        serializer = GetUserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -156,10 +156,17 @@ export const updatePassword = (password) => {
         };
       }
     })
-    .catch((err) => {
-      return {
-        status: "error",
-        message: "Something went wrong. Please try again later",
-      };
-    });
-};
+
+}
+
+export const getAllUsers = () => {
+    return axios
+        .get(`${API}/auth/getallusers/`)
+        .then(res => {
+            console.log(res)
+            return res.data;
+        })
+        .catch(err => {
+            console.log(err);
+        })
+}

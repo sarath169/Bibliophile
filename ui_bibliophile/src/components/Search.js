@@ -21,6 +21,7 @@ const useStyle = makeStyles((theme) => ({
 const Search = () => {
   const classes = useStyle();
   const navigate = useNavigate();
+  console.log("search.js")
 
   const [searchKey, setSearchKey] = useState("");
 
