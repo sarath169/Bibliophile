@@ -41,7 +41,7 @@ const Review = ({ bookId, bookAdded }) => {
   const [totalPages, setTotalPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const fetchNext = useCallback(async () => {
+  const fetchNext = async () => {
     console.log(totalPages, pageNumber);
     if (pageNumber <= totalPages || pageNumber === 1) {
       await getReviewByPage(bookId, pageNumber)
@@ -52,7 +52,7 @@ const Review = ({ bookId, bookAdded }) => {
         })
         .catch((err) => console.log(err));
     }
-  },[pageNumber, totalPages, reviews, bookId]);
+  };
 
   useEffect(() => {
     getBookDetails(bookId).then((res) => {
@@ -67,7 +67,7 @@ const Review = ({ bookId, bookAdded }) => {
         })
         .catch((err) => console.log(err));
     });
-  }, [bookAdded, bookId, fetchNext]);
+  }, [bookAdded, bookId]);
 
   const addComment = (e) => {
     e.preventDefault();
