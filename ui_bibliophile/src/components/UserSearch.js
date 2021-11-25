@@ -8,6 +8,8 @@ import {
 } from "@material-ui/core";
 import { SearchOutlined } from "@material-ui/icons";
 import { getAllUsers } from "../helpers/ProfileHelper";
+import ClearIcon from "@mui/icons-material/Clear";
+import { red } from "@mui/material/colors";
 
 const useStyle = makeStyles((theme) => ({
   search: {
@@ -29,6 +31,7 @@ const useStyle = makeStyles((theme) => ({
     border: "1px solid black",
     borderBottomLeftRadius: "10px",
     borderBottomRightRadius: "10px",
+    width: "100px"
   },
   ss: {
     borderBottom: "1px solid black",
@@ -37,6 +40,9 @@ const useStyle = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: "#d4d4d4",
     },
+  },
+  anchortag: {
+    textDecoration: "none",
   },
 }));
 
@@ -60,7 +66,7 @@ const UserSearch = () => {
     let text = e.target.value;
     let matches = [];
     if (text.length > 0) {
-      matches = users.filter(user => {
+      matches = users.filter((user) => {
         const regex = new RegExp(`${text}`, "gi");
         return user.name.match(regex);
       });
@@ -78,11 +84,15 @@ const UserSearch = () => {
     // console.log(searchKey);
     try {
       if (searchKey) {
-        navigate(`/search/${searchKey}`);
+        navigate(`/profile/${searchKey}`, { state: { isProfilePage: true } });
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const clearInput = () => {
+    setSearchKey("");
   };
 
   return (
@@ -91,6 +101,7 @@ const UserSearch = () => {
         className={classes.searchField}
         value={searchKey}
         onChange={handleChange}
+        placeholder="UserSearch"
         onBlur={() => {
           setTimeout(() => {
             setSuggestions([]);
@@ -99,25 +110,45 @@ const UserSearch = () => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={handleSearch}>
-                <SearchOutlined />
-              </IconButton>
+              {suggestions.length === 0 ? (
+                <IconButton onClick={handleSearch}>
+                  <SearchOutlined />
+                </IconButton>
+              ) : (
+                <IconButton onClick={clearInput}>
+                  <ClearIcon />
+                </IconButton>
+              )}
             </InputAdornment>
           ),
         }}
       />
-      {suggestions.length > 0 && (
-        <div className={classes.suggestionDiv}>
-          {suggestions.map((suggestion, i) => (
-            <div
-              key={i}
-              className={classes.ss}
-              onClick={() => onSuggestClickHandler(suggestion.name)}
-            >
-              {suggestion.name}
-            </div>
-          ))}
-        </div>
+      {searchKey.length > 0 && (
+        <>
+          <div className={classes.suggestionDiv}>
+            {suggestions.map((suggestion, i) => (
+              <>
+                <div key={i} className={classes.ss}>
+                  <a
+                    className={classes.anchortag}
+                    href={`http://localhost:3000/profile/${suggestion.public_url}`}
+                    // target="_blank"
+                  >
+                    {suggestion.name}
+                  </a>
+                </div>
+              </>
+            ))}
+            {/* <div className={classes.ss}>
+              <IconButton>
+                <SearchOutlined />
+              </IconButton>
+              <a className={classes.anchortag} href={`#`} target="_blank">
+                {searchKey}
+              </a>
+            </div> */}
+          </div>
+        </>
       )}
     </div>
   );

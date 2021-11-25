@@ -43,13 +43,6 @@ const Navbar = () => {
   console.log(location.pathname.split("/")[1]);
 
   useEffect(() => {
-    if (location.pathname.split("/")[1] == "profile") {
-      console.log(location.pathname.split("/")[1], "if condition");
-      let isProfilePage = true
-    }
-  }, []);
-
-  useEffect(() => {
     if (bibId) {
       getProfileById(localStorage.getItem("bib_id"))
         .then((data) => {
@@ -82,7 +75,7 @@ const Navbar = () => {
               <div className={classes.search} style={{ marginLeft: "10px" }}>
                 {isAuthenticated() && (location.pathname.split("/")[1] == 'profile' ? (
                   <>
-                    {console.log("search", "isProfilePage")}
+                    {/* {console.log("search", "isProfilePage")} */}
                     <UserSearch />
                   </>
                 ) : (

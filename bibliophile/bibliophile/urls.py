@@ -8,6 +8,7 @@ urlpatterns = [
     path('auth/', include('authentication.urls')),
     path('book/', include('books.urls')),
     path('search/', include('search.urls')),
+    path('friend/', include('friends.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

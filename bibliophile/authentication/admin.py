@@ -6,7 +6,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     """Custom display of User in Django Admin"""
     exclude = ('groups', 'user_permissions', )
     list_display = (
-        'id', 'name', 'email', 'validated'
+        'id', 'name', 'email', 'validated',
     )
     list_display_links = ('name', )
     list_editable = ('validated', )

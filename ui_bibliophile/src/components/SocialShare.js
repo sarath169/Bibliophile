@@ -3,16 +3,13 @@ import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import {
-  Container,
-  Grid,
-} from "@material-ui/core";
+import { Container, Grid } from "@material-ui/core";
 
 function SocialShare(props) {
   const uri = props.url;
-  console.log(uri)
+  // console.log(uri);
   const absoluteURI = encodeURI(uri);
-  console.log(absoluteURI)
+  // console.log(absoluteURI);
   const text = "Visit our company page for more details ";
   const title = "Mindfire Solutions";
   const provider = "sarath";
@@ -49,7 +46,6 @@ function SocialShare(props) {
           </a>
         </Grid>
       </Grid>
-      
     </div>
   );
 }

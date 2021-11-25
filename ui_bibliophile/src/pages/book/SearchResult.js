@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Container,
-  Grid,
-  makeStyles,
-  Typography,
-} from "@material-ui/core";
+import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 
 import BookCard from "../../components/BookCard";
 import { getSearchResults } from "../../helpers/BookAPICalles";
@@ -40,24 +35,41 @@ const SearchResult = () => {
       <>
         <Container className={classes.container}>
           <section>
-            <Typography variant="h5" className={classes.title}>
-              Search Result
-            </Typography>
-            <Grid container spacing={1}>
-              {searchResult.map((book) => (
-                <Grid key={book.id} item xs={12} sm={4} md={2}>
-                  <BookCard
-                    book={{
-                      id: book.id,
-                      image_link_small:
-                        book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : defaultBook,
-                      title: book.volumeInfo.title,
-                      googleSearch:true,
-                    }}
-                  />
+            {/* {console.log(searchResult)} */}
+            {searchResult.length > 0 ? (
+              <>
+                <Typography variant="h5" className={classes.title}>
+                  Search Result
+                </Typography>
+                <Grid container spacing={1}>
+                  {searchResult.map((book) => (
+                    <Grid key={book.id} item xs={12} sm={4} md={2}>
+                      <BookCard
+                        book={{
+                          id: book.id,
+                          image_link_small: book.volumeInfo.imageLinks
+                            ? book.volumeInfo.imageLinks.smallThumbnail
+                            : defaultBook,
+                          title: book.volumeInfo.title,
+                          googleSearch: true,
+                        }}
+                      />
+                    </Grid>
+                  ))}
                 </Grid>
-              ))}
-            </Grid>
+              </>
+            ) : (
+              <>
+                <div>
+                  <img
+                    src="http://127.0.0.1:8000/static/images/no_results.png"
+                    alt="No Results Found"
+                    width="100%"
+                    height="600"
+                  />
+                </div>
+              </>
+            )}
           </section>
         </Container>
       </>

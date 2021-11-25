@@ -381,7 +381,7 @@ class GetAllUsersAPIView(APIView):
         Returns profile details of a user
         """
 
-        users = CustomUser.objects.values('id', 'name', 'email').all()
+        users = CustomUser.objects.all()
         print(users)
         serializer = GetUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

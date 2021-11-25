@@ -1,12 +1,13 @@
 import os
 import requests
 import logging
+import dotenv
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
+dotenv.load_dotenv()
 class SearchBook(APIView):
     """
     Search book from google books api
@@ -20,7 +21,6 @@ class SearchBook(APIView):
         url = os.getenv('GOOGLE_BOOK_SELF_LINK')
         api_key = os.getenv('GOOGLE_BOOK_API_KEY')
         url = f'{url}?q={search_key}&maxResults=40&key={api_key}'
-
         try:
             res = requests.get(url)
             books = res.json().get("items")
