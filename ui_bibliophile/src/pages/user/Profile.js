@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Container, Grid, Typography, makeStyles } from "@material-ui/core";
 import {
-  Container,
-  Grid,
-  Typography,
-  makeStyles,
-} from "@material-ui/core";
-import { getProfile, getUersReview } from "../../helpers/ProfileHelper";
+  getProfile,
+  getUersReview,
+  getUersPagedReview,
+} from "../../helpers/ProfileHelper";
 import { getUsersBook } from "../../helpers/BookAPICalles";
 import BookCard from "../../components/BookCard";
 import ReviewCardUser from "../../components/ReviewCardUser";
 import user from "../../images/user.png";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -62,8 +62,23 @@ const Profile = () => {
   const [shelfList, setShelfList] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [owner, setOwner] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
 
   // console.log(userId);
+
+  const fetchNext =  useCallback(async() => {
+    console.log(totalPages, pageNumber);
+    if (pageNumber <= totalPages || pageNumber === 1) {
+      await getUersPagedReview(userId, pageNumber)
+        .then((res) => {
+          console.log(res);
+          if (res) setReviews([...reviews, ...res]);
+          setPageNumber(pageNumber + 1);
+        })
+        .catch((err) => console.log(err));
+    }
+  },[pageNumber, reviews, totalPages, userId]);
 
   useEffect(() => {
     const profileUrl = location.pathname;
@@ -87,17 +102,20 @@ const Profile = () => {
                 else if (i === "WL") setWishList(res[i]);
                 else if (i === "SL") setShelfList(res[i]);
               }
-              getUersReview(userId).then((res) => {
-                if (res) {
-                  setReviews(res);
-                }
+              fetchNext().then(() => {
+                getUersReview(userId).then((res) => {
+                  if (res) {
+                    // setReviews(res);
+                    setTotalPages(Math.ceil(res.length / 2));
+                  }
+                });
               });
             }
           });
         }
       });
     }
-  }, [location.pathname, publicUrl, userId]);
+  }, [location.pathname, publicUrl, userId, fetchNext]);
 
   let img_url = "";
   if (profile.profile_picture) {
@@ -184,9 +202,19 @@ const Profile = () => {
                 <Typography variant="h6" className={classes.title}>
                   Recent Reviews
                 </Typography>
-                {reviews.map((review, index) => (
-                  <ReviewCardUser key={index} review={review} />
-                ))}
+                <div>
+                  <InfiniteScroll
+                    dataLength={reviews.length}
+                    next={fetchNext}
+                    hasMore={true}
+                    loader={""}
+                    className={classes.incr}
+                  >
+                    {reviews.map((review, index) => (
+                      <ReviewCardUser key={index} review={review} />
+                    ))}
+                  </InfiniteScroll>
+                </div>
               </>
             )}
           </div>

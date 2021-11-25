@@ -1,7 +1,7 @@
 from django.urls import path
 from books.views import GetBookAPIView, GetBooksByPageAPIView, AddBookAPIView, GetUsersBookAPIView, \
     AddReviewAPIView, BooksReviewAPIView, UsersReviewAPIView, TopTenPopularBooksAPIView, \
-    TopTenRatedBooksAPIView, LastTenReviewsAPIView
+    TopTenRatedBooksAPIView, LastTenReviewsAPIView, BooksPagedReviewAPIView, UsersPagedReviewAPIView
 
 urlpatterns = [
     path('', GetBookAPIView.as_view(), name="get_all_books"),
@@ -14,7 +14,8 @@ urlpatterns = [
     path('review/', AddReviewAPIView.as_view(), name="add_review"),
     path('review/last_ten/', LastTenReviewsAPIView.as_view(), name="last_ten_review"),
     path('review/book/<str:book_id>/', BooksReviewAPIView.as_view(), name="add_review"),
+    path('review/paged/book/<str:book_id>/', BooksPagedReviewAPIView.as_view(), name="add_review"),
     path('review/user/<int:user_id>/', UsersReviewAPIView.as_view(), name="add_review"),
-    
+    path('review/paged/user/<int:user_id>/', UsersPagedReviewAPIView.as_view(), name="add_review"),
 
 ]

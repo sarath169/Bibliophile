@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Container, makeStyles, Typography } from "@material-ui/core";
 import { getAllBooks, getBooksByPage } from "../../helpers/BookAPICalles";
@@ -21,15 +21,15 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "white",
   },
   incr: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    width: '100%'
+    display: "flex",
+    flexWrap: "wrap",
+    width: "100%",
   },
   books: {
-    display: 'flex',
-    margin: '2% auto',
-    alignItems: 'flexStart',
-  }
+    display: "flex",
+    margin: "2% auto",
+    alignItems: "flexStart",
+  },
 }));
 
 const Books = () => {
@@ -39,17 +39,7 @@ const Books = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
 
-  useEffect(() => {
-    fetchNext().then(() => {
-      getAllBooks()
-        .then((res) => {
-          setTotalPages(Math.ceil(res.length / 12));
-        })
-        .catch((err) => console.log(err));
-    });
-  },[]);
-
-  const fetchNext = async () => {
+  const fetchNext = useCallback(async () => {
     if (pageNumber <= totalPages || pageNumber === 1) {
       await getBooksByPage(pageNumber)
         .then((res) => {
@@ -58,7 +48,19 @@ const Books = () => {
         })
         .catch((err) => console.log(err));
     }
-  };
+  },[pageNumber, books, totalPages]);
+
+  useEffect(() => {
+    fetchNext().then(() => {
+      getAllBooks()
+        .then((res) => {
+          setTotalPages(Math.ceil(res.length / 12));
+        })
+        .catch((err) => console.log(err));
+    });
+  }, [fetchNext]);
+
+  
 
   return (
     <Container className={classes.container}>
@@ -67,7 +69,7 @@ const Books = () => {
           Collection
         </Typography>
         <div className={classes.books}>
-        <InfiniteScroll
+          <InfiniteScroll
             dataLength={books.length}
             next={fetchNext}
             hasMore={true}
@@ -75,7 +77,7 @@ const Books = () => {
             className={classes.incr}
           >
             {books.map((book) => (
-                <BookCard key={book.id} book={book} />
+              <BookCard key={book.id} book={book} />
             ))}
           </InfiniteScroll>
         </div>
