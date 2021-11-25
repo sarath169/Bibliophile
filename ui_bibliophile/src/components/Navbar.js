@@ -13,6 +13,7 @@ import SearchAuto from "./SearchAuto";
 import { getProfileById } from "../helpers/ProfileHelper";
 import UserSearch from "./UserSearch";
 
+
 const useStyle = makeStyles((theme) => ({
   logo: {
     display: "inline",

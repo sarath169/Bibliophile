@@ -4,6 +4,7 @@ import logging
 import dotenv
 
 from django.db import connection
+from django.core.paginator import Paginator
 from django.db.models import Q, Avg, Count
 from django.http import JsonResponse
 from rest_framework import status
@@ -42,6 +43,24 @@ class GetBookAPIView(APIView):
             serializer = BookSerializer(books, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class GetBooksByPageAPIView(APIView):
+    def get(self, request):
+        books = self.get_pages(request)
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_pages(self, request):
+        """
+        Return content for specific page
+        :param request: request, request object
+        :return: books for a specific page
+        """
+        books = Book.objects.all()
+        paginator = Paginator(books, 12)
+        page = request.GET.get('page')
+        paged_books = paginator.get_page(page)
+        return paged_books
 
 class AddBookAPIView(APIView):
     """
@@ -201,19 +220,10 @@ class BooksReviewAPIView(APIView):
     """
     Get reviews of a book
     """
-    def get(self, request, book_id):
-        """
-        Return all the ratings and comments of a book along with their respective user's id and name
-        :param request: request object
-        :param book_id: str, id of a book
-        :return: dict, reviews of a book along with user details
-        """
-        reviews = Review.objects.select_related().filter(book=book_id).order_by('-updated_at')
-        if not reviews:
-            return Response({"msg": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+    def detailed_review(self, reviews):
         bid = None
         book_title = None
-        book_reviews = []
+        detailed_book_review = []
         for review in reviews:
             bid = review.book.id
             book_title = review.book.title
@@ -230,13 +240,52 @@ class BooksReviewAPIView(APIView):
                 "comment": review.comment,
                 "reviewed_at": review.created_at
             }
-            book_reviews.append(rvw)
+            detailed_book_review.append(rvw)
         send_reviews = {
             "book_id": bid,
             "book_title": book_title,
-            "reviews": book_reviews
+            "reviews": detailed_book_review
         }
-        return Response(send_reviews, status=status.HTTP_200_OK)
+        return send_reviews
+
+    def get(self, request, book_id):
+        """
+        Return all the ratings and comments of a book along with their respective user's id and name
+        :param request: request object
+        :param book_id: str, id of a book
+        :return: dict, reviews of a book along with user details
+        """
+        reviews = Review.objects.select_related().filter(book=book_id).order_by('-updated_at')
+        if not reviews:
+            return Response({"msg": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        book_reviews = self.detailed_review(reviews)
+        return Response(book_reviews, status=status.HTTP_200_OK)
+
+
+class BooksPagedReviewAPIView(APIView):
+    def get(self, request, book_id):
+        reviews = self.get_pages(request, book_id)
+        if not reviews:
+            return Response({"msg": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+        book_review_apiview = BooksReviewAPIView()
+        book_reviews = book_review_apiview.detailed_review(reviews)
+        return Response(book_reviews, status=status.HTTP_200_OK)
+
+
+    def get_pages(self, request, book_id):
+        """
+        Return content for specific page
+        :param request: request, request object
+        :return: reviews for a specific page
+        """
+        reviews = Review.objects.select_related().filter(book=book_id).order_by('-updated_at')
+        if not reviews:
+            return
+        paginator = Paginator(reviews, 2)
+        page = request.GET.get('page')
+        paged_reviews = paginator.get_page(page)
+        return paged_reviews
 
 
 class UsersReviewAPIView(APIView):
@@ -244,17 +293,7 @@ class UsersReviewAPIView(APIView):
     Fetch all the reviews made by a specific user
     """
     # permission_classes = (IsAuthenticated, )
-
-    def get(self, request, user_id):
-        """
-        Returns all the ratings and comments done by a specific user
-        :param request: request object
-        :param user_id: int, id of an user
-        :return: dict, user_id and all reviews
-        """
-        reviews = Review.objects.select_related().filter(user=user_id).order_by('-updated_at')
-        if not reviews:
-            return Response({"msg": "No reviews found"}, status=status.HTTP_404_NOT_FOUND)
+    def formated_review(self, reviews):
         users_review = []
         for review in reviews:
             rvw = {
@@ -266,8 +305,53 @@ class UsersReviewAPIView(APIView):
                 "reviewed_at": review.created_at
             }
             users_review.append(rvw)
+        return users_review
+
+    def get(self, request, user_id):
+        """
+        Returns all the ratings and comments done by a specific user
+        :param request: request object
+        :param user_id: int, id of an user
+        :return: dict, user_id and all reviews
+        """
+        reviews = Review.objects.select_related().filter(user=user_id).order_by('-updated_at')
+        if not reviews:
+            return Response({"msg": "No reviews found"}, status=status.HTTP_404_NOT_FOUND)
+        users_review = self.formated_review(reviews)
         send_review = {"user_id": user_id, "reviews": users_review}
         return Response(send_review, status=status.HTTP_200_OK)
+
+
+class UsersPagedReviewAPIView(APIView):
+    def get(self, request, user_id):
+        """
+        Returns all the ratings and comments done by a specific user
+        :param request: request object
+        :param user_id: int, id of an user
+        :return: dict, user_id and all reviews
+        """
+        reviews = self.get_pages(request, user_id)
+        if not reviews:
+            return Response({"msg": "No reviews found"}, status=status.HTTP_404_NOT_FOUND)
+        users_review_api_view = UsersReviewAPIView()
+        users_review = users_review_api_view.formated_review(reviews)
+        send_review = {"user_id": user_id, "reviews": users_review}
+        return Response(send_review, status=status.HTTP_200_OK)
+
+
+    def get_pages(self, request, user_id):
+        """
+        Return content for specific page
+        :param request: request, request object
+        :return: reviews for a specific page
+        """
+        reviews = Review.objects.select_related().filter(user=user_id).order_by('-updated_at')
+        if not reviews:
+            return
+        paginator = Paginator(reviews, 2)
+        page = request.GET.get('page')
+        paged_reviews = paginator.get_page(page)
+        return paged_reviews
 
 
 class TopTenPopularBooksAPIView(APIView):

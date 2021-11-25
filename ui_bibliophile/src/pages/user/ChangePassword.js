@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -30,16 +30,6 @@ const useStyles = makeStyles(() => ({
   },
   field: {
     marginTop: "8px",
-  },
-  links: {
-    marginTop: "10px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  link: {
-    color: "blue",
-    textDecoration: "none",
   },
   resp: {
     display: "block",
@@ -96,7 +86,7 @@ const ChangePassword = () => {
           // console.log(res);
           if (res) {
             setResponse(res.message);
-            navigate("/signin");
+            navigate("/signin", {state: {passwordChnaged: true}});
           }
         })
         .catch((err) => {
@@ -127,9 +117,9 @@ const ChangePassword = () => {
                   variant="outlined"
                   fullWidth
                   required
+                  disabled
                   error={emailError}
                   value={email}
-                  inputProps={{ readOnly: true }}
                 />
                 <TextField
                   className={classes.field}
@@ -163,14 +153,6 @@ const ChangePassword = () => {
                   Change Password
                 </Button>
               </form>
-              <div className={classes.links}>
-                <Link to="/signup" className={classes.link}>
-                  New Registration
-                </Link>
-                <Link to="/signin" className={classes.link}>
-                  Login
-                </Link>
-              </div>
             </CardContent>
           </Card>
         </Grid>

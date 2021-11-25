@@ -11,7 +11,7 @@ import {
 } from "../../helpers/BookAPICalles";
 import { isAuthenticated } from "../../helpers/AuthHelper";
 import AddBook from "../../components/AddBook";
-import Review from "./Review";
+import Review from "./ReviewInfinite";
 import defaultBookCover from "../../images/default-book.jpg";
 import SocialShare from "../../components/SocialShare";
 
