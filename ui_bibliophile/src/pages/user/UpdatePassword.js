@@ -32,29 +32,37 @@ const useStyles = makeStyles(()=>({
     resp: {
         display: 'block',
         textAlign: 'center',
-        color: 'blue',
     }
 }))
 
 const UpdatePassword = () => {
     const classes = useStyles();
     
+    const [oldPassword, setOldPassword] = useState("")
+    const [oldPasswordError, setOldPasswordError] = useState(false)
     const [newPassword, setNewPassword] = useState("")
     const [newPasswordError, setNewPasswordError] = useState(false)
     const [confirmNewPassword, setConfirmNewPassword] = useState("")
     const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false)
     
     const [response, setResponse] = useState('');
+    const [textColor, setTextColor] = useState('red');
 
 
     const handleUpdate = (e) => {
         e.preventDefault();
+        setResponse("");
 
         let error = false;
 
+        setOldPasswordError(false);
         setNewPasswordError(false);
         setConfirmNewPasswordError(false);
 
+        if(oldPassword === ''){
+            setOldPasswordError(true);
+            error = true;
+        }
         if(newPassword===''){
             setNewPasswordError(true);
             error = true;
@@ -70,17 +78,20 @@ const UpdatePassword = () => {
         }
 
         if(!error){
-            updatePassword(newPassword)
+            updatePassword(oldPassword, newPassword)
             .then(res=>{
-                // console.log(res);
-                if(res){
-                    setResponse(res.message);
+                setResponse(res.message);
+                if(res.status === 'success'){
+                    setTextColor('green');
+                } else {
+                    setTextColor('red');
                 }
 
             })
             .catch(err => {
                 console.log(err);
             })
+            setOldPassword("");
             setNewPassword("");
             setConfirmNewPassword("");
         }
@@ -97,9 +108,20 @@ const UpdatePassword = () => {
                     <Typography variant="h4" className={classes.title}>
                         Update Password
                     </Typography>
-                    <Typography className={classes.resp}>{response}</Typography>
+                    <Typography className={classes.resp} style={{color: textColor}}>{response}</Typography>
                     <CardContent>
                         <form noValidate onSubmit={handleUpdate}>
+                        <TextField
+                                className={classes.field}
+                                label="Old Password"
+                                variant="outlined"
+                                type="password"
+                                fullWidth
+                                required
+                                error={oldPasswordError}
+                                value={oldPassword}
+                                onChange={(e)=>setOldPassword(e.target.value)}
+                            />
                         <TextField
                                 className={classes.field}
                                 label="New Password"

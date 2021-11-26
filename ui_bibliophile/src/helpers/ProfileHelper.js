@@ -133,13 +133,14 @@ export const uploadProfilePicture = (formData) => {
     });
 };
 
-export const updatePassword = (password) => {
+export const updatePassword = (oldPassword, newPassword) => {
   const token = localStorage.getItem("bib_token");
   return axios
     .put(
       `${API}/auth/profile/updatepassword/`,
       {
-        password: password,
+        old_password: oldPassword,
+        new_password: newPassword
       },
       {
         headers: {
@@ -156,7 +157,12 @@ export const updatePassword = (password) => {
         };
       }
     })
-
+    .catch(err => {
+      return {
+        status: "error",
+        message: err.response.data.msg,
+      };
+    })
 }
 
 export const getAllUsers = () => {
