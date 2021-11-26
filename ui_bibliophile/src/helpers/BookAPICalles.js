@@ -42,7 +42,7 @@ export const getSearchResults = (searchKey) => {
   return axios
     .get(API_URL)
     .then((res) => {
-      // console.log(res.data);
+      console.log(res);
       return res.data;
     })
     .catch((err) => {

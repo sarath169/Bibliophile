@@ -7,6 +7,8 @@ import {
   TextField,
 } from "@material-ui/core";
 import { SearchOutlined } from "@material-ui/icons";
+import ClearIcon from "@mui/icons-material/Clear";
+
 import { getAllBooks } from "../helpers/BookAPICalles";
 
 const useStyle = makeStyles((theme) => ({
@@ -48,14 +50,6 @@ const SearchAuto = () => {
   const [searchKey, setSearchKey] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(()=>{
-    getAllBooks()
-        .then((res)=>{
-            setBooks(res);
-        })
-        .catch(err => console.log(err))
-  },[])
-
   const handleChange = (e) => {
     let text = e.target.value;
     let matches = []
@@ -88,6 +82,17 @@ const SearchAuto = () => {
       console.log(error);
     }
   };
+  const clearInput = () => {
+    setSearchKey("");
+  };
+
+  useEffect(()=>{
+    getAllBooks()
+        .then((res)=>{
+            setBooks(res);
+        })
+        .catch(err => console.log(err))
+  },[])
 
   return (
     <div className={classes.search}>
@@ -95,6 +100,7 @@ const SearchAuto = () => {
         className={classes.searchField}
         value={searchKey}
         onChange={handleChange}
+        placeholder = "BookSearch"
         onBlur={()=>{
           setTimeout(() => {
             setSuggestions([])
@@ -103,9 +109,15 @@ const SearchAuto = () => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={handleSearch}>
-                <SearchOutlined />
-              </IconButton>
+              {suggestions.length === 0 ? (
+                <IconButton onClick={handleSearch}>
+                  <SearchOutlined />
+                </IconButton>
+              ) : (
+                <IconButton onClick={clearInput}>
+                  <ClearIcon />
+                </IconButton>
+              )}
             </InputAdornment>
           ),
         }}

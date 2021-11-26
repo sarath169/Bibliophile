@@ -54,4 +54,4 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 class GetUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'name', 'email')
+        fields = ('id', 'name', 'email', 'public_url')

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     # local
     'authentication.apps.AuthenticationConfig',
     'books.apps.BooksConfig',
+    'friends.apps.FriendsConfig',
+    'search.apps.SearchConfig',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'

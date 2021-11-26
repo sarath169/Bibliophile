@@ -16,6 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     validated = models.BooleanField(default = False)
     description = models.TextField(blank=True)
     public_url = models.CharField(unique=True, max_length=250, default="", blank=True)
+    friends = models.ManyToManyField("User", blank=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
