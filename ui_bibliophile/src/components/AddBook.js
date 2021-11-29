@@ -86,7 +86,7 @@ const AddBook = (props) => {
         <>
         {props.setBookAdded}
         <Typography variant="body1" color="secondary">
-          This book is available in your collection.
+          {/* This book is available in your collection. */}
         </Typography>
         </>
       )}

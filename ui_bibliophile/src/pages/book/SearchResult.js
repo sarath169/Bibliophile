@@ -5,6 +5,7 @@ import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 import BookCard from "../../components/BookCard";
 import { getSearchResults } from "../../helpers/BookAPICalles";
 import defaultBook from "../../images/default-book.jpg";
+import noBook from "../../images/no_results.png";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -30,10 +31,14 @@ const SearchResult = () => {
 
   const [searchResult, setSearchResult] = useState([]);
 
-  const displayImages = () => {
-    return (
-      <>
-        <Container className={classes.container}>
+  useEffect(() => {
+    getSearchResults(searchKey)
+      .then((res) => setSearchResult(res))
+      .catch((err) => console.log(err));
+  }, [searchKey]);
+
+  return (
+      <Container className={classes.container}>
           <section>
             {/* {console.log(searchResult)} */}
             {searchResult.length > 0 ? (
@@ -62,7 +67,7 @@ const SearchResult = () => {
               <>
                 <div>
                   <img
-                    src="http://127.0.0.1:8000/static/images/no_results.png"
+                    src={noBook}
                     alt="No Results Found"
                     width="100%"
                     height="600"
@@ -72,20 +77,6 @@ const SearchResult = () => {
             )}
           </section>
         </Container>
-      </>
-    );
-  };
-
-  useEffect(() => {
-    getSearchResults(searchKey)
-      .then((res) => setSearchResult(res))
-      .catch((err) => console.log(err));
-  }, [searchKey]);
-
-  return (
-    <div>
-      <div>{displayImages()}</div>
-    </div>
   );
 };
 

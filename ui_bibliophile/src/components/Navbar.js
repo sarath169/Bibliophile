@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   AppBar,
   Button,
@@ -73,7 +73,7 @@ const Navbar = () => {
                                 }
                             </div> */}
               <div className={classes.search} style={{ marginLeft: "10px" }}>
-                {isAuthenticated() && (location.pathname.split("/")[1] == 'profile' ? (
+                {isAuthenticated() && (location.pathname.split("/")[1] === 'profile' ? (
                   <>
                     {/* {console.log("search", "isProfilePage")} */}
                     <UserSearch />
