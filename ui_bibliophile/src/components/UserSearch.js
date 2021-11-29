@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   makeStyles,
   IconButton,
@@ -10,6 +10,7 @@ import { SearchOutlined } from "@material-ui/icons";
 import { getAllUsers } from "../helpers/ProfileHelper";
 import ClearIcon from "@mui/icons-material/Clear";
 import { red } from "@mui/material/colors";
+import { Button } from "@mui/material";
 
 const useStyle = makeStyles((theme) => ({
   search: {
@@ -31,7 +32,7 @@ const useStyle = makeStyles((theme) => ({
     border: "1px solid black",
     borderBottomLeftRadius: "10px",
     borderBottomRightRadius: "10px",
-    width: "100px"
+    width: "100px",
   },
   ss: {
     borderBottom: "1px solid black",
@@ -75,10 +76,13 @@ const UserSearch = () => {
     setSearchKey(text);
   };
 
-  const onSuggestClickHandler = (text) => {
-    setSearchKey(text);
-    setSuggestions([]);
+  const onSearchClickHandler = (key) => {
+    navigate(`profile/search/${key}`);
   };
+
+  const onSuggestClickHandler = (key) => {
+    navigate(`/profile/${key}`);
+  }
 
   const handleSearch = () => {
     // console.log(searchKey);
@@ -110,7 +114,7 @@ const UserSearch = () => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              {suggestions.length === 0 ? (
+              {searchKey.length === 0 ? (
                 <IconButton onClick={handleSearch}>
                   <SearchOutlined />
                 </IconButton>
@@ -128,25 +132,24 @@ const UserSearch = () => {
           <div className={classes.suggestionDiv}>
             {suggestions.map((suggestion, i) => (
               <>
-                <div key={i} className={classes.ss}>
-                  <a
-                    className={classes.anchortag}
-                    href={`http://localhost:3000/profile/${suggestion.public_url}`}
-                    // target="_blank"
-                  >
-                    {suggestion.name}
-                  </a>
+                <div
+                  key={i}
+                  className={classes.ss}
+                  onClick={() => onSuggestClickHandler(suggestion.public_url)}
+                >
+                  {suggestion.name}
                 </div>
               </>
             ))}
-            {/* <div className={classes.ss}>
+            <div
+              className={classes.ss}
+              onClick={() => onSearchClickHandler(searchKey)}
+            >
               <IconButton>
                 <SearchOutlined />
               </IconButton>
-              <a className={classes.anchortag} href={`#`} target="_blank">
-                {searchKey}
-              </a>
-            </div> */}
+              {searchKey}
+            </div>
           </div>
         </>
       )}

@@ -7,8 +7,6 @@ import {
   TextField,
 } from "@material-ui/core";
 import { SearchOutlined } from "@material-ui/icons";
-import ClearIcon from "@mui/icons-material/Clear";
-
 import { getAllBooks } from "../helpers/BookAPICalles";
 
 const useStyle = makeStyles((theme) => ({
@@ -50,6 +48,14 @@ const SearchAuto = () => {
   const [searchKey, setSearchKey] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
+  useEffect(()=>{
+    getAllBooks()
+        .then((res)=>{
+            setBooks(res);
+        })
+        .catch(err => console.log(err))
+  },[])
+
   const handleChange = (e) => {
     let text = e.target.value;
     let matches = []
@@ -66,33 +72,18 @@ const SearchAuto = () => {
   const onSuggestClickHandler = (text) => {
     setSearchKey(text);
     setSuggestions([]);
-    handleSearch(text);
   }
 
-  const handleSearch = (searchText = "") => {
-    let searchItem = searchKey;
-    if (searchText.length > searchKey.length){
-      searchItem = searchText
-    }
+  const handleSearch = () => {
+    // console.log(searchKey);
     try {
-      if (searchItem!=="") {
-        navigate(`/search/${searchItem}`)
+      if (searchKey) {
+        navigate(`/search/${searchKey}`)
       }
     } catch (error) {
       console.log(error);
     }
   };
-  const clearInput = () => {
-    setSearchKey("");
-  };
-
-  useEffect(()=>{
-    getAllBooks()
-        .then((res)=>{
-            setBooks(res);
-        })
-        .catch(err => console.log(err))
-  },[])
 
   return (
     <div className={classes.search}>
@@ -100,7 +91,6 @@ const SearchAuto = () => {
         className={classes.searchField}
         value={searchKey}
         onChange={handleChange}
-        placeholder = "BookSearch"
         onBlur={()=>{
           setTimeout(() => {
             setSuggestions([])
@@ -109,15 +99,9 @@ const SearchAuto = () => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              {suggestions.length === 0 ? (
-                <IconButton onClick={handleSearch}>
-                  <SearchOutlined />
-                </IconButton>
-              ) : (
-                <IconButton onClick={clearInput}>
-                  <ClearIcon />
-                </IconButton>
-              )}
+              <IconButton onClick={handleSearch}>
+                <SearchOutlined />
+              </IconButton>
             </InputAdornment>
           ),
         }}
