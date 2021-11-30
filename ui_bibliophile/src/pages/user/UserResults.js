@@ -31,27 +31,36 @@ const UserResults = () => {
   const [searchResult, setSearchResult] = useState([]);
   const displayUsers = () => {
     console.log(searchResult);
-
-    const removeDuplicates = (data) => {
-      return data.filter((value, index) => data.indexOf(value.id) === index);
-    };
-    console.log(removeDuplicates(searchResult));
+    let uniqueArr = [];
+    let tempArr = [];
+    // loop through array
+    for (let i of searchResult) {
+      console.log(i);
+      if (!tempArr.includes(i.id)) {
+        tempArr.push(i.id);
+        uniqueArr.push(i);
+      }
+    }
+    console.log(uniqueArr);
+    
     return (
       <>
         <Container className={classes.container}>
           <section>
             {/* {console.log(searchResult)} */}
-            {searchResult.length > 0 ? (
+            {uniqueArr.length > 0 ? (
               <>
                 <Typography variant="h5" className={classes.title}>
                   Search Result
                 </Typography>
                 <Grid container spacing={1}>
-                  {searchResult.map((user) => (
-                    <Grid key={user.id} item xs={12} sm={4} md={2}>
-                      <UserCard user={user} />
-                    </Grid>
-                  ))}
+                  {uniqueArr.map((user) => {
+                    return (
+                      <Grid key={user.id} item xs={12} sm={4} md={2}>
+                        <UserCard user={user} />
+                      </Grid>
+                    );
+                  })}
                 </Grid>
               </>
             ) : (
@@ -77,6 +86,8 @@ const UserResults = () => {
       .then((res) => setSearchResult(res))
       .catch((err) => console.log(err));
   }, [searchKey]);
+
+  // program to remove duplicate value from an array
 
   return (
     <div>
