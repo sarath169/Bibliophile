@@ -176,3 +176,16 @@ export const getAllUsers = () => {
             console.log(err);
         })
 }
+
+export const getUserSearchResults = (searchKey) => {
+  const API_URL = `${API}/auth/getuserresults/${searchKey}`;
+  return axios
+    .get(API_URL)
+    .then((res) => {
+      console.log(res);
+      return res.data;
+    })
+    .catch((err) => {
+      return;
+    });
+};

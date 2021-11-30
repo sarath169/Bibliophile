@@ -8,7 +8,6 @@ import {
 } from "@material-ui/core";
 import { SearchOutlined } from "@material-ui/icons";
 import ClearIcon from "@mui/icons-material/Clear";
-
 import { getAllBooks, getSearchResults } from "../helpers/BookAPICalles";
 
 const useStyle = makeStyles((theme) => ({
@@ -55,6 +54,14 @@ const SearchAuto = () => {
   const [searchKey, setSearchKey] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
+  useEffect(()=>{
+    getAllBooks()
+        .then((res)=>{
+            setBooks(res);
+        })
+        .catch(err => console.log(err))
+  },[])
+
   const handleChange = (e) => {
     let text = e.target.value;
     let matches = []
@@ -91,30 +98,16 @@ const SearchAuto = () => {
     navigate(`/books/${link}`);
   }
 
-  const handleSearch = (searchText = "") => {
-    let searchItem = searchKey;
-    if (searchText.length > searchKey.length){
-      searchItem = searchText
-    }
+  const handleSearch = () => {
+    // console.log(searchKey);
     try {
-      if (searchItem!=="") {
-        navigate(`/search/${searchItem}`)
+      if (searchKey) {
+        navigate(`/search/${searchKey}`)
       }
     } catch (error) {
       console.log(error);
     }
   };
-  const clearInput = () => {
-    setSearchKey("");
-  };
-
-  useEffect(()=>{
-    getAllBooks()
-        .then((res)=>{
-            setBooks(res);
-        })
-        .catch(err => console.log(err))
-  },[])
 
   // book.title.split(" ").join("-") + `-id-${book.id}`;
 
@@ -124,7 +117,6 @@ const SearchAuto = () => {
         className={classes.searchField}
         value={searchKey}
         onChange={handleChange}
-        placeholder = "BookSearch"
         onBlur={()=>{
           setTimeout(() => {
             setSuggestions([])

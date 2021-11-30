@@ -2,6 +2,7 @@ import os
 import logging
 import random
 import dotenv
+import re
 
 from django.contrib.auth import authenticate
 from django.db.models import Q
@@ -392,3 +393,30 @@ class GetAllUsersAPIView(APIView):
         print(users)
         serializer = GetUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GetUserSearchAPIView(APIView):
+    def get(self, request, searchKey):
+        """
+        Returns users based on searchKey
+        """
+        keys = searchKey.split(' ')
+        # if len(keys)> 1 :
+        #     keys = keys + [searchKey]
+        print(keys, "keys", searchKey)
+
+        # procedure 1 
+
+        # users = CustomUser.objects.filter(name__in = keys).values()
+        # serializer = UpdateProfileSerializer(users, many=True)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # procedure 2
+
+        users = []
+        for key in keys:
+            result = CustomUser.objects.filter(name__icontains = key).values()
+            serializer = UpdateProfileSerializer(result, many=True)
+            print(key, serializer.data, "for loop")
+            users = users+serializer.data
+        
+        return Response(users, status=status.HTTP_200_OK)
