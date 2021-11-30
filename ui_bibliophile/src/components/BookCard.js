@@ -12,13 +12,16 @@ import {
 const useStyles = makeStyles(() => ({
   card: {
     width: '175px',
+    height: '250px',
     alignSelf: 'auto',
     marginTop: '20px',
     marginLeft: '15px',
-    flexgrow: 1,
+    // flexgrow: 1,
     verticalAlign: 'middle',
+    position: 'relative',
   },
   container: {
+    height: '60%',
     display: "flex",
     alignItem: "center",
     justifyContent: "center",
@@ -31,6 +34,10 @@ const useStyles = makeStyles(() => ({
   bookTitle: {
     fontWeight: "bold",
   },
+  button: {
+    position: 'relative',
+    bottom: '5px',
+  }
 }));
 
 const BookCard = ({ book }) => {
@@ -51,7 +58,19 @@ const BookCard = ({ book }) => {
         <Typography noWrap gutterBottom className={classes.bookTitle}>
           {book.title}
         </Typography>
-        {book.googleSearch ? (
+        <Button
+            className={classes.button}
+            variant="outlined"
+            color="primary"
+            fullWidth
+            onClick={() => {
+              const seoId = book.title.split(" ").join("-") + `-id-${book.id}`;
+              navigate(`/books/${seoId}`);
+            }}
+          >
+            Details
+          </Button>
+        {/* {book.googleSearch ? (
           <Button
             variant="outlined"
             color="primary"
@@ -81,7 +100,7 @@ const BookCard = ({ book }) => {
           >
             Details
           </Button>
-        )}
+        )} */}
       </CardContent>
     </Card>
   );

@@ -102,7 +102,7 @@ const BookDetails = () => {
         })
         .catch((err) => console.log(err));
     }
-  }, [seoId, bookId]);
+  }, [bookId, seoId]);
 
   useEffect(() => {
     getBookStatistics(bookId)
@@ -202,7 +202,7 @@ const BookDetails = () => {
       </Grid>
       <div className={classes.review}>
         {/* {isAuthenticated() && <Review bookId={bookId} bookAdded={bookAdded} />} */}
-        <Review bookId={bookId} bookAdded={bookAdded} setStatChanged={changeStatistics} />
+        {bookId && <Review bookId={bookId} bookAdded={bookAdded} setStatChanged={changeStatistics} />}
       </div>
     </Container>
   );

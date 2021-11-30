@@ -54,6 +54,7 @@ const Review = ({ bookId, bookAdded, setStatChanged }) => {
   };
 
   useEffect(() => {
+    setReviews([]);
     getBookDetails(bookId).then((res) => {
       if (res) {
         setIsBookAvailable(true);
@@ -66,7 +67,7 @@ const Review = ({ bookId, bookAdded, setStatChanged }) => {
         })
         .catch((err) => console.log(err));
     });
-  }, [bookAdded, bookId]);
+  }, [bookId, bookAdded]);
 
   const addComment = (e) => {
     e.preventDefault();

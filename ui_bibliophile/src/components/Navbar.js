@@ -40,7 +40,6 @@ const Navbar = () => {
 
   const [publicUrl, setPublicUrl] = useState("");
   const bibId = localStorage.getItem("bib_id");
-  console.log(location.pathname.split("/")[1]);
 
   useEffect(() => {
     if (bibId) {
@@ -53,6 +52,10 @@ const Navbar = () => {
         .catch((err) => console.log(err));
     }
   }, [bibId]);
+
+  window.onbeforeunload = () => {
+    signout();
+  }
 
   return (
     <AppBar position="static">

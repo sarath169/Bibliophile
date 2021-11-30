@@ -114,6 +114,7 @@ const SearchAuto = () => {
   return (
     <div className={classes.search}>
       <TextField
+        placeholder="Book Search"
         className={classes.searchField}
         value={searchKey}
         onChange={handleChange}

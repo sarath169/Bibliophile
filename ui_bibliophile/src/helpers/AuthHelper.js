@@ -119,7 +119,19 @@ export const signin = (email, password) => {
 };
 
 export const signout = (next) => {
+  const token = localStorage.getItem("bib_token");
   if (isAuthenticated) {
+    axios
+    .post(`${API}/auth/logout/`,{}, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`,
+      }
+    })
+    .then(res=>{
+      console.log(res)
+    })
+    .catch(err=>console.log(err.response.data.detail))
     localStorage.removeItem("bib_token");
     localStorage.removeItem("bib_id");
     next();
