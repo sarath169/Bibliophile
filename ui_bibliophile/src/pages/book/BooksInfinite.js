@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Container, makeStyles, Typography } from "@material-ui/core";
 import { getAllBooks, getBooksByPage } from "../../helpers/BookAPICalles";
 import BookCard from "../../components/BookCard";
+import BookSkeleton from "../../components/Skeleton/BookSkeleton";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -30,37 +31,55 @@ const useStyles = makeStyles(() => ({
     margin: "2% auto",
     alignItems: "flexStart",
   },
+  skeletonWraper: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
 }));
 
 const Books = () => {
   const classes = useStyles();
 
+  const [loading, setLoading] = useState(true);
   const [books, setBooks] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const fetchNext = useCallback(async () => {
+  const fetchNext = async () => {
     if (pageNumber <= totalPages || pageNumber === 1) {
+      setLoading(true);
       await getBooksByPage(pageNumber)
         .then((res) => {
-          setBooks([...books, ...res]);
-          setPageNumber(pageNumber + 1);
+          setTimeout(()=>{
+            setLoading(false);
+            setBooks([...books, ...res]);
+            setPageNumber(pageNumber + 1);
+          },1000)
         })
         .catch((err) => console.log(err));
     }
-  },[pageNumber, books, totalPages]);
+  };
 
   useEffect(() => {
-    fetchNext().then(() => {
-      getAllBooks()
-        .then((res) => {
-          setTotalPages(Math.ceil(res.length / 12));
-        })
-        .catch((err) => console.log(err));
-    });
-  }, [fetchNext]);
+      fetchNext().then(() => {
+        getAllBooks()
+          .then((res) => {
+            setTotalPages(Math.ceil(res.length / 12));
+          })
+          .catch((err) => console.log(err));
+      });
+  }, []);
 
-  
+  const MultipleBookSkeleton = () => {
+    return (
+      <div className={classes.skeletonWraper}>
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
+          <BookSkeleton key={n} />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <Container className={classes.container}>
@@ -68,6 +87,7 @@ const Books = () => {
         <Typography variant="h5" className={classes.title}>
           Collection
         </Typography>
+        
         <div className={classes.books}>
           <InfiniteScroll
             dataLength={books.length}
@@ -81,6 +101,7 @@ const Books = () => {
             ))}
           </InfiniteScroll>
         </div>
+        <div>{loading && <MultipleBookSkeleton />}</div>
       </section>
     </Container>
   );

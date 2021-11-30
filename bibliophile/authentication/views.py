@@ -362,13 +362,20 @@ class PasswordChangeAPIView(APIView):
     def put(self, request):
         token = request.auth.key
         user_id = self.get_user(token)
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
 
         if user_id:
             try:
+                print(user_id, old_password)
                 user = CustomUser.objects.get(id=user_id)
-                user.set_password(request.data.get("password"))
-                user.save()
-                return Response({"msg": "Password Updated"}, status=status.HTTP_200_OK)
+                if user.check_password(old_password):
+                    print(user)
+                    user.set_password(new_password)
+                    user.save()
+                    return Response({"msg": "Password Updated"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"msg": "Wrong Old Password"}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as ex:
                 logging.Logger(ex)
                 return Response({"mag": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)

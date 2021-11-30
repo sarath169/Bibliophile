@@ -420,3 +420,24 @@ class LastTenReviewsAPIView(APIView):
             most_recent_review.append(tmp_book)
 
         return Response(most_recent_review, status=status.HTTP_200_OK)
+
+
+class BookStatisticsAPIView(APIView):
+    def get(self, request, book_id):
+        try:
+            book_shelf_count = BookShelf.objects.filter(book=book_id).count()
+            reviews = Review.objects.filter(book=book_id)
+            review_count = 0
+            five_start_review_count = 0
+            for review in reviews:
+                review_count += 1
+                if review.rating == 5:
+                    five_start_review_count += 1
+            statistics = {
+                "book_shelf_count": book_shelf_count,
+                "review_count": review_count,
+                "five_Start_review_count": five_start_review_count
+            }
+            return Response(statistics, status=status.HTTP_200_OK)
+        except Book.DoesNotExist:
+            return Response({"msg":"Book not found"}, status=status.HTTP_404_NOT_FOUND)

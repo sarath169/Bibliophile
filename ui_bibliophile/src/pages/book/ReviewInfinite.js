@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -31,7 +31,7 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const Review = ({ bookId, bookAdded }) => {
+const Review = ({ bookId, bookAdded, setStatChanged }) => {
   const classes = useStyle();
 
   const [isBookAvailable, setIsBookAvailable] = useState(false);
@@ -41,18 +41,17 @@ const Review = ({ bookId, bookAdded }) => {
   const [totalPages, setTotalPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const fetchNext = useCallback(async () => {
-    console.log(totalPages, pageNumber);
+  const fetchNext = async () => {
     if (pageNumber <= totalPages || pageNumber === 1) {
       await getReviewByPage(bookId, pageNumber)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           if (res) setReviews([...reviews, ...res.reviews]);
           setPageNumber(pageNumber + 1);
         })
         .catch((err) => console.log(err));
     }
-  },[pageNumber, totalPages, reviews, bookId]);
+  };
 
   useEffect(() => {
     getBookDetails(bookId).then((res) => {
@@ -67,7 +66,7 @@ const Review = ({ bookId, bookAdded }) => {
         })
         .catch((err) => console.log(err));
     });
-  }, [bookAdded, bookId, fetchNext]);
+  }, [bookAdded, bookId]);
 
   const addComment = (e) => {
     e.preventDefault();
@@ -76,6 +75,7 @@ const Review = ({ bookId, bookAdded }) => {
         getReview(bookId)
           .then((res) => {
             setReviews(res.reviews);
+            setStatChanged();
           })
           .catch((err) => console.log(err));
       }

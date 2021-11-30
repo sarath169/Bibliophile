@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 import BookCard from "../components/BookCard";
 import { getPopularBooks, getTopRatedBooks } from "../helpers/BookAPICalles";
+import BookSkeleton from "../components/Skeleton/BookSkeleton";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -19,22 +20,33 @@ const useStyles = makeStyles(() => ({
     textAlign: "center",
     backgroundColor: "white",
   },
+  skeletonWraper:{
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  }
 }));
 
 const Home = () => {
   const classes = useStyles();
 
+  const [loading, setLoading] = useState(true);
   const [popularBooks, setPopularBooks] = useState([]);
   const [topRatedBooks, setTopRatedBooks] = useState([]);
 
   useEffect(() => {
-    getPopularBooks()
-      .then((res) => setPopularBooks(res))
-      .catch((err) => console.log(err));
-
-    getTopRatedBooks()
-      .then((res) => setTopRatedBooks(res))
-      .catch((err) => console.log(err));
+    setTimeout(()=>{
+      getPopularBooks()
+        .then((res) => {
+          setLoading(false);
+          setPopularBooks(res);
+        })
+        .catch((err) => console.log(err));
+  
+      getTopRatedBooks()
+        .then((res) => setTopRatedBooks(res))
+        .catch((err) => console.log(err));
+    }, 1000)
   }, []);
 
   return (
@@ -43,6 +55,13 @@ const Home = () => {
         <Typography variant="h5" className={classes.title}>
           Popular Books
         </Typography>
+        {
+          loading && (
+            <div className={classes.skeletonWraper}>
+              {[1,2,3,4,5,6].map((n)=> <BookSkeleton key={n} />)}
+            </div>
+          )
+        }
         <Grid container spacing={2}>
           {popularBooks.map((book) => {
             book["googleSearch"] = false;
@@ -59,6 +78,13 @@ const Home = () => {
         <Typography variant="h5" className={classes.title}>
           Top Rated Books
         </Typography>
+        {
+          loading && (
+            <div className={classes.skeletonWraper}>
+              {[1,2,3,4,5,6].map((n)=> <BookSkeleton key={n} />)}
+            </div>
+          )
+        }
         <Grid container>
           {topRatedBooks.map((book) => (
             <Grid key={book.id} item xs={12} sm={4} md={2}>

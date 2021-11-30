@@ -42,7 +42,7 @@ export const getSearchResults = (searchKey) => {
   return axios
     .get(API_URL)
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       return res.data;
     })
     .catch((err) => {
@@ -187,10 +187,20 @@ export const addReview = (bookId, rating, comment) => {
       }
     })
     .catch((err) => {
-      console.log(err.response.data);
+      // console.log(err.response.data);
       return {
         status: "error",
         message: err.response.data.detail,
       };
     });
 };
+
+export const getBookStatistics = (bookId) => {
+  return axios
+    .get(`${API}/book/statistics/${bookId}`)
+    .then(res=>{
+      // console.log(res);
+      return res.data;
+    })
+    .catch(err => console.log(err))
+}
