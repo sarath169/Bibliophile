@@ -46,7 +46,7 @@ const Home = () => {
       getTopRatedBooks()
         .then((res) => setTopRatedBooks(res))
         .catch((err) => console.log(err));
-    }, 5000)
+    }, 1000)
   }, []);
 
   return (

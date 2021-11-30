@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -31,7 +31,7 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const Review = ({ bookId, bookAdded }) => {
+const Review = ({ bookId, bookAdded, setStatChanged }) => {
   const classes = useStyle();
 
   const [isBookAvailable, setIsBookAvailable] = useState(false);
@@ -42,11 +42,10 @@ const Review = ({ bookId, bookAdded }) => {
   const [pageNumber, setPageNumber] = useState(1);
 
   const fetchNext = async () => {
-    console.log(totalPages, pageNumber);
     if (pageNumber <= totalPages || pageNumber === 1) {
       await getReviewByPage(bookId, pageNumber)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           if (res) setReviews([...reviews, ...res.reviews]);
           setPageNumber(pageNumber + 1);
         })
@@ -76,6 +75,7 @@ const Review = ({ bookId, bookAdded }) => {
         getReview(bookId)
           .then((res) => {
             setReviews(res.reviews);
+            setStatChanged();
           })
           .catch((err) => console.log(err));
       }

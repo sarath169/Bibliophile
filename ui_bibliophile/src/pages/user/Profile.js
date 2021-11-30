@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Container, Grid, Typography, makeStyles } from "@material-ui/core";
 import {
@@ -75,12 +75,10 @@ const Profile = () => {
   const [pageNumber, setPageNumber] = useState(1);
 
   const fetchNext = async () => {
-    console.log(totalPages, pageNumber);
     if (pageNumber <= totalPages || pageNumber === 1) {
       setLoading(true);
       await getUersPagedReview(userId, pageNumber)
         .then((res) => {
-          console.log(res);
           if (res) {
             setLoading(false);
             setReviews([...reviews, ...res]);
@@ -122,7 +120,7 @@ const Profile = () => {
             });
           }
         });
-      }, 5000);
+      }, 1000);
     }
   }, [location.pathname, publicUrl, userId]);
 

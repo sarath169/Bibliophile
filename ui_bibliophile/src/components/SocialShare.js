@@ -3,7 +3,7 @@ import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { Container, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 function SocialShare(props) {
   const uri = props.url;
@@ -23,24 +23,24 @@ function SocialShare(props) {
     <div>
       <Grid container spacing={1}>
         <Grid item xs={1}>
-          <a href={facebookShare} target="_blank">
+          <a href={facebookShare} target="_blank" rel="noopener noreferrer">
             {" "}
             <FacebookOutlinedIcon color="primary" />{" "}
           </a>
         </Grid>
         <Grid item xs={1}>
-          <a href={twitterShare} target="_blank">
+          <a href={twitterShare} target="_blank" rel="noopener noreferrer">
             <TwitterIcon color="primary" />{" "}
           </a>
         </Grid>
         <Grid item xs={1}>
-          <a href={whatsappShare} target="_blank">
+          <a href={whatsappShare} target="_blank" rel="noopener noreferrer">
             {" "}
             <WhatsAppIcon color="success" />{" "}
           </a>
         </Grid>
         <Grid item xs={1}>
-          <a href={linkedinShare} target="_blank">
+          <a href={linkedinShare} target="_blank" rel="noopener noreferrer">
             {" "}
             <LinkedInIcon color="primary" />{" "}
           </a>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Container, makeStyles, Typography } from "@material-ui/core";
 import { getAllBooks, getBooksByPage } from "../../helpers/BookAPICalles";
@@ -55,7 +55,7 @@ const Books = () => {
             setLoading(false);
             setBooks([...books, ...res]);
             setPageNumber(pageNumber + 1);
-          },5000)
+          },1000)
         })
         .catch((err) => console.log(err));
     }
