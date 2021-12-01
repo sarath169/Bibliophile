@@ -189,3 +189,29 @@ export const getUserSearchResults = (searchKey) => {
       return;
     });
 };
+
+export const sendFriendRequestHelper = (userId) => {
+  const API_URL = `${API}/friend/sendfriendrequest/${userId}/`;
+  return axios
+    .get(API_URL)
+    .then((res) => {
+      console.log(res);
+      return res.msg;
+    })
+    .catch((err) => {
+      return;
+    });
+};
+
+export const getFriendRequests = () => {
+  const API_URL = `${API}/friend/getallfriendrequests/`;
+  return axios
+    .get(API_URL)
+    .then((res) => {
+      console.log(res);
+      return res.data;
+    })
+    .catch((err) => {
+      return;
+    });
+};

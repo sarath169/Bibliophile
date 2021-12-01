@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Container, Grid, Typography, makeStyles } from "@material-ui/core";
+import { Container, Grid, Typography, makeStyles, Button } from "@material-ui/core";
 import {
   getProfile,
   getUersReview,
@@ -89,6 +89,10 @@ const Profile = () => {
     }
   };
 
+  const sendFriendRequest = () => {
+
+  }
+
   useEffect(() => {
     const profileUrl = location.pathname;
     setPublicUrl(profileUrl.split("/").at(-1));
@@ -148,11 +152,27 @@ const Profile = () => {
                   {`localhost:3000${location.pathname}`}
                 </Link>
               </Typography>
-              {owner && (
+              {owner ? (
+                <>
                 <Link to="/profile/updateinfo" className={classes.link}>
                   Edit Profile
                 </Link>
-              )}
+                <Link to="/progile/friendrequests" className={classes.link}>
+                  Friend Requests
+                  </Link>
+                  </>
+              ) : (<>
+              <Button
+            // className={classes.field}
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={sendFriendRequest()}
+          >
+            Add Friend
+          </Button>
+          
+              </>)}
             </>
           )}
         </Grid>
