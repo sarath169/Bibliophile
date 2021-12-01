@@ -18,6 +18,7 @@ import VerifyUser from './pages/user/VerifyUser';
 import ChangePassword from './pages/user/ChangePassword'
 import SocialShare from './components/SocialShare';
 import UserResults from './pages/user/UserResults';
+import FriendRequests from './pages/user/FriendRequests';
 
 function App() {
   return (
@@ -34,7 +35,6 @@ function App() {
           <Route path="/books/:seoId" element={<BookDetails />} />
           <Route path='/profile/:publicUrl' element={<Profile/>} />
           <Route path='/socialshare' element={<SocialShare/>}/>
-          <Route path='/profile/search/:searchKey' element={<UserResults/>}/>
 
           <Route path='/' element={<ProtectedRoute />} >
             <Route path='/books' element={<Books/>} />
@@ -42,6 +42,8 @@ function App() {
             <Route path='/profile/updatepicture' element={<UpdateProfilePicture/>} />
             <Route path='/profile/updatepassword' element={<UpdatePassword/>} />
             <Route path='/search/:searchKey' element={<SearchResult/>} />
+            <Route path='/profile/search/:searchKey' element={<UserResults/>}/>
+            <Route path='/profile/friendrequests/:userId' element={<FriendRequests/>}/>
           </Route>
         </Routes>
       </Router>
