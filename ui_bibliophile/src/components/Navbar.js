@@ -54,7 +54,7 @@ const Navbar = () => {
   }, [bibId]);
 
   window.onbeforeunload = () => {
-    signout();
+    // signout();
   }
 
   return (

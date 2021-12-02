@@ -32,6 +32,7 @@ const useStyle = makeStyles((theme) => ({
     borderBottomLeftRadius: '10px',
     borderBottomRightRadius: '10px',
     overflowY:'scroll',
+    zIndex: '2',
   },
   ss:{
     borderBottom: '1px solid black',
