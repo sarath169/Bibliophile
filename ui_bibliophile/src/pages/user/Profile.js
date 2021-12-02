@@ -10,14 +10,12 @@ import {
 import {
   getProfile,
   getUersReview,
-  getUersPagedReview,
   sendFriendRequestHelper,
 } from "../../helpers/ProfileHelper";
 import { getUsersBook } from "../../helpers/BookAPICalles";
 import BookCard from "../../components/BookCard";
 import ReviewCardUser from "../../components/ReviewCardUser";
 import user from "../../images/user.png";
-import InfiniteScroll from "react-infinite-scroll-component";
 import ProfileCardSkeleton from "../../components/Skeleton/ProfileCardSkeleton";
 import BookSkeleton from "../../components/Skeleton/BookSkeleton";
 import { Skeleton } from "@mui/material";
@@ -80,7 +78,6 @@ const Profile = () => {
   const [reviews, setReviews] = useState([]);
   const [owner, setOwner] = useState(false);
 
-
   const sendFriendRequest = (to_user) => {
     sendFriendRequestHelper(to_user)
       .then((res) => {
@@ -100,42 +97,43 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    setReviews([]);
-  }, []);
-
-  useEffect(() => {
+    // setReviews([]);
+    // setUserId(0);
     const profileUrl = location.pathname;
     setPublicUrl(profileUrl.split("/").at(-1));
     if (publicUrl !== "") {
-      setTimeout(() => {
-        getProfile(publicUrl).then((res) => {
-          if (localStorage.getItem("bib_id") === String(res.id)) {
+      getProfile(publicUrl).then((res) => {
+        if (res) {
+          let profile_id = res.id;
+          setUserId(profile_id);
+          if (localStorage.getItem("bib_id") === profile_id.toString()) {
             setOwner(true);
+          } else {
+            setOwner(false);
           }
-          setUserId(res.id);
-          if (res) {
-            setProfile(res);
-            setLoading(false);
-            setLoadingBookShelf(false);
-            getUsersBook(userId).then((res) => {
-              if (res && userId !== 0) {
-                for (let i in res) {
-                  if (i === "RL") setReadList(res[i]);
-                  else if (i === "WL") setWishList(res[i]);
-                  else if (i === "SL") setShelfList(res[i]);
-                }
+          setProfile(res);
+          setLoading(false);
+          setLoadingBookShelf(false);
+          getUsersBook(profile_id).then((res) => {
+            if (res && profile_id !== 0) {
+              for (let i in res) {
+                if (i === "RL") setReadList(res[i]);
+                else if (i === "WL") setWishList(res[i]);
+                else if (i === "SL") setShelfList(res[i]);
+              }
+            }
+          });
+          if (profile_id !== 0) {
+            getUersReview(profile_id).then((res) => {
+              if (res) {
+                setReviews(res);
+              } else {
+                setReviews([]);
               }
             });
-            if (userId !== 0) {
-              getUersReview(userId).then((res) => {
-                if (res) {
-                  setReviews(res);
-                }
-              });
-            }
           }
-        });
-      }, 1000);
+        }
+      });
     }
   }, [location.pathname, publicUrl, userId]);
 
@@ -166,19 +164,19 @@ const Profile = () => {
               {owner ? (
                 <>
                   <Button
-                    // className={classes.field}
+                    className={classes.button}
                     variant="outlined"
                     color="primary"
-                    width="50%"
+                    fullWidth
                     onClick={navigateToUpdateInfo}
                   >
                     Edit Profile
                   </Button>
                   <Button
-                    // className={classes.field}
+                    className={classes.button}
                     variant="outlined"
                     color="primary"
-                    width="50%"
+                    fullWidth
                     onClick={navigatetoFriendRequests}
                   >
                     Friend Requests
@@ -187,7 +185,7 @@ const Profile = () => {
               ) : (
                 <>
                   <Button
-                    // className={classes.field}
+                    className={classes.button}
                     type="submit"
                     variant="contained"
                     color="primary"

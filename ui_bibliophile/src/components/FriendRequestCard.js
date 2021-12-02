@@ -8,7 +8,6 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { Description, Email } from "@material-ui/icons";
 import { acceptFriendRequestHelper, rejectFriendRequestHelper } from "../helpers/ProfileHelper";
 
 const useStyles = makeStyles(() => ({
