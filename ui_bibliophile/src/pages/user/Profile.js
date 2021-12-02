@@ -79,23 +79,7 @@ const Profile = () => {
   const [shelfList, setShelfList] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [owner, setOwner] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
-  const [pageNumber, setPageNumber] = useState(1);
 
-  const fetchNext = async () => {
-    if (pageNumber <= totalPages || pageNumber === 1) {
-      setLoading(true);
-      await getUersPagedReview(userId, pageNumber)
-        .then((res) => {
-          if (res) {
-            setLoading(false);
-            setReviews([...reviews, ...res]);
-          }
-          setPageNumber(pageNumber + 1);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
 
   const sendFriendRequest = (to_user) => {
     sendFriendRequestHelper(to_user)
@@ -116,6 +100,10 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    setReviews([]);
+  }, []);
+
+  useEffect(() => {
     const profileUrl = location.pathname;
     setPublicUrl(profileUrl.split("/").at(-1));
     if (publicUrl !== "") {
@@ -127,6 +115,8 @@ const Profile = () => {
           setUserId(res.id);
           if (res) {
             setProfile(res);
+            setLoading(false);
+            setLoadingBookShelf(false);
             getUsersBook(userId).then((res) => {
               if (res && userId !== 0) {
                 for (let i in res) {
@@ -134,16 +124,15 @@ const Profile = () => {
                   else if (i === "WL") setWishList(res[i]);
                   else if (i === "SL") setShelfList(res[i]);
                 }
-                setLoadingBookShelf(false);
-                fetchNext().then(() => {
-                  getUersReview(userId).then((res) => {
-                    if (res) {
-                      setTotalPages(Math.ceil(res.length / 2));
-                    }
-                  });
-                });
               }
             });
+            if (userId !== 0) {
+              getUersReview(userId).then((res) => {
+                if (res) {
+                  setReviews(res);
+                }
+              });
+            }
           }
         });
       }, 1000);
@@ -285,17 +274,9 @@ const Profile = () => {
                   Recent Reviews
                 </Typography>
                 <div>
-                  <InfiniteScroll
-                    dataLength={reviews.length}
-                    next={fetchNext}
-                    hasMore={true}
-                    loader={""}
-                    className={classes.incr}
-                  >
-                    {reviews.map((review, index) => (
-                      <ReviewCardUser key={index} review={review} />
-                    ))}
-                  </InfiniteScroll>
+                  {reviews.map((review, index) => (
+                    <ReviewCardUser key={index} review={review} />
+                  ))}
                 </div>
               </>
             )}
