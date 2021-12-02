@@ -201,7 +201,7 @@ export const sendFriendRequestHelper = (userId) => {
       },
     })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       return res.msg;
     })
     .catch((err) => {
