@@ -44,23 +44,23 @@ class RegistrationView(CreateAPIView):
 class LoginView(APIView):
     # permission_classes = [AllowAny]
     def post(self, request):
-        print(request.data)
+        # print(request.data)
         email = request.data['email']
         password = request.data['password']
         try:
             user = CustomUser.objects.get(email = email)
         except CustomUser.DoesNotExist:
             return Response({"msg": "Invalid Email"}, status=status.HTTP_404_NOT_FOUND)
-        print(email, password)
+        # print(email, password)
         if user.validated:
             try:
                 user = authenticate(email = email, password = password)
-                print(user)
+                # print(user)
                 token = Token.objects.get_or_create(user = user)
-                print(token[0])
+                # print(token[0])
                 return Response({'token' : str(token[0]), 'id': user.id}, status=status.HTTP_200_OK)
             except Exception as e:
-                print(e)
+                # print(e)
                 return Response({'msg': "Invalid Password"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             mail_subject = 'Bibliophile App  : Verify Account'
@@ -69,11 +69,11 @@ class LoginView(APIView):
             content = "Thank you for choosing Bibliophile. Use the following OTP to complete your Sign Up procedures."
             try:
                 userotp_obj = OtpValidation.objects.get(user=user.id)
-                print(userotp_obj.otp)
-                print("tried")
+                # print(userotp_obj.otp)
+                # print("tried")
             except:
                 userotp_obj = None
-                print("except")
+                # print("except")
             if userotp_obj:
                 send_mail_func.delay( mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
             return Response({'msg': "Please Complete Verification"}, status = status.HTTP_403_FORBIDDEN)
@@ -111,11 +111,11 @@ class VerifyEmailView(APIView):
                     content = "Thank you for choosing Bibliophile. Use the following OTP to complete your Sign Up procedures."
                     try:
                         userotp_obj = OtpValidation.objects.get(user=user.id)
-                        print(userotp_obj.otp)
-                        print("tried")
+                        # print(userotp_obj.otp)
+                        # print("tried")
                     except:
                         userotp_obj = None
-                        print("except")
+                        # print("except")
                     if userotp_obj:
                         send_mail_func.delay( mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
 
@@ -135,11 +135,11 @@ class VerifyEmailView(APIView):
                 name = user.name
                 try:
                     userotp_obj = OtpValidation.objects.get(user=user.id)
-                    print(userotp_obj.otp)
-                    print("tried")
+                    # print(userotp_obj.otp)
+                    # print("tried")
                 except:
                     userotp_obj = None
-                    print("except")
+                    # print("except")
                 if userotp_obj:
                     send_mail_func.delay(mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
                 else:
@@ -150,14 +150,14 @@ class VerifyEmailView(APIView):
                 return Response(message, status=status.HTTP_200_OK)
                 
         except Exception as e:
-            print(e)
+            # print(e)
             response = {"message": "user with email not found"}
             return Response(response, status=status.HTTP_404_NOT_FOUND)
 
 class ForgotPasswordView(APIView):
 
     def post(self, request):
-        print(request.data['email'], request.data['newpassword'], request.data['confirmnewpassword'])
+        # print(request.data['email'], request.data['newpassword'], request.data['confirmnewpassword'])
         try:
             # simply delete the token to force a login
             email = request.data['email']
@@ -172,7 +172,7 @@ class ForgotPasswordView(APIView):
             else:
                 return Response({"response": "Passwords do not match"}, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            # print(e)
             message = {"message": "user not found"}
             return Response(message, status=status.HTTP_404_NOT_FOUND)
 
@@ -186,7 +186,7 @@ class SendMailView(APIView):
             return Response({"msg": "email is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = CustomUser.objects.get(email=email)
-        print(user.validated)
+        # print(user.validated)
 
         if not user.validated:
             mail_subject = 'Bibliophile App  : Verify Account'
@@ -195,11 +195,11 @@ class SendMailView(APIView):
             content = "Thank you for choosing Bibliophile. Use the following OTP to complete your Sign Up procedures."
             try:
                 userotp_obj = OtpValidation.objects.get(user=user.id)
-                print(userotp_obj.otp)
-                print("tried")
+                # print(userotp_obj.otp)
+                # print("tried")
             except:
                 userotp_obj = None
-                print("except")
+                # print("except")
             if userotp_obj:
                 send_mail_func.delay( mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
 
@@ -219,11 +219,11 @@ class SendMailView(APIView):
             name = user.name
             try:
                 userotp_obj = OtpValidation.objects.get(user=user.id)
-                print(userotp_obj.otp)
-                print("tried")
+                # print(userotp_obj.otp)
+                # print("tried")
             except:
                 userotp_obj = None
-                print("except")
+                # print("except")
             if userotp_obj:
                 send_mail_func.delay(mail_subject, content, userotp_obj.otp, os.getenv('EMAIL_HOST_USER') ,to_email, name)
             else:
@@ -251,8 +251,8 @@ class VerifyOtpView(APIView):
         if user.validated:
             try:
                 userotp_obj = OtpValidation.objects.get(user = user.id)
-                print(userotp_obj.otp)
-                print(otp)
+                # print(userotp_obj.otp)
+                # print(otp)
                 if userotp_obj.otp == otp:
                     OtpValidation.objects.filter(user = user.id).delete()
                     return Response({"msg" : "validation success"}, status=status.HTTP_200_OK)
@@ -260,25 +260,25 @@ class VerifyOtpView(APIView):
                     return Response({"msg" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
             except Exception as e:
-                print(e)
+                # print(e)
                 return Response({"msg" : "Please check email"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             try:
-                print("not valiated")
+                # print("not valiated")
                 userotp_obj = OtpValidation.objects.get(user = user.id)
-                print(userotp_obj.otp)
-                print(otp)
+                # print(userotp_obj.otp)
+                # print(otp)
                 if userotp_obj.otp == otp:
                     OtpValidation.objects.filter(user = user.id).delete()
                     user.validated = True
                     user.save()
-                    print(user.validated, "valiate")
+                    # print(user.validated, "valiate")
                     return Response({"msg" : "validation success"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"msg" : "otp did not match"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
             except Exception as e:
-                print(e)
+                # print(e)
                 return Response({"msg" : "please check email"}, status = status.HTTP_400_BAD_REQUEST)
 
 
@@ -367,10 +367,10 @@ class PasswordChangeAPIView(APIView):
 
         if user_id:
             try:
-                print(user_id, old_password)
+                # print(user_id, old_password)
                 user = CustomUser.objects.get(id=user_id)
                 if user.check_password(old_password):
-                    print(user)
+                    # print(user)
                     user.set_password(new_password)
                     user.save()
                     return Response({"msg": "Password Updated"}, status=status.HTTP_200_OK)
@@ -390,7 +390,7 @@ class GetAllUsersAPIView(APIView):
         """
 
         users = CustomUser.objects.all()
-        print(users)
+        # print(users)
         serializer = GetUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -402,7 +402,7 @@ class GetUserSearchAPIView(APIView):
         keys = searchKey.split(' ')
         # if len(keys)> 1 :
         #     keys = keys + [searchKey]
-        print(keys, "keys", searchKey)
+        # print(keys, "keys", searchKey)
 
         # procedure 1 
 
@@ -416,7 +416,7 @@ class GetUserSearchAPIView(APIView):
         for key in keys:
             result = CustomUser.objects.filter(name__icontains = key).values()
             serializer = UpdateProfileSerializer(result, many=True)
-            print(key, serializer.data, "for loop")
+            # print(key, serializer.data, "for loop")
             users = users+serializer.data
         
         return Response(users, status=status.HTTP_200_OK)

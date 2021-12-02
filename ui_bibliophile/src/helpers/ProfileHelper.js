@@ -191,9 +191,15 @@ export const getUserSearchResults = (searchKey) => {
 };
 
 export const sendFriendRequestHelper = (userId) => {
+  const token = localStorage.getItem("bib_token");
   const API_URL = `${API}/friend/sendfriendrequest/${userId}/`;
   return axios
-    .get(API_URL)
+    .get(API_URL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    })
     .then((res) => {
       console.log(res);
       return res.msg;
@@ -204,12 +210,56 @@ export const sendFriendRequestHelper = (userId) => {
 };
 
 export const getFriendRequests = () => {
+  const token = localStorage.getItem("bib_token");
   const API_URL = `${API}/friend/getallfriendrequests/`;
   return axios
-    .get(API_URL)
+    .get(API_URL,{
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    })
     .then((res) => {
       console.log(res);
       return res.data;
+    })
+    .catch((err) => {
+      return;
+    });
+};
+
+export const acceptFriendRequestHelper = (requestId) => {
+  const token = localStorage.getItem("bib_token");
+  const API_URL = `${API}/friend/acceptfriendrequest/${requestId}/`
+  return axios
+    .get(API_URL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      return res.msg;
+    })
+    .catch((err) => {
+      return;
+    });
+};
+
+export const rejectFriendRequestHelper = (requestId) => {
+  const token = localStorage.getItem("bib_token");
+  const API_URL = `${API}/friend/acceptfriendrequest/${requestId}/`
+  return axios
+    .get(API_URL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      return res.msg;
     })
     .catch((err) => {
       return;

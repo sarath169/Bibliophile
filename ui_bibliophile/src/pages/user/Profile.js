@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Container, Grid, Typography, makeStyles, Button } from "@material-ui/core";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Container,
+  Grid,
+  Typography,
+  makeStyles,
+  Button,
+} from "@material-ui/core";
 import {
   getProfile,
   getUersReview,
   getUersPagedReview,
+  sendFriendRequestHelper,
 } from "../../helpers/ProfileHelper";
 import { getUsersBook } from "../../helpers/BookAPICalles";
 import BookCard from "../../components/BookCard";
@@ -50,15 +57,16 @@ const useStyles = makeStyles(() => ({
     fontWeight: "bold",
     borderRadius: "5px",
   },
-  skeletonWraper:{
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  }
+  skeletonWraper: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
 }));
 
 const Profile = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const classes = useStyles();
 
   const [loading, setLoading] = useState(true);
@@ -89,9 +97,23 @@ const Profile = () => {
     }
   };
 
-  const sendFriendRequest = () => {
+  const sendFriendRequest = (to_user) => {
+    sendFriendRequestHelper(to_user)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-  }
+  const navigatetoFriendRequests = () => {
+    navigate(`/profile/friendrequests/${userId}`);
+  };
+
+  const navigateToUpdateInfo = () => {
+    navigate(`/profile/updateinfo`);
+  };
 
   useEffect(() => {
     const profileUrl = location.pathname;
@@ -154,25 +176,39 @@ const Profile = () => {
               </Typography>
               {owner ? (
                 <>
-                <Link to="/profile/updateinfo" className={classes.link}>
-                  Edit Profile
-                </Link>
-                <Link to="/progile/friendrequests" className={classes.link}>
-                  Friend Requests
-                  </Link>
-                  </>
-              ) : (<>
-              <Button
-            // className={classes.field}
-            type="submit"
-            variant="contained"
-            color="primary"
-            onClick={sendFriendRequest()}
-          >
-            Add Friend
-          </Button>
-          
-              </>)}
+                  <Button
+                    // className={classes.field}
+                    variant="outlined"
+                    color="primary"
+                    width="50%"
+                    onClick={navigateToUpdateInfo}
+                  >
+                    Edit Profile
+                  </Button>
+                  <Button
+                    // className={classes.field}
+                    variant="outlined"
+                    color="primary"
+                    width="50%"
+                    onClick={navigatetoFriendRequests}
+                  >
+                    Friend Requests
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    // className={classes.field}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={sendFriendRequest(userId)}
+                  >
+                    Add Friend
+                  </Button>
+                </>
+              )}
             </>
           )}
         </Grid>
@@ -181,25 +217,23 @@ const Profile = () => {
             <Typography variant="h6" className={classes.title}>
               About
             </Typography>
-            {
-              loading ? (
-                <Skeleton animation="wave" width={'100%'} height={200} />
-              ) : (
-                <Typography variant="subtitle1" className={classes.description}>
-                  {profile.description}
-                </Typography>
-              )
-            }
+            {loading ? (
+              <Skeleton animation="wave" width={"100%"} height={200} />
+            ) : (
+              <Typography variant="subtitle1" className={classes.description}>
+                {profile.description}
+              </Typography>
+            )}
           </div>
           <div>
-                  {(loading || loadingBookShelf) && (
-                    <div className={classes.skeletonWraper}>
-                      {[1, 2, 3, 4].map((n) => (
-                        <BookSkeleton key={n} />
-                      ))}
-                    </div>
-                  )}
-                </div>
+            {(loading || loadingBookShelf) && (
+              <div className={classes.skeletonWraper}>
+                {[1, 2, 3, 4].map((n) => (
+                  <BookSkeleton key={n} />
+                ))}
+              </div>
+            )}
+          </div>
           <div>
             {readList.length > 0 && (
               <div className={classes.section}>
