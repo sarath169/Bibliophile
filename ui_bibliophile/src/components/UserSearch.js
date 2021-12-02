@@ -77,10 +77,12 @@ const UserSearch = () => {
   };
 
   const onSearchClickHandler = (key) => {
+    setSearchKey('')
     navigate(`profile/search/${key}`);
   };
 
   const onSuggestClickHandler = (key) => {
+    setSearchKey('')
     navigate(`/profile/${key}`);
   }
 

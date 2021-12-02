@@ -4,8 +4,10 @@ from django.db import models
 from authentication.models import User
 
 class FriendRequest(models.Model):
-    from_user = models.ForeignKey(User, related_name='from_user', on_delete=models.CASCADE)
-    to_user = models.ForeignKey(User, related_name='to_user', on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='sender', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name='receiver', on_delete=models.CASCADE)
+    is_active = models.BooleanField(blank=True, null=False, default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "FriendRequests"

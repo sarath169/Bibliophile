@@ -17,23 +17,26 @@ class GetAllFriends(APIView):
     def get(self, request):
         user = request.user
         try:
-            users = User.objects.filter(id = user.id).values()
-            print(users.friends)
-            return Response({}, status=status.HTTP_200_OK)
+            # users = User.objects.get(id = user.id)
+            user_friends = user.friends.all().values()
+            serializer = ProfileSerializer(user_friends, many = True)
+            print(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({}, status=status.HTTP_200_OK)
+            return Response({"msg":"Invalid User"}, status=status.HTTP_404_NOT_FOUND)
 
 class SendFriendRequest(APIView):
     permission_classes = (IsAuthenticated, )
     def get(self, request, userId):
-        from_user = request.user
         try:
-            to_user = User.objects.get(id=userId)
-            print(to_user.id, "to_user", request.user.id, "from user")
-            if to_user.id == request.user.id:
-                return Response({"msg":"can't send request to own account"})
-            friend_request, created = FriendRequest.objects.get_or_create(from_user=from_user, to_user=to_user)
+            sender = request.user
+            receiver = User.objects.get(id=userId)
+            print("receiver:",receiver.id, "sender:", sender.id)
+
+            if receiver.id == sender.id:
+                return Response({"msg":"can't send request to own account"}, status = status.HTTP_400_BAD_REQUEST)
+            friend_request, created = FriendRequest.objects.get_or_create(sender= sender, receiver=receiver)
             if created:
                 return Response({"msg":"friend request sent"}, status=status.HTTP_200_OK)
             else:
@@ -47,10 +50,11 @@ class AcceptFriendRequest(APIView):
     def get(self, request, requestId):
         try:
             friend_request = FriendRequest.objects.get(id=requestId)
-            if friend_request.to_user == request.user:
-                friend_request.to_user.friends.add(friend_request.from_user)
-                friend_request.from_user.friends.add(friend_request.to_user)
-                friend_request.delete()
+            if friend_request.receiver == request.user:
+                friend_request.receiver.friends.add(friend_request.sender)
+                friend_request.sender.friends.add(friend_request.receiver)
+                friend_request.is_active = False
+                friend_request.save()
                 return Response({"msg":"friend request accepted"}, status=status.HTTP_200_OK)
             else:
                 return Response({"msg":"friend request not accepted"}, status=status.HTTP_200_OK)
@@ -63,8 +67,9 @@ class RejectFriendRequest(APIView):
     def get(self, request, requestId):
         try:
             friend_request = FriendRequest.objects.get(id=requestId)
-            if friend_request.to_user == request.user:
-                friend_request.delete()
+            if friend_request.receiver == request.user:
+                friend_request.is_active = False
+                friend_request.save()
                 return Response({"msg":"friend request rejected"}, status=status.HTTP_200_OK)
             else:
                 return Response({"msg":"action pending"}, status=status.HTTP_200_OK)
@@ -77,8 +82,9 @@ class CancelFriendRequest(APIView):
     def get(self, request, requestId):
         try:
             friend_request = FriendRequest.objects.get(id=requestId)
-            if friend_request.from_user == request.user:
-                friend_request.delete()
+            if friend_request.sender == request.user:
+                friend_request.is_active()
+                friend_request.save()
                 return Response({"msg":"friend request cancelled"}, status=status.HTTP_200_OK)
             else:
                 return Response({"msg":"unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -86,16 +92,27 @@ class CancelFriendRequest(APIView):
             print(e)
             return Response({"msg":"invalid requestId"}, status=status.HTTP_404_NOT_FOUND)
 
+class UnFriend(APIView):
+    permissions_classes = (IsAuthenticated, )
+    def get(self, request, removeeId):
+        try:
+            removee = User.objects.get(id = removeeId)
+            request.user.friends.remove(removee)
+            removee.friends.remove(request.user)
+            return Response({"msg": "The requested user is unfriended"}, status = status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"msg": "Invalid User"}, status = status.HTTP_404_NOT_FOUND)
 
 class GetAllFriendRequests(APIView):
     permission_classes = (IsAuthenticated, )
     def get(self, request):
-        friend_requests = FriendRequest.objects.filter(to_user = request.user).values()  
+        friend_requests = FriendRequest.objects.filter(receiver = request.user).values()  
         data = []
         for request in friend_requests:
-            from_user = User.objects.get(id = request["from_user_id"])
-            print(from_user)
-            serializer = ProfileSerializer(from_user)
+            sender = User.objects.get(id = request["sender_id"])
+            print(sender)
+            serializer = ProfileSerializer(sender)
             temp = serializer.data
             temp['request_id'] = request['id']
             print(temp)
