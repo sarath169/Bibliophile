@@ -33,15 +33,18 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, profile_pic}) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
+  console.log(user)
+  console.log(profile_pic)
+
   //   Email, name, profile_picture, public_url, Description, friends.
 
-  if (!user.profile_picture){
-      user.profile_picture = "http://127.0.0.1:8000/static/images/default.jpg"
-  }
+  // if (!user.profile_picture){
+  //     user.profile_picture = "http://127.0.0.1:8000/static/images/default.jpg"
+  // }
   
   return (
     <Card className={classes.card}>
