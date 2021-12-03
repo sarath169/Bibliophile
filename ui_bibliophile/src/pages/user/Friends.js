@@ -36,7 +36,7 @@ const Friends = () => {
         <Container className={classes.container}>
           <section>
             {/* {console.log(searchResult)} */}
-            {friends.length > 0 ? (
+            {friends ? (
               <>
                 <Typography variant="h5" className={classes.title}>
                   Friends
@@ -45,7 +45,7 @@ const Friends = () => {
                   {friends.map((user) => {
                     return (
                       <Grid key={user.id} item xs={12} sm={4} md={2}>
-                        <UserCard user={user} />
+                        <UserCard user={user} profile_pic = {user.profile_pic}/>
                       </Grid>
                     );
                   })}

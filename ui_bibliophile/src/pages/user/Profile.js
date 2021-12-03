@@ -78,8 +78,8 @@ const Profile = () => {
   const [reviews, setReviews] = useState([]);
   const [owner, setOwner] = useState(false);
 
-  const sendFriendRequest = (to_user) => {
-    sendFriendRequestHelper(to_user)
+  const sendFriendRequest = () => {
+    sendFriendRequestHelper(userId)
       .then((res) => {
         console.log(res);
       })
@@ -93,7 +93,7 @@ const Profile = () => {
   };
 
   const navigatetoFriends = () => {
-    navigate(`/profile/friends/${userId}`);
+    navigate(`/profile/friends`);
   };
 
   const navigateToUpdateInfo = () => {
@@ -203,7 +203,7 @@ const Profile = () => {
                     variant="contained"
                     color="primary"
                     fullWidth
-                    onClick={sendFriendRequest(userId)}
+                    onClick={sendFriendRequest}
                   >
                     Add Friend
                   </Button>
