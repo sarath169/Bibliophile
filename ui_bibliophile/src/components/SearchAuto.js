@@ -7,7 +7,6 @@ import {
   TextField,
 } from "@material-ui/core";
 import { SearchOutlined } from "@material-ui/icons";
-import ClearIcon from "@mui/icons-material/Clear";
 import { getAllBooks, getSearchResults } from "../helpers/BookAPICalles";
 
 const useStyle = makeStyles((theme) => ({

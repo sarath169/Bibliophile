@@ -4,7 +4,6 @@ import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 
 import UserCard from "../../components/UserCard";
 import { getUserSearchResults } from "../../helpers/ProfileHelper";
-import defaultBook from "../../images/default-book.jpg";
 
 const useStyles = makeStyles(() => ({
   container: {

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 import Skeleton from "@mui/material/Skeleton";
-
-import { getAllBooks } from "../../helpers/BookAPICalles";
 import { getFriendRequests } from "../../helpers/ProfileHelper";
 import FriendRequestCard from "../../components/FriendRequestCard";
 
@@ -39,7 +37,7 @@ function FriendRequests() {
           setFriendRequests(res.pending_requests);
         })
         .catch((err) => console.log(err));
-    }, 5000);
+    }, 1000);
   }, []);
 
   return (

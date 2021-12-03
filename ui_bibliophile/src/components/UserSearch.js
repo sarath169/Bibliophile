@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   makeStyles,
   IconButton,
@@ -9,8 +9,7 @@ import {
 import { SearchOutlined } from "@material-ui/icons";
 import { getAllUsers } from "../helpers/ProfileHelper";
 import ClearIcon from "@mui/icons-material/Clear";
-import { red } from "@mui/material/colors";
-import { Button } from "@mui/material";
+
 
 const useStyle = makeStyles((theme) => ({
   search: {
@@ -133,7 +132,6 @@ const UserSearch = () => {
         <>
           <div className={classes.suggestionDiv}>
             {suggestions.map((suggestion, i) => (
-              <>
                 <div
                   key={i}
                   className={classes.ss}
@@ -141,7 +139,6 @@ const UserSearch = () => {
                 >
                   {suggestion.name}
                 </div>
-              </>
             ))}
             <div
               className={classes.ss}
