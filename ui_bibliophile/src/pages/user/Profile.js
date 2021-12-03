@@ -92,6 +92,10 @@ const Profile = () => {
     navigate(`/profile/friendrequests/${userId}`);
   };
 
+  const navigatetoFriends = () => {
+    navigate(`/profile/friends/${userId}`);
+  };
+
   const navigateToUpdateInfo = () => {
     navigate(`/profile/updateinfo`);
   };
@@ -167,7 +171,7 @@ const Profile = () => {
                     className={classes.button}
                     variant="outlined"
                     color="primary"
-                    fullWidth
+                    width="100%"
                     onClick={navigateToUpdateInfo}
                   >
                     Edit Profile
@@ -176,10 +180,19 @@ const Profile = () => {
                     className={classes.button}
                     variant="outlined"
                     color="primary"
-                    fullWidth
+                    width="100%"
                     onClick={navigatetoFriendRequests}
                   >
                     Friend Requests
+                  </Button>
+                  <Button
+                    // className={classes.field}
+                    variant="outlined"
+                    color="primary"
+                    width="100%"
+                    onClick={navigatetoFriends}
+                  >
+                    Friends
                   </Button>
                 </>
               ) : (

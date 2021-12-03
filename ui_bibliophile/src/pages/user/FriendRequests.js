@@ -55,13 +55,11 @@ function FriendRequests() {
             </div>
           )}
         </div>
-        <Grid container spacing={1}>
           {friendRequests && (friendRequests.map((user) => (
-            <Grid key={user.id} item xs={3} sm={4} md={2}>
+            <div>
               <FriendRequestCard user={user} />
-            </Grid>
+            </div>
           )))}
-        </Grid>
       </section>
     </Container>
   );

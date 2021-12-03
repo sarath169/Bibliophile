@@ -8,15 +8,22 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { acceptFriendRequestHelper, rejectFriendRequestHelper } from "../helpers/ProfileHelper";
+import { Description, Email } from "@material-ui/icons";
+import {
+  acceptFriendRequestHelper,
+  rejectFriendRequestHelper,
+} from "../helpers/ProfileHelper";
+import "./FriendRequestCard.css";
 
 const useStyles = makeStyles(() => ({
   card: {
-    width: "175px",
+    display: "inline-block",
+    flexdirection: "row",
+    width: "100%",
     alignSelf: "auto",
     marginTop: "20px",
     marginLeft: "15px",
-    flexgrow: 1,
+    // flexgrow: 1,
     verticalAlign: "middle",
   },
   container: {
@@ -27,14 +34,14 @@ const useStyles = makeStyles(() => ({
   media: {
     paddingTop: "3px",
     width: "auto",
-    maxHeight: "150px",
+    maxHeight: "100px",
   },
   bookTitle: {
     fontWeight: "bold",
   },
 }));
 
-const UserCard = ({ user }) => {
+const FriendRequestCard = ({ user }) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -63,60 +70,45 @@ const UserCard = ({ user }) => {
       });
   };
 
+  const viewDetails = () => {
+    navigate("/profile/Sarath.Chandra.Rayala.1638436931");
+  };
+
   return (
-    <Card className={classes.card}>
-      <div className={classes.container}>
-        <CardMedia
-          image={user.profile_picture}
-          component="img"
-          className={classes.media}
-          title={user.name}
-        />
+    <>
+      <div className="courses-container">
+        <div className="course">
+          <div className="course-preview">
+            <img
+              src={user.profile_picture}
+              alt="Profile Pic"
+              width="100"
+              height="100"
+            />
+          </div>
+          <div className="course-info">
+            <h2> <a href={`http://localhost:3000/profile/${user.public_url}`} className='a-name'>{user.name}</a></h2>
+            <button
+              className="btn"
+              onClick={() => {
+                acceptFriendRequest(user.request_id);
+              }}
+            >
+              Accept
+            </button>
+            <button
+              className="btn"
+              onClick={() => {
+                rejectFriendRequest(user.request_id);
+              }}
+            >
+              Reject
+            </button>
+          </div>
+        </div>
       </div>
-      <CardContent>
-        <Typography noWrap gutterBottom className={classes.bookTitle}>
-          {user.name}
-        </Typography>
-        {
-          <Button
-            variant="outlined"
-            color="primary"
-            fullWidth
-            onClick={() => {
-              //   console.log(seoId);
-              navigate(`/profile/${user.public_url}`);
-            }}
-          >
-            Details
-          </Button>
-        }
-        {
-          <Button
-            variant="outlined"
-            color="primary"
-            fullWidth
-            onClick={() => {
-              acceptFriendRequest(user.request_id);
-            }}
-          >
-            Accept
-          </Button>
-        }
-        {
-          <Button
-            variant="outlined"
-            color="primary"
-            fullWidth
-            onClick={() => {
-              rejectFriendRequest(user.request_id);
-            }}
-          >
-            Reject
-          </Button>
-        }
-      </CardContent>
-    </Card>
+    </>
   );
 };
 
-export default UserCard;
+export default FriendRequestCard;
