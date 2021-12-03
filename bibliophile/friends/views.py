@@ -26,7 +26,7 @@ class GetAllFriends(APIView):
 class SendFriendRequest(APIView):
     permission_classes = (IsAuthenticated, )
     def get(self, request, receiverId):
-        
+
         try:
             sender = request.user
             sender_friends_list = sender.friends.all()
