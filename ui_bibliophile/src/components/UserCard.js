@@ -34,7 +34,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, profile_pic}) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
