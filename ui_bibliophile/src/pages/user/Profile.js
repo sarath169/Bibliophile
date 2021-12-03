@@ -171,7 +171,7 @@ const Profile = () => {
                     className={classes.button}
                     variant="outlined"
                     color="primary"
-                    width="100%"
+                    fullWidth
                     onClick={navigateToUpdateInfo}
                   >
                     Edit Profile
@@ -180,16 +180,16 @@ const Profile = () => {
                     className={classes.button}
                     variant="outlined"
                     color="primary"
-                    width="100%"
+                    fullWidth
                     onClick={navigatetoFriendRequests}
                   >
                     Friend Requests
                   </Button>
                   <Button
-                    // className={classes.field}
+                    className={classes.button}
                     variant="outlined"
                     color="primary"
-                    width="100%"
+                    fullWidth
                     onClick={navigatetoFriends}
                   >
                     Friends

@@ -80,6 +80,7 @@ const FriendRequestCard = ({ user }) => {
         <div className="course">
           <div className="course-preview">
             <img
+              className="profile-pic"
               src={user.profile_picture}
               alt="Profile Pic"
               width="100"
