@@ -265,3 +265,22 @@ export const rejectFriendRequestHelper = (requestId) => {
       return;
     });
 };
+
+export const getFriendsHelper = () => {
+  const token = localStorage.getItem("bib_token");
+  const API_URL = `${API}/friend/getfriends/`
+  return axios
+    .get(API_URL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      return res.data.friends;
+    })
+    .catch((err) => {
+      return;
+    });
+};
