@@ -33,12 +33,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const UserCard = ({ user, profile_pic}) => {
+const UserCard = ({ user}) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
   console.log(user)
-  console.log(profile_pic)
 
   //   Email, name, profile_picture, public_url, Description, friends.
 
