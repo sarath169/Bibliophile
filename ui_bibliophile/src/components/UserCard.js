@@ -8,6 +8,7 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
+import defaultUserImage from "../images/user.png";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -37,20 +38,19 @@ const UserCard = ({ user, profile_pic}) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
-  console.log(user)
-  console.log(profile_pic)
-
-  //   Email, name, profile_picture, public_url, Description, friends.
-
-  // if (!user.profile_picture){
-  //     user.profile_picture = "http://127.0.0.1:8000/static/images/default.jpg"
-  // }
+  const API = process.env.REACT_APP_BACKEND
+  let img_url=""
+    if(user.profile_picture){
+      img_url = `${API}${user.profile_picture}`;
+    } else {
+      img_url = defaultUserImage;
+    }
   
   return (
     <Card className={classes.card}>
       <div className={classes.container}>
         <CardMedia
-          image={user.profile_picture}
+          image={img_url}
           component="img"
           className={classes.media}
           title={user.name}
@@ -66,7 +66,6 @@ const UserCard = ({ user, profile_pic}) => {
             color="primary"
             fullWidth
             onClick={() => {
-              //   console.log(seoId);
               navigate(`/profile/${user.public_url}`);
             }}
           >
