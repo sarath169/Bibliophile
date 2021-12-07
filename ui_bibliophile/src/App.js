@@ -54,7 +54,7 @@ function App() {
               element={<UserResults />}
             />
             <Route
-              path="/profile/friendrequests/:userId"
+              path="/profile/friendrequests"
               element={<FriendRequests />}
             />
           </Route>

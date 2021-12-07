@@ -189,7 +189,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/sarath/Documents/Bibliophile/bibliophile/debug.log',
+            'filename': 'bibliophile/debug.log',
         },
     },
     'loggers': {

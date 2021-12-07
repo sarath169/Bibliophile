@@ -78,6 +78,8 @@ const Profile = () => {
   const [loadingBookShelf, setLoadingBookShelf] = useState(true);
   const [publicUrl, setPublicUrl] = useState("");
   const [userId, setUserId] = useState(0);
+  const [requestSentId, setRequestSentId] = useState();
+  const [requestReceivedId, setRequestReceivedId] = useState();
   const [profile, setProfile] = useState({});
   const [readList, setReadList] = useState([]);
   const [wishList, setWishList] = useState([]);
@@ -87,21 +89,15 @@ const Profile = () => {
   const [friendRequests, setFriendRequests] = useState([]);
   const [requestedUsers, setRequestedUsers] = useState([]);
   const [owner, setOwner] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
+  const [isRequestSent, setIsRequestSent] = useState(false);
+  const [isRequestReceived, setIsRequestReceived] = useState(false);
 
   const unfriendRequest = () => {
     unfriendRequestHelper(userId)
       .then((res) => {
         console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const sendFriendRequest = () => {
-    sendFriendRequestHelper(userId)
-      .then((res) => {
-        console.log(res);
+        setIsFriend(false);
       })
       .catch((err) => {
         console.log(err);
@@ -112,6 +108,41 @@ const Profile = () => {
     cancelFriendRequestHelper(requestId)
       .then((res) => {
         console.log(res);
+        setIsRequestSent(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const acceptFriendRequest = (requestId) => {
+    acceptFriendRequestHelper(requestId)
+      .then((res) => {
+        console.log(res);
+        setIsFriend(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const rejectFriendRequest = (requestId) => {
+    rejectFriendRequestHelper(requestId)
+      .then((res) => {
+        console.log(res);
+        setIsRequestReceived(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const sendFriendRequest = () => {
+    sendFriendRequestHelper(userId)
+      .then((res) => {
+        console.log(res.request);
+        setIsRequestSent(true);
+        setRequestSentId(res.request.id);
       })
       .catch((err) => {
         console.log(err);
@@ -119,7 +150,7 @@ const Profile = () => {
   };
 
   const navigatetoFriendRequests = () => {
-    navigate(`/profile/friendrequests/${userId}`);
+    navigate(`/profile/friendrequests`);
   };
 
   const navigatetoFriends = () => {
@@ -130,24 +161,11 @@ const Profile = () => {
     navigate(`/profile/updateinfo`);
   };
 
-  const acceptFriendRequest = (requestId) => {
-    acceptFriendRequestHelper(requestId)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const rejectFriendRequest = (requestId) => {
-    rejectFriendRequestHelper(requestId)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  // useEffect(() => {
+  //   setIsRequestReceived(false);
+  //   setIsRequestSent(false);
+  //   setIsFriend(false);
+  // }, []);
 
   useEffect(() => {
     getFriendsHelper()
@@ -169,13 +187,49 @@ const Profile = () => {
 
   useEffect(() => {
     getFriendRequests()
-      .then((res) => setFriendRequests(res.pending_requests))
+      .then((res) => {
+        console.log(res);
+        setFriendRequests(res.pending_requests);
+      })
       .catch((err) => console.log(err));
   }, []);
 
+  const setStateVariables = () => {
+    
+      if (friends.length > 0) {
+        friends.map((friend) => {
+          console.log(friend.id, userId, "ids")
+          if (friend.id == userId) {
+            console.log(friend.id);
+            setIsFriend(true);
+          }
+        });
+      }
+    
+      if (requestedUsers.length > 0) {
+        requestedUsers.map((user) => {
+          console.log(user);
+          if (user.id == userId) {
+            setIsRequestSent(true);
+            setRequestSentId(user.request_id);
+          }
+        });
+      }
+    
+      if (friendRequests.length > 0) {
+        friendRequests.map((user) => {
+          console.log(user);
+          if (user.id == userId) {
+            setIsRequestReceived(true);
+            setRequestReceivedId(user.request_id);
+          }
+        });
+      }
+  };
+
   useEffect(() => {
     // setReviews([]);
-    // setUserId(0);
+    setStateVariables();
     const profileUrl = location.pathname;
     setPublicUrl(profileUrl.split("/").at(-1));
     if (publicUrl !== "") {
@@ -221,6 +275,9 @@ const Profile = () => {
     img_url = user;
   }
 
+  // console.log( "isFriend:", isFriend)
+  // console.log( "isRequestSent:", isRequestSent)
+  // console.log( "isRequestReceived:", isRequestReceived)
   return (
     <Container className={classes.container}>
       <Grid container spacing={4}>
@@ -270,158 +327,57 @@ const Profile = () => {
                 </>
               ) : (
                 <>
-                  {friends.length > 0 ? (
+                  {isFriend ? (
+                    <Button
+                      className={classes.button}
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={unfriendRequest}
+                    >
+                      Unfriend
+                    </Button>
+                  ) : isRequestSent ? (
+                    <Button
+                      className={classes.button}
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={() => cancelFriendRequest(requestSentId)}
+                    >
+                      Cancel Request
+                    </Button>
+                  ) : isRequestReceived ? (
                     <>
-                      {friends.map((friend) => {
-                        {console.log(friend.id)}
-                        return (
-                          <>
-                            {
-                              (friend.id = userId ? (
-                                <>
-                                  <Button
-                                    className={classes.button}
-                                    variant="contained"
-                                    color="primary"
-                                    fullWidth
-                                    onClick={unfriendRequest}
-                                  >
-                                    Unfriend
-                                  </Button>
-                                </>
-                              ) : (
-                                <>
-                                  {requestedUsers.length > 0 ? (
-                                    <>
-                                      {requestedUsers.map((user) => {
-                                        console.log(user.id);
-                                        return (
-                                          <>
-                                            {
-                                              (user.id = userId ? (
-                                                <>
-                                                  <Button
-                                                    className={classes.button}
-                                                    variant="contained"
-                                                    color="primary"
-                                                    fullWidth
-                                                    onClick={() =>
-                                                      cancelFriendRequest(
-                                                        user.request_id
-                                                      )
-                                                    }
-                                                  >
-                                                    Cancel Request
-                                                  </Button>
-                                                </>
-                                              ) : (
-                                                <>
-                                                  <Button
-                                                    className={classes.button}
-                                                    variant="contained"
-                                                    color="primary"
-                                                    fullWidth
-                                                    onClick={sendFriendRequest}
-                                                  >
-                                                    Add Friend
-                                                  </Button>
-                                                </>
-                                              ))
-                                            }
-                                          </>
-                                        );
-                                      })}
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Button
-                                        className={classes.button}
-                                        variant="contained"
-                                        color="primary"
-                                        fullWidth
-                                        onClick={sendFriendRequest}
-                                      >
-                                        Add Friend
-                                      </Button>
-                                    </>
-                                  )}
-                                </>
-                              ))
-                            }
-                          </>
-                        );
-                      })}
+                      <Button
+                        className={classes.button}
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={() => acceptFriendRequest(requestReceivedId)}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        className={classes.button}
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={() => rejectFriendRequest(requestReceivedId)}
+                      >
+                        Reject
+                      </Button>
                     </>
                   ) : (
-                    <>
-                      {friendRequests.length > 0 ? (
-                        <>
-                          {friendRequests.map((request) => {
-                            console.log(request);
-                            return (
-                              <>
-                                {
-                                  (request.id = userId ? (
-                                    <>
-                                      <Button
-                                        className={classes.button}
-                                        variant="contained"
-                                        color="primary"
-                                        fullWidth
-                                        onClick={() =>
-                                          acceptFriendRequest(
-                                            request.request_id
-                                          )
-                                        }
-                                      >
-                                        Accept
-                                      </Button>
-                                      <Button
-                                        className={classes.button}
-                                        variant="contained"
-                                        color="primary"
-                                        fullWidth
-                                        onClick={() =>
-                                          rejectFriendRequest(
-                                            request.request_id
-                                          )
-                                        }
-                                      >
-                                        Reject
-                                      </Button>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Button
-                                        className={classes.button}
-                                        variant="contained"
-                                        color="primary"
-                                        fullWidth
-                                        onClick={sendFriendRequest}
-                                      >
-                                        Add Friend
-                                      </Button>
-                                    </>
-                                  ))
-                                }
-                              </>
-                            );
-                          })}
-                        </>
-                      ) : (
-                        <>
-                          <Button
-                            className={classes.button}
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            onClick={sendFriendRequest}
-                          >
-                            Add Friend
-                          </Button>
-                        </>
-                      )}
-                    </>
+                    <Button
+                      className={classes.button}
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={sendFriendRequest}
+                    >
+                      Add Friend
+                    </Button>
                   )}
                 </>
               )}
