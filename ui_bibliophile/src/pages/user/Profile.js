@@ -161,12 +161,6 @@ const Profile = () => {
     navigate(`/profile/updateinfo`);
   };
 
-  // useEffect(() => {
-  //   setIsRequestReceived(false);
-  //   setIsRequestSent(false);
-  //   setIsFriend(false);
-  // }, []);
-
   useEffect(() => {
     getFriendsHelper()
       .then((res) => {
@@ -194,42 +188,44 @@ const Profile = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  const setStateVariables = () => {
-    
-      if (friends.length > 0) {
-        friends.map((friend) => {
-          console.log(friend.id, userId, "ids")
-          if (friend.id == userId) {
-            console.log(friend.id);
-            setIsFriend(true);
-          }
-        });
-      }
-    
-      if (requestedUsers.length > 0) {
-        requestedUsers.map((user) => {
-          console.log(user);
-          if (user.id == userId) {
-            setIsRequestSent(true);
-            setRequestSentId(user.request_id);
-          }
-        });
-      }
-    
-      if (friendRequests.length > 0) {
-        friendRequests.map((user) => {
-          console.log(user);
-          if (user.id == userId) {
-            setIsRequestReceived(true);
-            setRequestReceivedId(user.request_id);
-          }
-        });
-      }
-  };
+  useEffect(() => {
+    if (friends.length > 0) {
+      friends.map((friend) => {
+        console.log(friend.id, userId, "ids");
+        if (friend.id == userId) {
+          console.log(friend.id);
+          setIsFriend(true);
+        }
+      });
+    }
+  }, [userId, friends]);
+
+  useEffect(() => {
+    if (requestedUsers.length > 0) {
+      requestedUsers.map((user) => {
+        console.log(user);
+        if (user.id == userId) {
+          setIsRequestSent(true);
+          setRequestSentId(user.request_id);
+        }
+      });
+    }
+  }, [userId, requestedUsers]);
+
+  useEffect(() => {
+    if (friendRequests.length > 0) {
+      friendRequests.map((user) => {
+        console.log(user);
+        if (user.id == userId) {
+          setIsRequestReceived(true);
+          setRequestReceivedId(user.request_id);
+        }
+      });
+    }
+  }, [friendRequests, userId]);
 
   useEffect(() => {
     // setReviews([]);
-    setStateVariables();
     const profileUrl = location.pathname;
     setPublicUrl(profileUrl.split("/").at(-1));
     if (publicUrl !== "") {
@@ -278,6 +274,7 @@ const Profile = () => {
   // console.log( "isFriend:", isFriend)
   // console.log( "isRequestSent:", isRequestSent)
   // console.log( "isRequestReceived:", isRequestReceived)
+
   return (
     <Container className={classes.container}>
       <Grid container spacing={4}>
