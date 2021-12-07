@@ -38,11 +38,9 @@ const UserCard = ({ user}) => {
   const classes = useStyles();
   const navigate = useNavigate();
 
-
-  const API = process.env.REACT_APP_BACKEND
   let img_url=""
     if(user.profile_picture){
-      img_url = `${API}${user.profile_picture}`;
+      img_url = user.profile_picture;
     } else {
       img_url = defaultUserImage;
     }
