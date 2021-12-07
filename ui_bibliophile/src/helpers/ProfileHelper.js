@@ -182,7 +182,7 @@ export const getUserSearchResults = (searchKey) => {
   return axios
     .get(API_URL)
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       return res.data;
     })
     .catch((err) => {

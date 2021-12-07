@@ -400,23 +400,7 @@ class GetUserSearchAPIView(APIView):
         Returns users based on searchKey
         """
         keys = searchKey.split(' ')
-        # if len(keys)> 1 :
-        #     keys = keys + [searchKey]
-        # print(keys, "keys", searchKey)
-
-        # procedure 1 
-
-        # users = CustomUser.objects.filter(name__in = keys).values()
-        # serializer = UpdateProfileSerializer(users, many=True)
-        # return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # procedure 2
-
-        users = []
-        for key in keys:
-            result = CustomUser.objects.filter(name__icontains = key).values()
-            serializer = UpdateProfileSerializer(result, many=True)
-            # print(key, serializer.data, "for loop")
-            users = users+serializer.data
-        
-        return Response(users, status=status.HTTP_200_OK)
+        result = CustomUser.objects.filter(*[Q(name__icontains=key) for key in keys], _connector=Q.OR)
+        serializer = UpdateProfileSerializer(result, many=True)
+        # print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
