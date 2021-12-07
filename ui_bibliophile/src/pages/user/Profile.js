@@ -162,7 +162,8 @@ const Profile = () => {
               <Typography variant="caption">
                 Public URL: <br />
                 <Link to={`${location.pathname}`}>
-                  {`localhost:3000${location.pathname}`}
+                  {/* {`localhost:3000${location.pathname}`} */}
+                  {window.location.href}
                 </Link>
               </Typography>
               {owner ? (

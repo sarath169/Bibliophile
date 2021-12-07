@@ -51,11 +51,13 @@ const Books = () => {
       setLoading(true);
       await getBooksByPage(pageNumber)
         .then((res) => {
-          setTimeout(()=>{
-            setLoading(false);
-            setBooks([...books, ...res]);
-            setPageNumber(pageNumber + 1);
-          },1000)
+          if(res){
+            setTimeout(()=>{
+              setLoading(false);
+              setBooks([...books, ...res]);
+              setPageNumber(pageNumber + 1);
+            },1000)
+          }
         })
         .catch((err) => console.log(err));
     }
