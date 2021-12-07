@@ -98,6 +98,7 @@ class RejectFriendRequest(APIView):
 
 class CancelFriendRequest(APIView):
     permission_classes = (IsAuthenticated, )
+    print("cancel friend request")
     def get(self, request, requestId):
         try:
             friend_request = FriendRequest.objects.get(id=requestId)
@@ -117,11 +118,16 @@ class CancelFriendRequest(APIView):
 class UnFriend(APIView):
     permissions_classes = (IsAuthenticated, )
     def get(self, request, removeeId):
+        user = request.user
         try:
-            removee = User.objects.get(id = removeeId)
-            request.user.friends.remove(removee)
-            removee.friends.remove(request.user)
-            return Response({"msg": "The requested user is unfriended"}, status = status.HTTP_200_OK)
+            user_friends_list = user.friends.all()
+            removee = User.objects.get(id=removeeId)
+            if removee in user_friends_list:
+                user.friends.remove(removee)
+                removee.friends.remove(request.user)
+                return Response({"msg": "The requested user is unfriended"}, status = status.HTTP_200_OK)
+            else:
+                return Response({"msg": "The requested user not a friend"}, status = status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response({"msg": "Invalid User"}, status = status.HTTP_404_NOT_FOUND)
@@ -138,3 +144,17 @@ class GetAllFriendRequests(APIView):
             temp['request_id'] = request['id']
             data.append(temp)
         return Response({"pending_requests":data}, status=status.HTTP_200_OK)
+
+class GetAllRequestedUsers(APIView):
+    permission_classes = (IsAuthenticated, )
+    def get(self, request):
+        friend_requests = FriendRequest.objects.filter(sender = request.user, is_active=True).values()
+        print(friend_requests)
+        data = []
+        for request in friend_requests:
+            receiver = User.objects.get(id = request["receiver_id"])
+            serializer = UpdateProfileSerializer(receiver)
+            temp = serializer.data
+            temp['request_id'] = request['id']
+            data.append(temp)
+        return Response({"requested_users":data}, status=status.HTTP_200_OK)

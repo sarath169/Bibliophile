@@ -45,7 +45,7 @@ const Friends = () => {
                   {friends.map((user) => {
                     return (
                       <Grid key={user.id} item xs={12} sm={4} md={2}>
-                        <UserCard user={user} profile_pic = {user.profile_pic}/>
+                        <UserCard user={user}/>
                       </Grid>
                     );
                   })}

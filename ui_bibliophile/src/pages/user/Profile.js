@@ -10,7 +10,14 @@ import {
 import {
   getProfile,
   getUersReview,
+  unfriendRequestHelper,
   sendFriendRequestHelper,
+  acceptFriendRequestHelper,
+  rejectFriendRequestHelper,
+  getRequestdUsersHelper,
+  cancelFriendRequestHelper,
+  getFriendsHelper,
+  getFriendRequests,
 } from "../../helpers/ProfileHelper";
 import { getUsersBook } from "../../helpers/BookAPICalles";
 import BookCard from "../../components/BookCard";
@@ -76,10 +83,33 @@ const Profile = () => {
   const [wishList, setWishList] = useState([]);
   const [shelfList, setShelfList] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [friends, setFriends] = useState([]);
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [requestedUsers, setRequestedUsers] = useState([]);
   const [owner, setOwner] = useState(false);
+
+  const unfriendRequest = () => {
+    unfriendRequestHelper(userId)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const sendFriendRequest = () => {
     sendFriendRequestHelper(userId)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const cancelFriendRequest = (requestId) => {
+    cancelFriendRequestHelper(requestId)
       .then((res) => {
         console.log(res);
       })
@@ -99,6 +129,49 @@ const Profile = () => {
   const navigateToUpdateInfo = () => {
     navigate(`/profile/updateinfo`);
   };
+
+  const acceptFriendRequest = (requestId) => {
+    acceptFriendRequestHelper(requestId)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const rejectFriendRequest = (requestId) => {
+    rejectFriendRequestHelper(requestId)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getFriendsHelper()
+      .then((res) => {
+        console.log(res);
+        setFriends(res);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    getRequestdUsersHelper()
+      .then((res) => {
+        console.log(res);
+        setRequestedUsers(res);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    getFriendRequests()
+      .then((res) => setFriendRequests(res.pending_requests))
+      .catch((err) => console.log(err));
+  }, []);
 
   useEffect(() => {
     // setReviews([]);
@@ -197,16 +270,159 @@ const Profile = () => {
                 </>
               ) : (
                 <>
-                  <Button
-                    className={classes.button}
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={sendFriendRequest}
-                  >
-                    Add Friend
-                  </Button>
+                  {friends.length > 0 ? (
+                    <>
+                      {friends.map((friend) => {
+                        {console.log(friend.id)}
+                        return (
+                          <>
+                            {
+                              (friend.id = userId ? (
+                                <>
+                                  <Button
+                                    className={classes.button}
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    onClick={unfriendRequest}
+                                  >
+                                    Unfriend
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  {requestedUsers.length > 0 ? (
+                                    <>
+                                      {requestedUsers.map((user) => {
+                                        console.log(user.id);
+                                        return (
+                                          <>
+                                            {
+                                              (user.id = userId ? (
+                                                <>
+                                                  <Button
+                                                    className={classes.button}
+                                                    variant="contained"
+                                                    color="primary"
+                                                    fullWidth
+                                                    onClick={() =>
+                                                      cancelFriendRequest(
+                                                        user.request_id
+                                                      )
+                                                    }
+                                                  >
+                                                    Cancel Request
+                                                  </Button>
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <Button
+                                                    className={classes.button}
+                                                    variant="contained"
+                                                    color="primary"
+                                                    fullWidth
+                                                    onClick={sendFriendRequest}
+                                                  >
+                                                    Add Friend
+                                                  </Button>
+                                                </>
+                                              ))
+                                            }
+                                          </>
+                                        );
+                                      })}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Button
+                                        className={classes.button}
+                                        variant="contained"
+                                        color="primary"
+                                        fullWidth
+                                        onClick={sendFriendRequest}
+                                      >
+                                        Add Friend
+                                      </Button>
+                                    </>
+                                  )}
+                                </>
+                              ))
+                            }
+                          </>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <>
+                      {friendRequests.length > 0 ? (
+                        <>
+                          {friendRequests.map((request) => {
+                            console.log(request);
+                            return (
+                              <>
+                                {
+                                  (request.id = userId ? (
+                                    <>
+                                      <Button
+                                        className={classes.button}
+                                        variant="contained"
+                                        color="primary"
+                                        fullWidth
+                                        onClick={() =>
+                                          acceptFriendRequest(
+                                            request.request_id
+                                          )
+                                        }
+                                      >
+                                        Accept
+                                      </Button>
+                                      <Button
+                                        className={classes.button}
+                                        variant="contained"
+                                        color="primary"
+                                        fullWidth
+                                        onClick={() =>
+                                          rejectFriendRequest(
+                                            request.request_id
+                                          )
+                                        }
+                                      >
+                                        Reject
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Button
+                                        className={classes.button}
+                                        variant="contained"
+                                        color="primary"
+                                        fullWidth
+                                        onClick={sendFriendRequest}
+                                      >
+                                        Add Friend
+                                      </Button>
+                                    </>
+                                  ))
+                                }
+                              </>
+                            );
+                          })}
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            className={classes.button}
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            onClick={sendFriendRequest}
+                          >
+                            Add Friend
+                          </Button>
+                        </>
+                      )}
+                    </>
+                  )}
                 </>
               )}
             </>
