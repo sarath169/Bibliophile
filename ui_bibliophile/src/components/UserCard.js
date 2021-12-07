@@ -34,9 +34,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const UserCard = ({ user, profile_pic}) => {
+const UserCard = ({ user}) => {
   const classes = useStyles();
   const navigate = useNavigate();
+
 
   const API = process.env.REACT_APP_BACKEND
   let img_url=""
