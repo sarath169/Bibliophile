@@ -169,7 +169,7 @@ export const getAllUsers = () => {
     return axios
         .get(`${API}/auth/getallusers/`)
         .then(res => {
-            console.log(res)
+//             console.log(res)
             return res.data;
         })
         .catch(err => {
@@ -201,8 +201,8 @@ export const sendFriendRequestHelper = (userId) => {
       },
     })
     .then((res) => {
-      // console.log(res);
-      return res.data.msg;
+//       console.log(res.data);
+      return res.data;
     })
     .catch((err) => {
       return;
@@ -220,7 +220,7 @@ export const getRequestdUsersHelper = () => {
       },
     })
     .then((res) => {
-      console.log(res.data.requested_users);
+//       console.log(res.data.requested_users);
       return res.data.requested_users;
     })
     .catch((err) => {
@@ -239,7 +239,7 @@ export const getFriendRequests = () => {
       },
     })
     .then((res) => {
-      console.log(res);
+//       console.log(res);
       return res.data;
     })
     .catch((err) => {
@@ -258,7 +258,7 @@ export const acceptFriendRequestHelper = (requestId) => {
       },
     })
     .then((res) => {
-      console.log(res);
+//       console.log(res);
       return res.msg;
     })
     .catch((err) => {
@@ -277,7 +277,7 @@ export const rejectFriendRequestHelper = (requestId) => {
       },
     })
     .then((res) => {
-      console.log(res);
+//       console.log(res);
       return res.msg;
     })
     .catch((err) => {
@@ -296,7 +296,7 @@ export const cancelFriendRequestHelper = (requestId) => {
       },
     })
     .then((res) => {
-      console.log(res);
+//       console.log(res.data);
       return res.data.msg;
     })
     .catch((err) => {
@@ -316,7 +316,7 @@ export const unfriendRequestHelper = (removeeId) => {
       },
     })
     .then((res) => {
-      console.log(res);
+//       console.log(res);
       return res.msg;
     })
     .catch((err) => {
@@ -335,7 +335,7 @@ export const getFriendsHelper = () => {
       },
     })
     .then((res) => {
-      console.log(res);
+//       console.log(res);
       return res.data.friends;
     })
     .catch((err) => {
