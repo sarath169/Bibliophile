@@ -165,7 +165,11 @@ const Profile = () => {
     getFriendsHelper()
       .then((res) => {
         console.log(res);
-        setFriends(res);
+        if (res){
+        setFriends(res);}
+        else{
+          setFriends([])
+        }
       })
       .catch((err) => console.log(err));
   }, []);

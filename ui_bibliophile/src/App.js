@@ -20,6 +20,7 @@ import SocialShare from "./components/SocialShare";
 import UserResults from "./pages/user/UserResults";
 import FriendRequests from "./pages/user/FriendRequests";
 import Friends from "./pages/user/Friends";
+import RegistrationSuccess from "./pages/RegistrationSuccess";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/books/:seoId" element={<BookDetails />} />
           <Route path="/profile/:publicUrl" element={<Profile />} />
           <Route path="/socialshare" element={<SocialShare />} />
+          <Route path="/success" element={<RegistrationSuccess/>}/>
 
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/books" element={<Books />} />

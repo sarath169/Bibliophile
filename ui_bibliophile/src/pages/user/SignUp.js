@@ -91,7 +91,7 @@ const SignUp = () => {
                     sendMail(email)
                     .then(res=>{
                         if(res.status === 'success'){
-                            navigate("/verifyuser",{state: {email:email, isForgotPassword: false}})
+                            navigate("/success",{state: {email:email, isForgotPassword: false}})
                         } else {
                             setResponse(res.message)
                         }
