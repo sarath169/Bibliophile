@@ -38,13 +38,19 @@ const Home = () => {
     setTimeout(()=>{
       getPopularBooks()
         .then((res) => {
-          setLoading(false);
-          setPopularBooks(res);
+          if(res){
+            setLoading(false);
+            setPopularBooks(res);
+          }
         })
         .catch((err) => console.log(err));
   
       getTopRatedBooks()
-        .then((res) => setTopRatedBooks(res))
+        .then((res) => {
+          if(res){
+            setTopRatedBooks(res)
+          }
+        })
         .catch((err) => console.log(err));
     }, 1000)
   }, []);

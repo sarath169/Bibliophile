@@ -401,6 +401,6 @@ class GetUserSearchAPIView(APIView):
         """
         keys = searchKey.split(' ')
         result = CustomUser.objects.filter(*[Q(name__icontains=key) for key in keys], _connector=Q.OR)
-        serializer = UpdateProfileSerializer(result, many=True)
+        serializer = UpdateProfileSerializer(result, many=True, context={"request": request})
         # print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
