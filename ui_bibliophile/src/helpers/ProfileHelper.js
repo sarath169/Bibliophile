@@ -201,8 +201,8 @@ export const sendFriendRequestHelper = (userId) => {
       },
     })
     .then((res) => {
-      // console.log(res);
-      return res.msg;
+      console.log(res.data);
+      return res.data;
     })
     .catch((err) => {
       return;
@@ -268,7 +268,7 @@ export const acceptFriendRequestHelper = (requestId) => {
 
 export const rejectFriendRequestHelper = (requestId) => {
   const token = localStorage.getItem("bib_token");
-  const API_URL = `${API}/friend/acceptfriendrequest/${requestId}/`
+  const API_URL = `${API}/friend/rejectfriendrequest/${requestId}/`
   return axios
     .get(API_URL, {
       headers: {
@@ -296,8 +296,8 @@ export const cancelFriendRequestHelper = (requestId) => {
       },
     })
     .then((res) => {
-      console.log(res);
-      return res.msg;
+      console.log(res.data);
+      return res.data.msg;
     })
     .catch((err) => {
       return;

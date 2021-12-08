@@ -16,7 +16,7 @@ class GetAllFriends(APIView):
             # users = User.objects.get(id = user.id)
             user_friends = user.friends.all()
             print(user_friends)
-            serializer = UpdateProfileSerializer(user_friends, many = True, context={"request": request})
+            serializer = UpdateProfileSerializer(user_friends, many = True)
             print(serializer.data)
             return Response({"friends" : serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -44,15 +44,16 @@ class SendFriendRequest(APIView):
                 if friend_requests:
                     is_friend_request_active = friend_requests[0].is_active
                     if is_friend_request_active:
-
-                        return Response({"msg":"friend request was already sent"}, status=status.HTTP_200_OK)
+                        serializer = FriendRequestSerializer(friend_requests[0])
+                        return Response({"request" :serializer.data ,"msg":"friend request was already sent"}, status=status.HTTP_200_OK)
                     else:
-                        FriendRequest.objects.create(sender = sender, receiver = receiver)
-
-                        return Response({"msg":"friend request sent"}, status=status.HTTP_200_OK)
+                        request = FriendRequest.objects.create(sender = sender, receiver = receiver)
+                        serializer = FriendRequestSerializer(request)
+                        return Response({"request": serializer.data, "msg":"friend request sent"}, status=status.HTTP_200_OK)
                 else:
-                    FriendRequest.objects.create(sender = sender, receiver = receiver)
-                    return Response({"msg":"friend request sent"}, status=status.HTTP_200_OK)
+                    request = FriendRequest.objects.create(sender = sender, receiver = receiver)
+                    serializer = FriendRequestSerializer(request)
+                    return Response({"request": serializer.data, "msg":"friend request sent"}, status=status.HTTP_200_OK)
                     
         except Exception as e:
             print(e)
@@ -136,6 +137,7 @@ class GetAllFriendRequests(APIView):
     permission_classes = (IsAuthenticated, )
     def get(self, request):
         friend_requests = FriendRequest.objects.filter(receiver = request.user, is_active=True).values()
+        print(friend_requests, "friend_requests")
         data = []
         for request in friend_requests:
             sender = User.objects.get(id = request["sender_id"])
