@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Button,
   Card,
@@ -8,22 +8,19 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import { Description, Email } from "@material-ui/icons";
 import {
-  acceptFriendRequestHelper,
-  rejectFriendRequestHelper,
-} from "../helpers/ProfileHelper";
-import "./FriendRequestCard.css";
+    acceptFriendRequestHelper,
+    rejectFriendRequestHelper,
+  } from "../helpers/ProfileHelper";
+import defaultUserImage from "../images/user.png";
 
 const useStyles = makeStyles(() => ({
   card: {
-    display: "inline-block",
-    flexdirection: "row",
-    width: "100%",
+    width: "175px",
     alignSelf: "auto",
     marginTop: "20px",
     marginLeft: "15px",
-    // flexgrow: 1,
+    flexgrow: 1,
     verticalAlign: "middle",
   },
   container: {
@@ -34,27 +31,35 @@ const useStyles = makeStyles(() => ({
   media: {
     paddingTop: "3px",
     width: "auto",
-    maxHeight: "100px",
+    maxHeight: "150px",
   },
-  bookTitle: {
+  link: {
+    display: "block",
     fontWeight: "bold",
+    textAlign: "center",
+    textDecoration: "none",
+  },
+  button: {
+    marginBottom: "3px",
   },
 }));
 
-const FriendRequestCard = ({ user }) => {
+const FriendRequestCard = ({ user, changeRequestStatus }) => {
   const classes = useStyles();
-  const navigate = useNavigate();
 
-  //   Email, name, profile_picture, public_url, Description, friends.
-
-  if (!user.profile_picture) {
-    user.profile_picture = "http://127.0.0.1:8000/static/images/default.jpg";
+  const API = process.env.REACT_APP_BACKEND;
+  let img_url = "";
+  if (user.profile_picture) {
+    img_url = `${API}${user.profile_picture}`;
+  } else {
+    img_url = defaultUserImage;
   }
 
   const acceptFriendRequest = (requestId) => {
     acceptFriendRequestHelper(requestId)
       .then((res) => {
         console.log(res);
+        changeRequestStatus();
       })
       .catch((err) => {
         console.log(err);
@@ -64,51 +69,57 @@ const FriendRequestCard = ({ user }) => {
     rejectFriendRequestHelper(requestId)
       .then((res) => {
         console.log(res);
+        changeRequestStatus();
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const viewDetails = () => {
-    navigate("/profile/Sarath.Chandra.Rayala.1638436931");
-  };
-
   return (
-    <>
-      <div className="courses-container">
-        <div className="course">
-          <div className="course-preview">
-            <img
-            className="profile-pic"
-              src={user.profile_picture}
-              alt="Profile Pic"
-              width="100"
-              height="100"
-            />
-          </div>
-          <div className="course-info">
-            <h2> <a href={`http://localhost:3000/profile/${user.public_url}`} className='a-name'>{user.name}</a></h2>
-            <button
-              className="btn"
-              onClick={() => {
-                acceptFriendRequest(user.request_id);
-              }}
-            >
-              Accept
-            </button>
-            <button
-              className="btn"
-              onClick={() => {
-                rejectFriendRequest(user.request_id);
-              }}
-            >
-              Reject
-            </button>
-          </div>
-        </div>
+    <Card className={classes.card}>
+      <div className={classes.container}>
+        <CardMedia
+          image={img_url}
+          component="img"
+          className={classes.media}
+          title={user.name}
+        />
       </div>
-    </>
+      <CardContent>
+        <Typography noWrap gutterBottom className={classes.bookTitle}>
+          <Link to={`/profile/${user.public_url}`} className={classes.link}>
+            {user.name}
+          </Link>
+        </Typography>
+        {
+          <Button
+            className={classes.button}
+            variant="outlined"
+            color="primary"
+            fullWidth
+            onClick={() => {
+              acceptFriendRequest(user.request_id);
+            }}
+          >
+            Accept
+          </Button>
+        }
+        {
+          <Button
+            className={classes.button}
+            variant="outlined"
+            color="secondary"
+            fullWidth
+            onClick={() => {
+              rejectFriendRequest(user.request_id);
+            }}
+          >
+            Reject
+          </Button>
+        }
+      </CardContent>
+    </Card>
   );
 };
 
