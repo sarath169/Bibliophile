@@ -204,3 +204,23 @@ export const getBookStatistics = (bookId) => {
     })
     .catch(err => console.log(err))
 }
+
+export const getReaderList = (bookId) => {
+  return axios
+    .get(`${API}/book/readers/${bookId}`)
+    .then(res=>{
+      // console.log(res);
+      return res.data;
+    })
+    .catch(err => console.log(err))
+}
+
+export const getLatestReview = () =>{
+  return axios
+    .get(`${API}/book/review/last_ten/`)
+    .then(res=>{
+      // console.log(res);
+      return res.data;
+    })
+    .catch(err => console.log(err))
+}

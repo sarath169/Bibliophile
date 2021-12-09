@@ -12,7 +12,7 @@ import { addBook, isBookInShelf } from "../helpers/BookAPICalles";
 
 const useStyle = makeStyles(() => ({
   select: {
-    minWidth: "190px",
+    minWidth: "180px",
     marginBottom: "10px",
   },
 }));
