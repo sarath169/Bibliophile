@@ -64,6 +64,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    if(bibId){
     isAuthenticated() &&
       getRecommendedBooks()
         .then((res) => {
@@ -74,11 +75,12 @@ const Home = () => {
           }
         })
         .catch((err) => console.log(err));
-  }, []);
+    }
+  }, [bibId]);
 
   return (
     <Container className={classes.container}>
-      <section>
+      {isAuthenticated() ? (<section>
         <Typography variant="h5" className={classes.title}>
           Recommendation
         </Typography>
@@ -107,7 +109,7 @@ const Home = () => {
             );
           })}
         </Grid>
-      </section>
+      </section>) : (<></>)}
       <section>
         <Typography variant="h5" className={classes.title}>
           Popular Books
