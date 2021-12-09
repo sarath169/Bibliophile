@@ -12,6 +12,23 @@ class SearchBook(APIView):
     """
     Search book from google books api
     """
+    def getResults(self, search_key):
+        """
+        Retrive books from google books based on search key
+        :param search_key: str, keywords to search books
+        :return: list, list of books with details
+        """
+        url = os.getenv('GOOGLE_BOOK_SELF_LINK')
+        api_key = os.getenv('GOOGLE_BOOK_API_KEY')
+        url = f'{url}?q={search_key}&maxResults=40&key={api_key}'
+        try:
+            res = requests.get(url)
+            books = res.json().get("items")
+            return books
+        except Exception as ex:
+            logging.debug(str(ex))
+            return None
+
     def get(self, request, search_key=""):
         """
         Retrive books from google books based on search key

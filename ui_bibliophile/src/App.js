@@ -20,7 +20,7 @@ import SocialShare from "./components/SocialShare";
 import UserResults from "./pages/user/UserResults";
 import FriendRequests from "./pages/user/FriendRequests";
 import Friends from "./pages/user/Friends";
-import RegistrationSuccess from "./pages/RegistrationSuccess";
+import RegistrationSuccess from "./pages/user/RegistrationSuccess"
 
 function App() {
   return (

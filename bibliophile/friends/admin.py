@@ -2,4 +2,8 @@ from django.contrib import admin
 from .models import FriendRequest
 # Register your models here.
 
-admin.site.register(FriendRequest)
+class CustomFriendRequest(admin.ModelAdmin):
+    list_display = (
+        'sender', 'receiver', 'is_active', 'created_at'
+    )
+admin.site.register(FriendRequest, CustomFriendRequest)

@@ -26,6 +26,5 @@ class CustomOTPAdmin(admin.ModelAdmin):
         'user', 'otp'
     )
 
-
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(OtpValidation)
+admin.site.register(OtpValidation, CustomOTPAdmin)
