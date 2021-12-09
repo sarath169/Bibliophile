@@ -7,7 +7,7 @@ import BookDetails from "./pages/book/BookDetails";
 import Books from "./pages/book/BooksInfinite";
 import SearchResult from "./pages/book/SearchResult";
 import Home from "./pages/Home";
-import Profile from "./pages/user/ProfileEd";
+import Profile from "./pages/user/Profile";
 import SignIn from "./pages/user/SignIn";
 import SignUp from "./pages/user/SignUp";
 import UpdatePassword from "./pages/user/UpdatePassword";
@@ -20,7 +20,7 @@ import SocialShare from "./components/SocialShare";
 import UserResults from "./pages/user/UserResults";
 import FriendRequests from "./pages/user/FriendRequests";
 import Friends from "./pages/user/Friends";
-import RegistrationSuccess from "./pages/RegistrationSuccess";
+import RegistrationSuccess from "./pages/user/RegistrationSuccess";
 
 function App() {
   return (

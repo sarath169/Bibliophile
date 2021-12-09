@@ -35,7 +35,6 @@ const Home = () => {
   const [topRatedBooks, setTopRatedBooks] = useState([]);
 
   useEffect(() => {
-    setTimeout(()=>{
       getPopularBooks()
         .then((res) => {
           if(res){
@@ -52,7 +51,6 @@ const Home = () => {
           }
         })
         .catch((err) => console.log(err));
-    }, 1000)
   }, []);
 
   return (

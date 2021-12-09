@@ -17,8 +17,8 @@ class GetAllFriends(APIView):
         try:
             # users = User.objects.get(id = user.id)
             user_friends = user.friends.all()
-            print(user_friends)
-            serializer = UpdateProfileSerializer(user_friends, many = True)
+            # print(user_friends)
+            serializer = UpdateProfileSerializer(user_friends, many=True, context={"request": request})
 
 #             print(serializer.data)
             return Response({"friends": serializer.data}, status=status.HTTP_200_OK)
@@ -46,7 +46,7 @@ class SendFriendRequest(APIView):
                     is_friend_request_active = friend_requests[0].is_active
                     if is_friend_request_active:
                         serializer = FriendRequestSerializer(friend_requests[0])
-                        return Response({"request" :serializer.data ,"msg":"friend request was already sent"}, status=status.HTTP_200_OK)
+                        return Response({"request": serializer.data,"msg": "friend request was already sent"}, status=status.HTTP_200_OK)
                     else:
                         request = FriendRequest.objects.create(sender = sender, receiver = receiver)
                         serializer = FriendRequestSerializer(request)
@@ -135,12 +135,12 @@ class UnFriend(APIView):
             if removee in user_friends_list:
                 user.friends.remove(removee)
                 removee.friends.remove(request.user)
-                return Response({"msg": "The requested user is unfriended"}, status = status.HTTP_200_OK)
+                return Response({"msg": "The requested user is unfriended"}, status=status.HTTP_200_OK)
             else:
-                return Response({"msg": "The requested user not a friend"}, status = status.HTTP_200_OK)
+                return Response({"msg": "The requested user not a friend"}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({"msg": "Invalid User"}, status = status.HTTP_404_NOT_FOUND)
+            return Response({"msg": "Invalid User"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GetAllFriendRequests(APIView):

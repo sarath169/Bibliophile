@@ -129,7 +129,7 @@ export const signout = (next) => {
       }
     })
     .then(res=>{
-      console.log(res)
+      // console.log(res)
     })
     .catch(err=>console.log(err.response.data.detail))
     localStorage.removeItem("bib_token");
