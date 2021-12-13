@@ -205,6 +205,32 @@ export const getBookStatistics = (bookId) => {
     .catch(err => console.log(err))
 }
 
+export const getRecommendedBooks = () => {
+  const token = localStorage.getItem("bib_token");
+  return axios
+    .get(`${API}/book/recommendation/`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    })
+    .then((res) => {
+//         console.log(res);
+      if (res.data) {
+        return res.data
+      } else {
+        return res.msg
+      }
+    })
+    .catch((err) => {
+      // console.log(err.response.data);
+      return {
+        status: "error",
+        message: err.response.data.detail,
+      };
+    });
+};
+
 export const getReaderList = (bookId) => {
   return axios
     .get(`${API}/book/readers/${bookId}`)
