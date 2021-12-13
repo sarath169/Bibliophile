@@ -26,6 +26,7 @@ import user from "../../images/user.png";
 import ProfileCardSkeleton from "../../components/Skeleton/ProfileCardSkeleton";
 import BookSkeleton from "../../components/Skeleton/BookSkeleton";
 import { Skeleton } from "@mui/material";
+import { isAuthenticated } from "../../helpers/AuthHelper";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -281,7 +282,7 @@ const Profile = () => {
                   <label className={classes.pl}>{window.location.href}</label>
                 </Link>
               </Typography>
-              {owner ? (
+              {owner ? isAuthenticated()&&(
                 <>
                   <Button
                     className={classes.button}
@@ -321,7 +322,7 @@ const Profile = () => {
                       }
                   </Button>
                 </>
-              ) : (
+              ) : isAuthenticated()&&(
                 <>
                   {isFriend ? (
                     <Button
