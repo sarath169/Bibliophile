@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 import AccountCircleOutlinedIcon from "@material-ui/icons/AccountCircleOutlined";
 import PublicOutlinedIcon from "@material-ui/icons/PublicOutlined";
 import MenuBookOutlinedIcon from "@material-ui/icons/MenuBookOutlined";
 import ClosedCaptionOutlinedIcon from "@material-ui/icons/ClosedCaptionOutlined";
+import PersonIcon from '@material-ui/icons/Person';
 import {
   getBookDetails,
   getBookStatistics,
   getGoogleBookDetails,
+  getReaderList
 } from "../../helpers/BookAPICalles";
 import { isAuthenticated } from "../../helpers/AuthHelper";
 import AddBook from "../../components/AddBook";
@@ -62,6 +64,18 @@ const useStyles = makeStyles(() => ({
   stat: {
     textAlign: "justify",
   },
+  section:{
+    marginBottom: '5px',
+    // backgroundColor: '#ebebeb',
+    padding: '5px',
+    borderRadius: '3px',
+  },
+  reader:{
+    display: 'block',
+  },
+  link:{
+    textDecoration: 'none',
+  }
 }));
 
 const BookDetails = () => {
@@ -72,6 +86,7 @@ const BookDetails = () => {
 
   const [bookDetails, setBookDetails] = useState([]);
   const [bookStat, setBookStat] = useState({});
+  const [readers, setReaders] = useState([]);
   const [bookAdded, setBookAdded] = useState(false);
   const [statChanged, setStatChanged] = useState(false);
 
@@ -110,6 +125,13 @@ const BookDetails = () => {
         setBookStat(res);
       })
       .catch((err) => console.log(err));
+    getReaderList(bookId)
+      .then((res)=>{
+        if(res){
+          setReaders(res)
+        }
+      })
+      .catch(err=>console.log(err));
   }, [bookId, statChanged]);
 
   let details = String(bookDetails.description).replace(/(<([^>]+)>)/gi, "");
@@ -171,7 +193,7 @@ const BookDetails = () => {
           </div>
         </Grid>
         <Grid item xs={12} sm={2}>
-          <div>
+          <div className={classes.section}>
             <p className={classes.stat}>
               <Typography variant="subtitle1" className={classes.wrapIcon}>
                 <GroupIcon className={classes.linkIcon} />{" "}
@@ -191,13 +213,31 @@ const BookDetails = () => {
               </Typography>
             </p>
           </div>
-          {isAuthenticated() && (
-            <AddBook
-              bookId={bookId}
-              seoId={seoId}
-              setBookAdded={handleBookAdded}
-            />
-          )}
+          <div className={classes.section}>
+            {isAuthenticated() && (
+              <AddBook
+                bookId={bookId}
+                seoId={seoId}
+                setBookAdded={handleBookAdded}
+              />
+            )}
+          </div>
+          <div className={classes.section}>
+              {
+                readers.length > 0 && (
+                  <>
+                    <Typography variant="subtitle1">People who are reading this book:</Typography>
+                    {readers.map((reader, index) => (
+                      <label key={index} className={classes.reader}>
+                         <PersonIcon className={classes.linkIcon} />
+                          <Link to={`/profile/${reader.public_url}`} className={classes.link}>{reader.name}</Link>
+                      </label>
+                    ))
+                    }
+                  </>
+                )
+              }
+          </div>
         </Grid>
       </Grid>
       <div className={classes.review}>

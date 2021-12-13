@@ -400,7 +400,7 @@ class LastTenReviewsAPIView(APIView):
     """
     Get Most recent reviews
     """
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         """
@@ -416,6 +416,7 @@ class LastTenReviewsAPIView(APIView):
                 "book_title": review.book.title,
                 "user_id": review.user_id,
                 "user_name": review.user.name,
+                "public_url": review.user.public_url,
                 "rating": review.rating,
                 "comment": review.comment
             }
@@ -488,3 +489,19 @@ class UserRecommendationAPIView(APIView):
         except Exception as e:
             print(e)
             return Response({'msg':'error'}, status=status.HTTP_404_NOT_FOUND)
+
+class ReaderListAPIView(APIView):
+    def get(self, request, book_id):
+        try:
+            readers_qs = BookShelf.objects.select_related().filter(book=book_id, book_in_shelf="RL")[:10]
+            readers = []
+            for reader in readers_qs:
+                temp_reader = {
+                    "name": reader.user.name,
+                    "public_url": reader.user.public_url
+                }
+                readers.append(temp_reader)
+            return Response(readers, status=status.HTTP_200_OK)
+        except Book.DoesNotExist:
+            return Response({"msg": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+
