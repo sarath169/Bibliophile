@@ -55,11 +55,10 @@ const Home = () => {
   const [topRatedBooks, setTopRatedBooks] = useState([]);
   const [recommendedBooks, setRecommendedBooks] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const bibId = localStorage.getItem("bib_id");
+  const [bibId, setBibId] = useState();
 
   useEffect(() => {
     setTimeout(() => {
-      
       getPopularBooks()
         .then((res) => {
           if (res) {
@@ -87,11 +86,13 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    setBibId(localStorage.getItem("bib_id"));
+    console.log(bibId);
     if (bibId) {
       isAuthenticated() &&
         getRecommendedBooks()
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             if (res) {
               setLoading(false);
               setRecommendedBooks(res);
@@ -103,42 +104,40 @@ const Home = () => {
 
   return (
     <Container className={classes.container}>
-      {isAuthenticated() ? (
-        <section>
-          <Typography variant="h5" className={classes.title}>
-            Recommendation
-          </Typography>
-          {loading && (
-            <div className={classes.skeletonWraper}>
-              {[1, 2, 3, 4, 5, 6].map((n) => (
-                <BookSkeleton key={n} />
-              ))}
-            </div>
-          )}
-          <Grid container spacing={2}>
-            {recommendedBooks.map((book) => {
-              return (
-                <Grid key={book.id} item xs={12} sm={4} md={2}>
-                  <BookCard
-                    book={{
-                      id: book.id,
-                      image_link_small: book.volumeInfo.imageLinks
-                        ? book.volumeInfo.imageLinks.smallThumbnail
-                        : defaultBook,
-                      title: book.volumeInfo.title,
-                      googleSearch: true,
-                    }}
-                  />
-                </Grid>
-              );
-            })}
-          </Grid>
-        </section>
-      ) : (
-        <></>
-      )}
       <Grid container spacing={1}>
         <Grid item lg={10}>
+          {isAuthenticated() && (
+            <section>
+              <Typography variant="h5" className={classes.title}>
+                Recommended Books
+              </Typography>
+              {loading && (
+                <div className={classes.skeletonWraper}>
+                  {[1, 2, 3, 4, 5, 6].map((n) => (
+                    <BookSkeleton key={n} />
+                  ))}
+                </div>
+              )}
+              <Grid container spacing={2}>
+                {recommendedBooks.map((book) => {
+                  return (
+                    <Grid key={book.id} item item xs={12} sm={3}>
+                      <BookCard
+                        book={{
+                          id: book.id,
+                          image_link_small: book.volumeInfo.imageLinks
+                            ? book.volumeInfo.imageLinks.smallThumbnail
+                            : defaultBook,
+                          title: book.volumeInfo.title,
+                          googleSearch: true,
+                        }}
+                      />
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </section>
+          )}
           <section>
             <Typography variant="h5" className={classes.title}>
               Popular Books
