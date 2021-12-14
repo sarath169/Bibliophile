@@ -68,6 +68,7 @@ const UpdateProfilePicture = () => {
 
   const [image, setImage] = useState("");
   const [uploadImage, setUploadImage] = useState({})
+  const [text, setText] = useState("Upload to make it parmanent")
   const [showText, setShowText] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -107,7 +108,8 @@ const UpdateProfilePicture = () => {
         .then(res=>{
           // console.log(res);
           setImage(res.profile_picture);
-          setShowText(false);
+          setText("Profile picture uploaded")
+          // setShowText(false);
         })
         .catch(err =>{
           console.log(err);
@@ -150,7 +152,7 @@ const UpdateProfilePicture = () => {
               <p className={classes.error}>{errorMessage}</p>
               { showText && (
               <Typography variant="caption" className={classes.text}>
-                Upload to make it parmanent
+                {text}
                 </Typography>
               )}
               <Button

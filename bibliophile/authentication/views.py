@@ -383,6 +383,7 @@ class PasswordChangeAPIView(APIView):
         else:
             return Response({"msg": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
 class GetAllUsersAPIView(APIView):
     def get(self, request):
         """
@@ -404,3 +405,15 @@ class GetUserSearchAPIView(APIView):
         serializer = UpdateProfileSerializer(result, many=True, context={"request": request})
         # print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class VerifyUserTokenAPIView(APIView):
+    def post(self, request):
+        id = request.data.get("id")
+        token = request.data.get("token")
+        try:
+            user = Token.objects.get(key=token, user_id=id)
+            print("User: ", user)
+            return Response(status=status.HTTP_200_OK)
+        except Token.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)

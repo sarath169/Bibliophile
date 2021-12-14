@@ -92,7 +92,7 @@ const VerifyUser = () => {
               // alert(
               //   "Your account is verified successfully. Please login to continue"
               // );
-              navigate("/signin", {state: {accountVerified: true}});
+              navigate("/signin", {state: {email:email, accountVerified: true}});
             } else {
               setResponse("Invalid OTP");
             }

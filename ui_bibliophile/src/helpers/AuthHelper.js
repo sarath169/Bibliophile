@@ -201,3 +201,19 @@ export const changePassword = (email, newPassword, confirmNewPassword) => {
       };
     });
 };
+
+export const verifyTokenAndId = () =>{
+  const token = localStorage.getItem("bib_token")
+  const id = localStorage.getItem("bib_id")
+  return axios
+    .post(`${API}/auth/verifytoken/`,{
+      id: id,
+      token: token
+    })
+    .then(res => {
+      return res.status;
+    })
+    .catch(err => {
+      return err.response.status;
+    })
+}

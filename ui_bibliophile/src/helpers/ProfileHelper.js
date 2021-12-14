@@ -27,7 +27,8 @@ export const getProfileById = (userId) => {
       return res.data;
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err.response.status);
+      return err.response.status;
     });
 };
 

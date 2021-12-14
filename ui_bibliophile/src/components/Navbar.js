@@ -45,11 +45,20 @@ const Navbar = () => {
     if (bibId) {
       getProfileById(localStorage.getItem("bib_id"))
         .then((data) => {
-          let profile_url = "/profile/" + data.public_url;
-          // console.log("Nav Bar"+profile_url)
-          setPublicUrl(profile_url);
+          console.log("Nav ",data);
+          if(data === 401){
+            localStorage.removeItem("bib_token");
+            localStorage.removeItem("bib_id");
+            navigate("/signin")
+          } else{
+            let profile_url = "/profile/" + data.public_url;
+            // console.log("Nav Bar"+profile_url)
+            setPublicUrl(profile_url);
+          }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          navigate("/signin");
+        });
     }
   }, [bibId]);
 

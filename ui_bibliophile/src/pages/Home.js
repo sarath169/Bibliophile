@@ -33,6 +33,11 @@ const useStyles = makeStyles(() => ({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
+  gridwraper:{
+    display: 'flex',
+    alignItems:'center',
+    justifyContent: 'center'
+  },
   reviews: {},
   reviewTitle: {
     textAlign: "center",
@@ -55,7 +60,7 @@ const Home = () => {
   const [topRatedBooks, setTopRatedBooks] = useState([]);
   const [recommendedBooks, setRecommendedBooks] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [bibId, setBibId] = useState();
+  const [bibId, setBibId] = useState(localStorage.getItem("bib_id"));
 
   useEffect(() => {
     setTimeout(() => {
@@ -86,8 +91,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    setBibId(localStorage.getItem("bib_id"));
-    console.log(bibId);
     if (bibId) {
       isAuthenticated() &&
         getRecommendedBooks()
@@ -121,7 +124,7 @@ const Home = () => {
               <Grid container spacing={2}>
                 {recommendedBooks.map((book) => {
                   return (
-                    <Grid key={book.id} item item xs={12} sm={3}>
+                    <Grid key={book.id} item item xs={12} sm={3} className={classes.gridwraper}>
                       <BookCard
                         book={{
                           id: book.id,
@@ -153,7 +156,7 @@ const Home = () => {
               {popularBooks.map((book) => {
                 book["googleSearch"] = false;
                 return (
-                  <Grid key={book.id} item xs={12} sm={3}>
+                  <Grid key={book.id} item xs={12} sm={3} className={classes.gridwraper}>
                     <BookCard book={book} />
                   </Grid>
                 );
@@ -174,14 +177,14 @@ const Home = () => {
             )}
             <Grid container>
               {topRatedBooks.map((book) => (
-                <Grid key={book.id} item xs={12} sm={3}>
+                <Grid key={book.id} item xs={12} sm={3} className={classes.gridwraper}>
                   <BookCard book={book} />
                 </Grid>
               ))}
             </Grid>
           </section>
         </Grid>
-        <Grid item lg={2}>
+        <Grid item xs={12} lg={2}>
           <div className={classes.reviews}>
             <label className={classes.reviewTitle}>Review Feed</label>
             {reviews.map((review, index) => (

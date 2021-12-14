@@ -58,7 +58,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState();
   const [emailError, setEmailError] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -81,6 +81,10 @@ const SignIn = () => {
         setMessageColor("green");
       } else {
         setResponse("");
+      }
+
+      if(location.state.email){
+        setEmail(location.state.email);
       }
     }
   }, [location.state]);

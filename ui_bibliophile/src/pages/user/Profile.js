@@ -26,7 +26,7 @@ import user from "../../images/user.png";
 import ProfileCardSkeleton from "../../components/Skeleton/ProfileCardSkeleton";
 import BookSkeleton from "../../components/Skeleton/BookSkeleton";
 import { Skeleton } from "@mui/material";
-import { isAuthenticated } from "../../helpers/AuthHelper";
+import { isAuthenticated, verifyTokenAndId } from "../../helpers/AuthHelper";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -65,6 +65,7 @@ const useStyles = makeStyles(() => ({
   },
   pl: {
     overflowWrap: "break-word",
+    cursor: 'pointer',
   },
   skeletonWraper: {
     display: "flex",
@@ -188,7 +189,7 @@ const Profile = () => {
         .then((res) => {
           if (res) {
             res.map(user => {
-              if(user.id === user.Id){
+              if(user.id === userId){
                 setIsFriendRequestSend(true);
                 setRequestId(user.request_id);
               }
@@ -207,8 +208,10 @@ const Profile = () => {
             let data = res.pending_requests;
             setFriendRequestCount(data.length);
             data.map(user => {
-              setIsFriendRequestReceived(true);
-              setRequestId(user.request_id);
+              if(user.id === userId){
+                setIsFriendRequestReceived(true);
+                setRequestId(user.request_id);
+              }
             })
           }
         })
@@ -219,10 +222,21 @@ const Profile = () => {
   useEffect(() => {
     // setReviews([]);
     // setUserId(0);
+    if(localStorage.getItem("bib_id")){
+      verifyTokenAndId()
+        .then(data=>{
+          if(data === 404){
+            localStorage.removeItem("bib_token");
+            localStorage.removeItem("bib_id");
+            navigate("/signin");
+          }
+        })
+    }
     const profileUrl = location.pathname;
     setPublicUrl(profileUrl.split("/").at(-1));
     if (publicUrl !== "") {
-      getProfile(publicUrl).then((res) => {
+      getProfile(publicUrl)
+      .then((res) => {
         if (res) {
           let profile_id = res.id;
           setUserId(profile_id);
@@ -253,7 +267,11 @@ const Profile = () => {
             });
           }
         }
-      });
+      }).catch(err => {
+        console.log("error: ",err);
+        if(err === 401)
+          navigate("/signin");
+      })
     }
   }, [location.pathname, publicUrl, userId]);
 

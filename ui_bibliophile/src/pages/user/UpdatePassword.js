@@ -73,6 +73,8 @@ const UpdatePassword = () => {
         }
 
         if(newPassword !== confirmNewPassword){
+            setResponse("New Password and confirm new password must be same");
+            setTextColor('red');
             setConfirmNewPasswordError(true);
             error = true;
         }

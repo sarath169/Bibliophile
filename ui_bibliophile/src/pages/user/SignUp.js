@@ -49,6 +49,8 @@ const SignUp = () => {
     const [confirmPasswordError, setConfirmPasswordError] = useState(false);
     const [response, setResponse] = useState('');
 
+    let re = /\S+@\S+\.\S+/;
+
     const handleSignUp = (e) => {
         e.preventDefault();
         
@@ -68,6 +70,11 @@ const SignUp = () => {
         if(email===''){
             setEmailError(true);
             error = true;
+        } else if(!re.test(email)){
+            setResponse("Please provide a valid email");
+            setEmailError(true);
+            error = true;
+            return
         }
         if(password===''){
             setPasswordError(true);
@@ -78,6 +85,7 @@ const SignUp = () => {
             error = true;
         }
         if(password !== confirmPassword){
+            setResponse("Password and Confirm password must be same");
             setPasswordError(true);
             setConfirmPasswordError(true);
             error = true;
@@ -87,7 +95,7 @@ const SignUp = () => {
             signup(name, email, password)
             .then(res => {
                 if(res.status !== 'error'){
-                    setResponse("Account created successfully. Please verify to continue");
+                    // setResponse("Account created successfully. Please verify to continue");
                     sendMail(email)
                     .then(res=>{
                         if(res.status === 'success'){
