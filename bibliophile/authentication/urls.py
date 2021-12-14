@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import LoginView, RegistrationView, LogoutView, SendMailView, ForgotPasswordView, VerifyOtpView, \
-    ProfileAPIView, PublicProfileAPIView, PasswordChangeAPIView, VerifyEmailView, GetAllUsersAPIView, GetUserSearchAPIView
+from .views import GetPresignedS3POST, LoginView, RegistrationView, LogoutView, SendMailView, ForgotPasswordView, VerifyOtpView, \
+    ProfileAPIView, PublicProfileAPIView, PasswordChangeAPIView, VerifyEmailView, GetAllUsersAPIView, GetUserSearchAPIView, GetPresignedS3URL
 
 urlpatterns = [
     path('signup/', RegistrationView.as_view(), name = 'signup'),
@@ -16,4 +16,7 @@ urlpatterns = [
     path('public/profile/<str:user_id>/', PublicProfileAPIView.as_view(), name="public_profile"),
     path('getallusers/', GetAllUsersAPIView.as_view(), name= 'get_all_users' ),
     path('getuserresults/<str:searchKey>/', GetUserSearchAPIView.as_view(), name = 'get_user_search' ),
+    path('getpresignedurltoupload/', GetPresignedS3POST.as_view(), name="presigned_url_to_upload"),
+    path('getpresignedurl/', GetPresignedS3URL.as_view(), name="presigned_url"),
+
 ]

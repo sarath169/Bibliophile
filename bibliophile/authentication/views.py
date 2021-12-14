@@ -20,6 +20,7 @@ from .models import OtpValidation, User as CustomUser
 from .serializers import RegisterSerializer, VerifyOtpSerializer, ProfileSerializer, UpdateProfileSerializer, GetUserSerializer
 from django.conf import settings
 from .task import send_mail_func
+from .utils import create_presigned_post, create_presigned_url
 
 dotenv.load_dotenv()
 
@@ -404,3 +405,13 @@ class GetUserSearchAPIView(APIView):
         serializer = UpdateProfileSerializer(result, many=True, context={"request": request})
         # print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GetPresignedS3POST(APIView):
+    def post(self, request):
+        response = create_presigned_post(os.getenv('AWS_S3_BUCKETNAME'), "default")
+        return Response(response, status=status.HTTP_200_OK)
+
+class GetPresignedS3URL(APIView):
+    def get(self, request):
+        response = create_presigned_url(os.getenv('AWS_S3_BUCKETNAME'), "default")
+        return Response(response, status=status.HTTP_200_OK)
