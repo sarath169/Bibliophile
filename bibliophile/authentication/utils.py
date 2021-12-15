@@ -9,7 +9,7 @@ from botocore.config import Config
 load_dotenv()
 
 def create_presigned_post(bucket_name, object_name,
-                          fields=None, conditions=None, expiration=3600):
+                          fields={}, conditions=[], expiration=3600):
     # Generate a presigned S3 POST URL
     my_config = Config(
     region_name = 'ap-south-1',
@@ -18,6 +18,7 @@ def create_presigned_post(bucket_name, object_name,
     s3_client = boto3.client('s3',
     aws_access_key_id = os.getenv('AWS_ACCESS_KEY'),
     aws_secret_access_key = os.getenv('AWS_SECRET_KEY'),
+    config = my_config
     )
     print(object_name, "from create_presigned_post")
     try:

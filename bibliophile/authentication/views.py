@@ -2,7 +2,7 @@ import os
 import logging
 import random
 import dotenv
-import re
+import requests
 
 from django.contrib.auth import authenticate
 from django.db.models import Q
@@ -408,10 +408,10 @@ class GetUserSearchAPIView(APIView):
 
 class GetPresignedS3POST(APIView):
     def post(self, request):
-        response = create_presigned_post(os.getenv('AWS_S3_BUCKETNAME'), "default")
+        response = create_presigned_post(os.getenv('AWS_S3_BUCKETNAME'), request.data['fileName'])
         return Response(response, status=status.HTTP_200_OK)
 
 class GetPresignedS3URL(APIView):
     def get(self, request):
-        response = create_presigned_url(os.getenv('AWS_S3_BUCKETNAME'), "default")
+        response = create_presigned_url(os.getenv('AWS_S3_BUCKETNAME'), "user1.jpeg")
         return Response(response, status=status.HTTP_200_OK)
