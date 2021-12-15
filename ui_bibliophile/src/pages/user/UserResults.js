@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
+import PeopleIcon from '@material-ui/icons/People';
 
 import UserCard from "../../components/UserCard";
 import { getUserSearchResults } from "../../helpers/ProfileHelper";
-import noBook from "../../images/no_results.png";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -22,6 +22,13 @@ const useStyles = makeStyles(() => ({
     textAlign: "center",
     backgroundColor: "white",
   },
+  notfound:{
+    textAlign: 'center',
+  },
+  peopleicon:{
+    height: '150px',
+    width: '150px',
+  }
 }));
 
 const UserResults = () => {
@@ -56,12 +63,10 @@ const UserResults = () => {
         </Grid>
       ) : (
         <div>
-          <img
-            src={noBook}
-            alt="No Results Found"
-            width="100%"
-            height="600"
-          />
+         <div className={classes.notfound}>
+                  <PeopleIcon size="large" color="primary" className={classes.peopleicon}/>
+                  <Typography variant="h6">No user available</Typography>
+                </div>
         </div>
       )}
     </Container>

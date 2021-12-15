@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Button,
   Card,
@@ -32,11 +32,16 @@ const useStyles = makeStyles(() => ({
   bookTitle: {
     fontWeight: "bold",
   },
+  link: {
+    display: "block",
+    fontWeight: "bold",
+    textAlign: "center",
+    textDecoration: "none",
+  },
 }));
 
 const UserCard = ({ user}) => {
   const classes = useStyles();
-  const navigate = useNavigate();
 
   let img_url=""
     if(user.profile_picture){
@@ -57,20 +62,10 @@ const UserCard = ({ user}) => {
       </div>
       <CardContent>
         <Typography noWrap gutterBottom className={classes.bookTitle}>
-          {user.name}
+          <Link to={`/profile/${user.public_url}`} className={classes.link}>
+            {user.name}
+          </Link>
         </Typography>
-        {
-          <Button
-            variant="outlined"
-            color="primary"
-            fullWidth
-            onClick={() => {
-              navigate(`/profile/${user.public_url}`);
-            }}
-          >
-            Details
-          </Button>
-        }
       </CardContent>
     </Card>
   );

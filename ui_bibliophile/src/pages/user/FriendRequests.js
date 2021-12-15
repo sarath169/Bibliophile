@@ -3,7 +3,7 @@ import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
 import { getFriendRequests } from "../../helpers/ProfileHelper";
 import FriendRequestCard from "../../components/FriendRequestCard";
 import FriendRequestsSkeleton from "../../components/Skeleton/FriendRequestsSkeleton";
-import noResult from "../../images/no_results.png";
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -25,6 +25,13 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-around",
+  },
+  notfound: {
+    textAlign: "center",
+  },
+  peopleicon: {
+    height: "150px",
+    width: "150px",
   },
 }));
 
@@ -65,24 +72,27 @@ function FriendRequests() {
           )}
         </div>
         <div>
-          <Grid container spacing={2}>
-            {friendRequests.length > 0 ? (
-              friendRequests.map((user) => (
+          {friendRequests.length > 0 ? (
+            <Grid container spacing={2}>
+              {friendRequests.map((user) => (
                 <Grid key={user.id} item xs={12} sm={4} md={2}>
                   <FriendRequestCard
                     user={user}
                     changeRequestStatus={changeRequestStatus}
                   />
                 </Grid>
-              ))):(
-                <img
-                    src={noResult}
-                    alt="No Results Found"
-                    width="100%"
-                    height="600"
-                  />
-              )}
-          </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <div className={classes.notfound}>
+              <GroupAddIcon
+                size="large"
+                color="primary"
+                className={classes.peopleicon}
+              />
+              <Typography variant="h6">No friend request available</Typography>
+            </div>
+          )}
         </div>
       </section>
     </Container>

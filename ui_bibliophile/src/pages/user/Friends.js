@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Container, Grid, makeStyles, Typography } from "@material-ui/core";
+import PeopleIcon from '@material-ui/icons/People';
 
 import UserCard from "../../components/UserCard";
 import { getFriendsHelper } from "../../helpers/ProfileHelper";
-import noResult from "../../images/no_results.png";
+
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -21,6 +22,13 @@ const useStyles = makeStyles(() => ({
     textAlign: "center",
     backgroundColor: "white",
   },
+  notfound:{
+    textAlign: 'center',
+  },
+  peopleicon:{
+    height: '150px',
+    width: '150px',
+  }
 }));
 
 const Friends = () => {
@@ -52,13 +60,9 @@ const Friends = () => {
               </>
             ) : (
               <>
-                <div>
-                  <img
-                    src={noResult}
-                    alt="No Results Found"
-                    width="100%"
-                    height="600"
-                  />
+                <div className={classes.notfound}>
+                  <PeopleIcon size="large" color="primary" className={classes.peopleicon}/>
+                  <Typography variant="h6">No friends available</Typography>
                 </div>
               </>
             )}

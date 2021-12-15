@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { isAuthenticated, signout } from "../helpers/AuthHelper";
-import SearchAuto from "./SearchAuto";
+import SearchAuto from "./SearchBoth";
 import { getProfileById } from "../helpers/ProfileHelper";
 import UserSearch from "./UserSearch";
 
@@ -45,7 +45,7 @@ const Navbar = () => {
     if (bibId) {
       getProfileById(localStorage.getItem("bib_id"))
         .then((data) => {
-          console.log("Nav ",data);
+          // console.log("Nav ",data);
           if(data === 401){
             localStorage.removeItem("bib_token");
             localStorage.removeItem("bib_id");
