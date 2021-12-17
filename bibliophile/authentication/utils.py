@@ -9,7 +9,7 @@ from botocore.config import Config
 load_dotenv()
 
 def create_presigned_post(bucket_name, object_name,
-                          fields={}, conditions=[], expiration=3600):
+                          fields= None, conditions = None, expiration=3600):
     # Generate a presigned S3 POST URL
     my_config = Config(
     region_name = 'ap-south-1',

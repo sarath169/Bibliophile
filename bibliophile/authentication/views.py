@@ -408,6 +408,7 @@ class GetUserSearchAPIView(APIView):
 
 class GetPresignedS3POST(APIView):
     def post(self, request):
+        print('fileName:', request.data['fileName'])
         response = create_presigned_post(os.getenv('AWS_S3_BUCKETNAME'), request.data['fileName'])
         return Response(response, status=status.HTTP_200_OK)
 
